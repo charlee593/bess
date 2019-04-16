@@ -44,8 +44,8 @@ using bess::utils::be32_t;
 class StaticNAT : public Module {
  public:
   enum Direction {
-    kForward = 0,  // internal -> external
-    kReverse = 1,  // external -> internal
+    kForward = 1,  // internal -> external
+    kReverse = 0,  // external -> internal
   };
 
   static const gate_idx_t kNumIGates = 2;
