@@ -95,7 +95,7 @@ mdc_rec1:0 -> 0:mdc_switch
 # mdc_switch:0 -> mdc_rec1
 # # mdc_switch:1 -> mdc_rec2
 
-# mdc_rec1:1 -> rec1_mypkts::Sink()
+mdc_rec1:1 -> rec1_mypkts::Sink()
 # # mdc_rec2:1 -> rec2_mypkts::Sink()
 #
 # Traffic generator: this generates data pkts unlike the MdcPktGen that generate ctrl pkts
