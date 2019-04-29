@@ -106,11 +106,11 @@ mdc_rec1::AwsMdcReceiver(agent_id=0x01,
 # bess.add_tc('tgen', policy='rate_limit', resource='packet', limit={'packet': int(tgen_pkt_rate)})
 #
 # # Creates a source, and limits its pkt rate
-# tgen_src::Source()
+tgen_src::Source()
 # tgen_src.attach_task('tgen')
 #
 # # Sends generated traffic on Port1
-# tgen_src -> Rewrite(templates=[unlabeled_data_pkt_bytes]) -> 7:mdc_switch
+tgen_src -> Rewrite(templates=[unlabeled_data_pkt_bytes]) -> 7:mdc_switch
 
 
 src::Source() \
