@@ -99,17 +99,17 @@ mdc_rec1::AwsMdcReceiver(agent_id=0x01,
 # mdc_rec1:1 -> rec1_mypkts::Sink()
 # # mdc_rec2:1 -> rec2_mypkts::Sink()
 #
-# # Traffic generator: this generates data pkts unlike the MdcPktGen that generate ctrl pkts
-# # Recommended: Use when the NIC has at least 2 ports, and when you want to generate traffic using BESS
-# # Data rate depends on the capacity (Gbps), and data_pkt_size and Ethernet framing overhead (bytes)
-# tgen_pkt_rate = 0.05 * 1e9 / (8 * (data_pkt_size + 24))
-# bess.add_tc('tgen', policy='rate_limit', resource='packet', limit={'packet': int(tgen_pkt_rate)})
-#
-# # Creates a source, and limits its pkt rate
+# Traffic generator: this generates data pkts unlike the MdcPktGen that generate ctrl pkts
+# Recommended: Use when the NIC has at least 2 ports, and when you want to generate traffic using BESS
+# Data rate depends on the capacity (Gbps), and data_pkt_size and Ethernet framing overhead (bytes)
+tgen_pkt_rate = 0.05 * 1e9 / (8 * (data_pkt_size + 24))
+bess.add_tc('tgen', policy='rate_limit', resource='packet', limit={'packet': int(tgen_pkt_rate)})
+
+# Creates a source, and limits its pkt rate
 tgen_src::Source()
-# tgen_src.attach_task('tgen')
-#
-# # Sends generated traffic on Port1
+tgen_src.attach_task('tgen')
+
+# Sends generated traffic on Port1
 tgen_src -> Rewrite(templates=[unlabeled_data_pkt_bytes]) -> 7:mdc_switch
 
 
