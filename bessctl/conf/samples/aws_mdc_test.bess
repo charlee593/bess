@@ -86,13 +86,13 @@ mdc_rec1::AwsMdcReceiver(agent_id=0x01,
 #                           agent_ip='10.1.0.2',
 #                           )
 
-# # Adds (session address, label) tuples to the MdcReceiver module
-# mdc_rec1.add(entries=[{'addr': '1a:1b', 'label': 0x02}])
-#
-# # mdc_rec1:0 -> Dump(interval=1) -> 0:mdc_switch
-# mdc_rec1:0 -> 0:mdc_switch
-# # mdc_rec2:0 -> 1:mdc_switch
-#
+# Adds (session address, label) tuples to the MdcReceiver module
+mdc_rec1.add(entries=[{'addr': '1a:1b', 'label': 0x02}])
+
+mdc_rec1:0 -> Dump(interval=1) -> 0:mdc_switch
+mdc_rec1:0 -> 0:mdc_switch
+# mdc_rec2:0 -> 1:mdc_switch
+
 # mdc_switch:0 -> mdc_rec1
 # # mdc_switch:1 -> mdc_rec2
 #
