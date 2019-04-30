@@ -155,6 +155,10 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
             // If mode is 0x00, the data pkt needs to be forwarded to the active agent
             EmitPacket(ctx, pkt, 1);
         } else {
+
+            std::cout << "Not mode 0000000" << std::endl;
+
+
             // Let's check the label
             uint8_t label = p->raw_value() & 0xff000000;
             int remaining_gate_count = numberOfSetBits_8(label);
