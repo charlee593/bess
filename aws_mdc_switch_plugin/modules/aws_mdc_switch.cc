@@ -155,13 +155,13 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
         // Data pkts
         uint8_t mode = p->raw_value() & 0x00ff0000;
         if (mode == 0x00) {
-            // If mode is 0x00, the data pkt needs to be forwarded to the active agent
-            std::cout << "Forwarded"<< std::endl;
-            EmitPacket(ctx, pkt, active_agent_id_);
-        } else {
-            std::cout << "DropPacket"<< std::endl;
-            DropPacket(ctx, pkt);
-            continue;
+        //     // If mode is 0x00, the data pkt needs to be forwarded to the active agent
+        //     std::cout << "Forwarded"<< std::endl;
+        //     EmitPacket(ctx, pkt, active_agent_id_);
+        // } else {
+        //     std::cout << "DropPacket"<< std::endl;
+        //     DropPacket(ctx, pkt);
+        //     continue;
 
             // Let's check the label
             uint8_t label = p->raw_value() & 0xff000000;
