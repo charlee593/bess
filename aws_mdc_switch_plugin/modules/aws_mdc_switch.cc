@@ -152,6 +152,8 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
         uint8_t mode = p->raw_value() & 0x00ff0000;
         std::cout << "Mode :::::" << std::endl;
         std::cout << std::hex << static_cast<int>(mode) << std::endl;
+        std::cout << std::hex << p->raw_value()  << std::endl;
+
 
         if (mode == 0x00) {
             std::cout << "Mode 0000000" << std::endl;
