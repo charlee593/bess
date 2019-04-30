@@ -110,3 +110,4 @@ tgen_src.attach_task('tgen')
 
 # Sends generated traffic on Port1
 tgen_src -> Rewrite(templates=[unlabeled_data_pkt_bytes]) -> 7:mdc_switch
+tgen_src -> Rewrite(templates=[unlabeled_data_pkt_bytes]) -> 6:mdc_switch
