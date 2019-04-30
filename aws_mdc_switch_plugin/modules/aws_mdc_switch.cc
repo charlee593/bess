@@ -156,13 +156,18 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
         std::cout << std::hex << p->raw_value()  << std::endl;
 
 
-        if (mode == 0x00) {
+        if (mode == 0x01) {
             std::cout << "Mode 0000000" << std::endl;
 
-            // If mode is 0x00, the data pkt needs to be forwarded to the active agent
+            // If mode is 0x00, the data pkt needs to be forwarded to the active agent.
+            std::cout << "Mode 0" << std::endl;
+            EmitPacket(ctx, pkt, 0);
+        } else if (mode == 0x10){
+            std::cout << "Mode 1" << std::endl;
             EmitPacket(ctx, pkt, 1);
-        } else {
-
+        }else {.
+            std::cout << "Mode 2" << std::endl;
+            EmitPacket(ctx, pkt, 2);
             std::cout << "Not mode 0000000" << std::endl;
 
 
