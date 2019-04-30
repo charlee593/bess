@@ -169,6 +169,7 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
             // We actually shouldn't reach here
             if (remaining_gate_count == 0) {
+              std::cout << "We actually shouldn't reach here"<< std::endl;
                 DropPacket(ctx, pkt);
                 continue;
             }
