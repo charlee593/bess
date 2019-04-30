@@ -129,9 +129,6 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     int cnt = batch->cnt();
 
     for (int i = 0; i < cnt; i++) {
-        std::cout << "Inside switch"<< std::endl;
-        std::cout  << static_cast<int>(i)<< std::endl;
-
         bess::Packet *pkt = batch->pkts()[i];
         Ethernet *eth = pkt->head_data<Ethernet *>();
 
@@ -155,26 +152,18 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
         // Data pkts
         uint8_t mode = p->raw_value() & 0x00ff0000;
         if (mode == 0x00) {
-        //     // If mode is 0x00, the data pkt needs to be forwarded to the active agent
-        //     std::cout << "Forwarded"<< std::endl;
-        //     EmitPacket(ctx, pkt, active_agent_id_);
-        // } else {
-            std::cout << "DropPacket"<< std::endl;
-        //     DropPacket(ctx, pkt);
-        //     continue;
-
+            // If mode is 0x00, the data pkt needs to be forwarded to the active agent
+            EmitPacket(ctx, pkt, 1);
+        } else {
             // Let's check the label
             uint8_t label = p->raw_value() & 0xff000000;
             int remaining_gate_count = numberOfSetBits_8(label);
 
             // We actually shouldn't reach here
-            // if (remaining_gate_count == 0) {
-            //   std::cout << "We actually shouldn't reach here"<< std::endl;
-            //     DropPacket(ctx, pkt);
-            //     continue;
-            // }
-            std::cout << "####AS#@$@#$"<< std::endl;
-            std::cout  << static_cast<int>(AWS_MAX_INTF_COUNT)<< std::endl;
+            if (remaining_gate_count == 0) {
+                DropPacket(ctx, pkt);
+                continue;
+            }
 
             for (uint8_t i=0; i < AWS_MAX_INTF_COUNT; i++) {
                 if((label_gates_[i] & label) == label_gates_[i]) {
@@ -184,8 +173,6 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
                         eth->src_addr = switch_macs_[i];
                         ip->src = switch_ips_[i];
-                        std::cout << "!!!@@@"<< std::endl;
-                        std::cout  << static_cast<int>(i)<< std::endl;
                         EmitPacket(ctx, pkt, i);
                         break;
                     } else {
@@ -200,9 +187,6 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
                             new_eth->src_addr = switch_macs_[i];
                             new_ip->src = switch_ips_[i];
-
-                            std::cout << "-*******!!!@@@"<< std::endl;
-                            std::cout  << static_cast<int>(i)<< std::endl;
 
                             EmitPacket(ctx, new_pkt, i);
                         }
