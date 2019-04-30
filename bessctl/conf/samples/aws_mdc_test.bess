@@ -112,12 +112,15 @@ mdc_rec2:1 -> rec2_mypkts::Sink()
 # Data rate depends on the capacity (Gbps), and data_pkt_size and Ethernet framing overhead (bytes)
 tgen_pkt_rate = 0.05 * 1e9 / (8 * (data_pkt_size + 24))
 bess.add_tc('tgen', policy='rate_limit', resource='packet', limit={'packet': 10})
+bess.add_tc('tgen1', policy='rate_limit', resource='packet', limit={'packet': 1})
+bess.add_tc('tgen2', policy='rate_limit', resource='packet', limit={'packet': 1})
+
 
 # Creates a source, and limits its pkt rate
 tgen_src::Source()
 tgen_src.attach_task('tgen')
-bq1.attach_task('tgen')
-bq2.attach_task('tgen')
+bq1.attach_task('tgen1')
+bq2.attach_task('tgen2')
 
 # Sends generated traffic on Port1
 # Source() -> Rewrite(templates=[unlabeled_data_pkt_bytes]) -> 7:mdc_switch
