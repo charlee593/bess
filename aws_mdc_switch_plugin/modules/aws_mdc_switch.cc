@@ -154,7 +154,6 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
         std::cout << std::hex << static_cast<int>(mode) << std::endl;
         std::cout << std::hex << (p->raw_value() >> 4)  << std::endl;
         std::cout << std::hex << p->raw_value()  << std::endl;
-        std::cout << std::bitset<8> << mode << std::endl;
 
 
         if (mode == 0x00) {
