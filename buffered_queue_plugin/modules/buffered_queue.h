@@ -35,6 +35,9 @@
 #include "../module.h"
 #include "../pb/module_msg.pb.h"
 
+#include "pb/buffered_queue_msg.pb.h"
+
+
 class BufferedQueue : public Module {
  public:
   static const Commands cmds;
