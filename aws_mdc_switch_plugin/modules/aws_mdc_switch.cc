@@ -129,6 +129,9 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     int cnt = batch->cnt();
 
     for (int i = 0; i < cnt; i++) {
+        std::cout << "Inside switch"<< std::endl;
+        std::cout  << static_cast<int>(i)<< std::endl;
+
         bess::Packet *pkt = batch->pkts()[i];
         Ethernet *eth = pkt->head_data<Ethernet *>();
 
@@ -155,6 +158,10 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
             // If mode is 0x00, the data pkt needs to be forwarded to the active agent
             EmitPacket(ctx, pkt, active_agent_id_);
         } else {
+
+            DropPacket(ctx, pkt);
+            continue;
+
             // Let's check the label
             uint8_t label = p->raw_value() & 0xff000000;
             int remaining_gate_count = numberOfSetBits_8(label);
