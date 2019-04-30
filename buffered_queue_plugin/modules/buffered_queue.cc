@@ -142,12 +142,17 @@ std::string BufferedQueue::GetDesc() const {
 void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
   int queued =
       llring_mp_enqueue_burst(queue_, (void **)batch->pkts(), batch->cnt());
+
+  std::cout << "Queued value in llring_mp_enqueue_burst" << std::endl;
+  std::cout <<  static_cast<int>(queued) << std::endl;
+
   if (backpressure_ && llring_count(queue_) > high_water_) {
     SignalOverload();
   }
 
-  stats_.enqueued += queued;
+  stats_.enqueued += queued; // Total enqueued stat
 
+  // Drop if batch size is larger than queued packet in this round
   if (queued < batch->cnt()) {
     int to_drop = batch->cnt() - queued;
     stats_.dropped += to_drop;
