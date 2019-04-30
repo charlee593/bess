@@ -147,10 +147,12 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 //        Udp *udp = reinterpret_cast<Udp *>(reinterpret_cast<uint8_t *>(ip) + ip_bytes);
         // Access UDP payload (i.e., mDC data)
         be32_t *p = pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
-//            std::cout << std::hex << static_cast<int>(mode) << std::endl;
 
         // Data pkts
         uint8_t mode = p->raw_value() & 0x00ff0000;
+        std::cout << "Mode :::::" << std::endl;
+        std::cout << std::hex << static_cast<int>(mode) << std::endl;
+
         if (mode == 0x00) {
             std::cout << "Mode 0000000" << std::endl;
 
