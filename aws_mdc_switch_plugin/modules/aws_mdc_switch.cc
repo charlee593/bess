@@ -173,6 +173,8 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
             //     DropPacket(ctx, pkt);
             //     continue;
             // }
+            std::cout << "####AS#@$@#$"<< std::endl;
+            std::cout  << static_cast<int>(AWS_MAX_INTF_COUNT)<< std::endl;
 
             for (uint8_t i=0; i < AWS_MAX_INTF_COUNT; i++) {
                 if((label_gates_[i] & label) == label_gates_[i]) {
@@ -182,6 +184,8 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
                         eth->src_addr = switch_macs_[i];
                         ip->src = switch_ips_[i];
+                        std::cout << "!!!@@@"<< std::endl;
+                        std::cout  << static_cast<int>(i)<< std::endl;
                         EmitPacket(ctx, pkt, i);
                         break;
                     } else {
@@ -196,6 +200,9 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
                             new_eth->src_addr = switch_macs_[i];
                             new_ip->src = switch_ips_[i];
+
+                            std::cout << "-*******!!!@@@"<< std::endl;
+                            std::cout  << static_cast<int>(i)<< std::endl;
 
                             EmitPacket(ctx, new_pkt, i);
                         }
