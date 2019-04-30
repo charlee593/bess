@@ -159,7 +159,7 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
         //     std::cout << "Forwarded"<< std::endl;
         //     EmitPacket(ctx, pkt, active_agent_id_);
         // } else {
-        //     std::cout << "DropPacket"<< std::endl;
+            std::cout << "DropPacket"<< std::endl;
         //     DropPacket(ctx, pkt);
         //     continue;
 
