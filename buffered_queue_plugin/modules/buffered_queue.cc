@@ -108,7 +108,7 @@ CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQu
       return err;
     }
   } else {
-    int ret = Resize(DEFAULT_BufferedQueue_SIZE);
+    int ret = Resize(DEFAULT_BUFFEREDQUEUE_SIZE);
     if (ret) {
       return CommandFailure(-ret);
     }
