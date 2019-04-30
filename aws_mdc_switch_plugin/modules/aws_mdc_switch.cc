@@ -149,7 +149,7 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
         be32_t *p = pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
 
         // Data pkts
-        uint8_t mode = p->raw_value() != 0x00ff0000;
+        uint8_t mode = p->raw_value() & 0x00ff0000;
         std::cout << "Mode :::::" << std::endl;
         std::cout << std::hex << static_cast<int>(mode) << std::endl;
         std::cout << std::hex << p->raw_value()  << std::endl;
