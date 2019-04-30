@@ -479,9 +479,9 @@ void AwsMdcReceiver::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
             // If mode is 0x00, the data pkt needs to be labeled
             mdc_label_t out_label = 0x0a;
             int ret = aws_mdc_find(&mdc_table_, address, &out_label);
-            std::cout << "Address" << std::endl;
-            std::cout << std::hex << static_cast<int>(address) << std::endl;
-            std::cout << ret << std::endl;
+            // std::cout << "Address" << std::endl;
+            // std::cout << std::hex << static_cast<int>(address) << std::endl;
+            // std::cout << ret << std::endl;
             if (ret != 0) {
                 out_label = 0x0a;
             }
