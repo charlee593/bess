@@ -149,14 +149,14 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
         be32_t *p = pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
 
         // Data pkts
-        uint8_t mode = p->raw_value() & 0x00ff0000;
+        uint8_t mode = p->raw_value() >> 4 & 0x00ff;
         std::cout << "Mode :::::" << std::endl;
         std::cout << std::hex << static_cast<int>(mode) << std::endl;
         std::cout << std::hex << p->raw_value()  << std::endl;
         std::cout << std::hex << (p->raw_value() & 0x00ff0000) << std::endl;
 
 
-        if (mode == 0x00000000) {
+        if (mode == 0x00) {
             std::cout << "Mode 0000000" << std::endl;
 
             // If mode is 0x00, the data pkt needs to be forwarded to the active agent
