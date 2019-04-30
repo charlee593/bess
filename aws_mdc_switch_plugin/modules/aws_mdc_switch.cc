@@ -168,11 +168,11 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
             int remaining_gate_count = numberOfSetBits_8(label);
 
             // We actually shouldn't reach here
-            if (remaining_gate_count == 0) {
-              std::cout << "We actually shouldn't reach here"<< std::endl;
-                DropPacket(ctx, pkt);
-                continue;
-            }
+            // if (remaining_gate_count == 0) {
+            //   std::cout << "We actually shouldn't reach here"<< std::endl;
+            //     DropPacket(ctx, pkt);
+            //     continue;
+            // }
 
             for (uint8_t i=0; i < AWS_MAX_INTF_COUNT; i++) {
                 if((label_gates_[i] & label) == label_gates_[i]) {
