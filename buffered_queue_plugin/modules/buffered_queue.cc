@@ -166,7 +166,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 /* to downstream */
 struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch,
                                   void *) {
-  if (children_overload_ > 0) {
+  if (children_overload_ >= 0) {
     return {
         .block = true, .packets = 0, .bits = 0,
     };
