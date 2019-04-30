@@ -45,7 +45,7 @@ print('Data pkt size = %d' % data_pkt_size)
 class MDCData(scapy.Packet):
     name = 'MulticastDataCenterData '
     fields_desc=[scapy.ShortField('addr', 0),
-                 scapy.XByteField('mode', 1),
+                 scapy.XByteField('mode', 0),
                  scapy.XByteField('label' , 0)]
 
 
@@ -63,7 +63,7 @@ unlabeled_data_pkt_bytes = bytes(unlabeled_data_pkt)
 data_eth_2 = scapy.Ether(src='aa:bb:cc:dd:ee:01', dst='11:22:33:44:55:01', type=0x0800)
 data_ip_2 = scapy.IP(src='10.1.0.1', dst='10.0.0.1')
 data_udp_2 = scapy.UDP(sport=10001, dport=10002)
-unlabeled_data_mdc_2 = MDCData(addr=0x1a1b, mode=0xff, label=0xff)
+unlabeled_data_mdc_2 = MDCData(addr=0x1a1b, mode=0x0, label=0x0)
 data_payload_2 = bytes(unlabeled_data_mdc_2) + b"\0" * (data_pkt_size-CONST_DATA_SIZE)
 unlabeled_data_pkt_2 = data_eth_2/data_ip_2/data_udp_2/data_payload_2
 unlabeled_data_pkt_bytes_2 = bytes(unlabeled_data_pkt_2)
