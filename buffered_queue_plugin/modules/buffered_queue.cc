@@ -185,11 +185,11 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
 
   const int burst = ACCESS_ONCE(burst_);
   const int pkt_overhead = 24;
-
+  uint32_t cnt = 0
   uint64_t total_bytes = 0;
 
   while (llring_count(queue_) > 0){
-      uint32_t cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), burst);
+    cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), burst);
 
     if (cnt == 0) {
       return {.block = true, .packets = 0, .bits = 0};
@@ -216,10 +216,6 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
     }
 
   }
-
-  
-
-
 
   return {.block = false,
           .packets = cnt,
