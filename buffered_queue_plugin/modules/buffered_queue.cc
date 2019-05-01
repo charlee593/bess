@@ -168,16 +168,12 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
                                   void *) {
 
   if(llring_count(queue_) < 100){
-    std::cout << "BufferedQueue Not reach RunTask" + static_cast<int>(llring_count(queue_))<< std::endl;
-
     return {
         .block = true, .packets = 0, .bits = 0,
     };
   }
 
-  std::cout << "BufferedQueue RunTask" + static_cast<int>(llring_count(queue_))<< std::endl;
-  std::cout <<  static_cast<int>(llring_count(queue_)) << std::endl;
-
+  std::cout << "BufferedQueue RunTask" << static_cast<int>(llring_count(queue_))<< std::endl;
 
   if (children_overload_ > 0 ) {
     return {
