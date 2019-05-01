@@ -167,11 +167,15 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch,
                                   void *) {
 
-  if(llring_count(queue_) > 0){
-    std::cout << "BufferedQueue RunTask" << std::endl;
-    std::cout <<  static_cast<int>(llring_count(queue_)) << std::endl;
-    std::chrono::milliseconds timespan(2000);
+  if(llring_count(queue_) < 20){
+    return {
+        .block = true, .packets = 0, .bits = 0,
+    };
   }
+
+  std::cout << "BufferedQueue RunTask" << std::endl;
+  std::cout <<  static_cast<int>(llring_count(queue_)) << std::endl;
+  std::chrono::milliseconds timespan(2000);
 
 
   if (children_overload_ > 0 ) {
