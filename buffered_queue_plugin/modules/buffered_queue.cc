@@ -188,31 +188,38 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
 
   uint64_t total_bytes = 0;
 
-  uint32_t cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), burst);
+  while (llring_count(queue_) > 0){
+      uint32_t cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), burst);
 
-  if (cnt == 0) {
-    return {.block = true, .packets = 0, .bits = 0};
-  }
-
-  stats_.dequeued += cnt;
-  batch->set_cnt(cnt);
-
-  if (prefetch_) {
-    for (uint32_t i = 0; i < cnt; i++) {
-      total_bytes += batch->pkts()[i]->total_len();
-      rte_prefetch0(batch->pkts()[i]->head_data());
+    if (cnt == 0) {
+      return {.block = true, .packets = 0, .bits = 0};
     }
-  } else {
-    for (uint32_t i = 0; i < cnt; i++) {
-      total_bytes += batch->pkts()[i]->total_len();
+
+    stats_.dequeued += cnt;
+    batch->set_cnt(cnt);
+
+    if (prefetch_) {
+      for (uint32_t i = 0; i < cnt; i++) {
+        total_bytes += batch->pkts()[i]->total_len();
+        rte_prefetch0(batch->pkts()[i]->head_data());
+      }
+    } else {
+      for (uint32_t i = 0; i < cnt; i++) {
+        total_bytes += batch->pkts()[i]->total_len();
+      }
     }
+
+    RunNextModule(ctx, batch);
+
+    if (backpressure_ && llring_count(queue_) < low_water_) {
+      SignalUnderload();
+    }
+
   }
 
-  RunNextModule(ctx, batch);
+  
 
-  if (backpressure_ && llring_count(queue_) < low_water_) {
-    SignalUnderload();
-  }
+
 
   return {.block = false,
           .packets = cnt,
