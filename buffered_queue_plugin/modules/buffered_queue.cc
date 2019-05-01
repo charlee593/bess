@@ -167,7 +167,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch,
                                   void *) {
 
-  if(llring_count(queue_) < 60){
+  if(llring_count(queue_) < 100){
     return {
         .block = true, .packets = 0, .bits = 0,
     };
@@ -188,7 +188,7 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
 
   uint64_t total_bytes = 0;
 
-  uint32_t cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), burst);
+  uint32_t cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), 100);
 
   if (cnt == 0) {
     return {.block = true, .packets = 0, .bits = 0};
