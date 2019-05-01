@@ -167,7 +167,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch,
                                   void *) {
 
-  if(llring_count(queue_) < 20){
+  if(llring_count(queue_) < 60){
     return {
         .block = true, .packets = 0, .bits = 0,
     };
