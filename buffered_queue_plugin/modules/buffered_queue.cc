@@ -143,11 +143,9 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
   int queued =
       llring_mp_enqueue_burst(queue_, (void **)batch->pkts(), batch->cnt());
 
-  std::cout << "Queued value in llring_mp_enqueue_burst" << std::endl;
-  std::cout <<  static_cast<int>(queued) << std::endl;
+  std::cout << "Queued value in llring_mp_enqueue_burst" + std::to_string(queued) << std::endl;
 
-  std::cout << "Queued value in llring_count" << std::endl;
-  std::cout <<  static_cast<int>(llring_count(queue_)) << std::endl;
+  std::cout << "Queued value in llring_count" + std::to_string(llring_count(queue_)) << std::endl;
 
   if (backpressure_ && llring_count(queue_) > high_water_) {
     SignalOverload();
@@ -173,8 +171,7 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
     };
   }
 
-  uint64_t cc = llring_count(queue_);
-  std::cout << "BufferedQueue RunTask: " + std::to_string(cc) << std::endl;
+  std::cout << "BufferedQueue RunTask: " + std::to_string(llring_count(queue_)) << std::endl;
 
   if (children_overload_ > 0 ) {
     return {
