@@ -173,7 +173,7 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
     };
   }
 
-  uint64_t cc = llring_count(queue_))
+  uint64_t cc = llring_count(queue_));
   std::cout << "BufferedQueue RunTask: " << cc << " size" << std::endl;
 
   if (children_overload_ > 0 ) {
