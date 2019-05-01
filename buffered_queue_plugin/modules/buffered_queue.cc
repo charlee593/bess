@@ -185,7 +185,7 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
 
   const int burst = ACCESS_ONCE(burst_);
   const int pkt_overhead = 24;
-  uint32_t cnt = 0
+  uint32_t cnt = 0;
   uint64_t total_bytes = 0;
 
   while (llring_count(queue_) > 0){
