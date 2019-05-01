@@ -175,7 +175,6 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
 
   std::cout << "BufferedQueue RunTask" << std::endl;
   std::cout <<  static_cast<int>(llring_count(queue_)) << std::endl;
-  std::chrono::milliseconds timespan(2000);
 
 
   if (children_overload_ > 0 ) {
