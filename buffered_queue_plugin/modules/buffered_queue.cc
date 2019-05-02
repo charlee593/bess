@@ -87,7 +87,7 @@ int BufferedQueue::Resize(int slots) {
 }
 
 CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQueueArg &arg) {
-  sendto = false;
+  sendto_ = false;
 
   task_id_t tid;
   CommandResponse err;
@@ -165,7 +165,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
   }
 
   if(llring_count(queue_) > 100){
-    sendto = true;
+    sendto_ = true;
   }
 
 }
@@ -193,7 +193,7 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
   uint32_t cnt = 0;
   uint64_t total_bytes = 0;
 
-  if (sendto){
+  if (sendto_){
     std::cout << "BufferedQueue queue value in before: " + std::to_string(llring_count(queue_)) << std::endl;
 
     cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), burst);
@@ -221,7 +221,7 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
     RunChooseModule(ctx, 0, batch);
 
     if(llring_count(queue_) <= 0){
-      sendto = false;
+      sendto_ = false;
     }
 
     // for (uint32_t i = 0; i < cnt; i++) {
