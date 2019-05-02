@@ -32,6 +32,7 @@ unlabeled_data_pkt_bytes = bytes(unlabeled_data_pkt)
 print("Connecting...")
 if os.path.exists("/tmp/mdc_dp_p.sock"):
     client = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
+    client.setblocking(0)
     client.connect("/tmp/mdc_dp_p.sock")
     print("Ready.")
     while True:
@@ -42,10 +43,6 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
 
             data = client.recv(16)
             print("Recv.")
-            amount_received = 0
-            amount_expected = 1
-
-            data = client.recv(16)
             
             if len(data) > 0:
                 print >>sys.stderr, 'received "%s"' % data
