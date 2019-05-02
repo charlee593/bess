@@ -53,6 +53,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
             break
 
         except IOError as e:  # and here it is handeled
+            print("Error.")
             pass
 else:
     print("Couldn't Connect!")
