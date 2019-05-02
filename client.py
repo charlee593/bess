@@ -42,7 +42,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
         try:
             client.send(unlabeled_data_pkt_bytes)
 
-            data = client.recv(46)
+            data = client.recv(len(unlabeled_data_pkt_bytes))
             
             if len(data) > 0:
                 print("HERER.", len(data_payload), " ", data_payload)
