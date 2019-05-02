@@ -13,7 +13,6 @@ print('Data pkt size = %d' % data_pkt_size)
 
 # Data pkt
 class MDCData(scapy.Packet):
-    name = 'MulticastDataCenterData '
     fields_desc=[scapy.ShortField('addr', 0),
                  scapy.XByteField('mode', 0),
                  scapy.XByteField('label' , 0)]
