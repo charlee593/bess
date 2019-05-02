@@ -207,9 +207,18 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
       }
     }
 
-    std::cout << "BufferedQueue queue value in during: " + std::to_string(batch->cnt()) << std::endl;
+    std::cout << "BufferedQueue queue batch value in during: " + std::to_string(batch->cnt()) << std::endl;
 
-    RunChooseModule(ctx, 1, batch);
+    // RunChooseModule(ctx, 0, batch);
+
+    for (uint32_t i = 0; i < cnt; i++) {
+      std::cout << "BufferedQueue sending packet: " + std::to_string(i)) << std::endl;
+      EmitPacket(ctx, batch->pkts()[i], 0);
+    }
+
+
+
+
 
     if (backpressure_ && llring_count(queue_) < low_water_) {
       SignalUnderload();
