@@ -87,6 +87,8 @@ int BufferedQueue::Resize(int slots) {
 }
 
 CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQueueArg &arg) {
+  sendto = false;
+
   task_id_t tid;
   CommandResponse err;
 
@@ -140,6 +142,8 @@ std::string BufferedQueue::GetDesc() const {
 
 /* from upstream */
 void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
+
+
   int queued =
       llring_mp_enqueue_burst(queue_, (void **)batch->pkts(), batch->cnt());
 
@@ -159,6 +163,11 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     stats_.dropped += to_drop;
     bess::Packet::Free(batch->pkts() + queued, to_drop);
   }
+
+  if(llring_count(queue_) > 100){
+    sendto = true;
+  }
+
 }
 
 /* to downstream */
@@ -179,15 +188,15 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
     };
   }
 
-  // const int burst = ACCESS_ONCE(burst_);
+  const int burst = ACCESS_ONCE(burst_);
   const int pkt_overhead = 24;
   uint32_t cnt = 0;
   uint64_t total_bytes = 0;
 
-  while (llring_count(queue_) > 0){
+  if (sendto){
     std::cout << "BufferedQueue queue value in before: " + std::to_string(llring_count(queue_)) << std::endl;
 
-    cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), 8);
+    cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), burst);
 
     if (cnt == 0) {
       return {.block = true, .packets = 0, .bits = 0};
@@ -211,13 +220,14 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
 
     RunChooseModule(ctx, 0, batch);
 
+    if(llring_count(queue_) <= 0){
+      sendto = false;
+    }
+
     // for (uint32_t i = 0; i < cnt; i++) {
     //   std::cout << "BufferedQueue sending packet: " + std::to_string(i) << std::endl;
     //   EmitPacket(ctx, batch->pkts()[i], 0);
     // }
-
-
-
 
 
     if (backpressure_ && llring_count(queue_) < low_water_) {
