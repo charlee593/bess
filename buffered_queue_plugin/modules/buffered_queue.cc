@@ -143,7 +143,7 @@ std::string BufferedQueue::GetDesc() const {
 /* from upstream */
 void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
-SetSize(50);
+  SetSize(50);
   int queued =
       llring_mp_enqueue_burst(queue_, (void **)batch->pkts(), batch->cnt());
 
@@ -175,7 +175,7 @@ SetSize(50);
 struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch,
                                   void *) {
 
-  std::cout << "BufferedQueue RunTask: " + std::to_string(llring_count(queue_)) << std::endl;
+  // std::cout << "BufferedQueue RunTask: " + std::to_string(llring_count(queue_)) << std::endl;
 
   if (children_overload_ > 0 ) {
     return {
@@ -253,6 +253,7 @@ CommandResponse BufferedQueue::CommandSetBurst(
 }
 
 CommandResponse BufferedQueue::SetSize(uint64_t size) {
+  std::cout << "Here in Setsize: " << std::endl;
   if (size < 4 || size > 16384) {
     return CommandFailure(EINVAL, "must be in [4, 16384]");
   }
@@ -262,6 +263,7 @@ CommandResponse BufferedQueue::SetSize(uint64_t size) {
   }
 
   int ret = Resize(size);
+  std::cout << "After Here in Setsize: " +  std::to_string(ret) << std::endl;
   if (ret) {
     return CommandFailure(-ret);
   }
