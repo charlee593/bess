@@ -166,6 +166,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
   if(llring_count(queue_) >= 100){
     sendto_ = true;
+    SetSize(50);
   }
 
 }
