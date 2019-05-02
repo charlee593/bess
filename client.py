@@ -5,12 +5,10 @@ import scapy.all as scapy
 
 CONST_DATA_SIZE = 46
 
-num_cores = int($BESS_CORES!'3')
 data_pkt_size = int($BESS_DATA_PKT_SIZE!'1024')
 
 assert 64 <= data_pkt_size <= 1024, 'Data pkts needs to be in the range [64, 1024] in bytes'
 
-print('Core count = %d' % num_cores)
 print('Data pkt size = %d' % data_pkt_size)
 
 # Data pkt
