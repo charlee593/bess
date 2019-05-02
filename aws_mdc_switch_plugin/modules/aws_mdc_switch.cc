@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017, The Regents of the University of California.
+// Copyright (c) 2014-2017, The Regentr of the University of California.
 // Copyright (c) 2016-2017, Nefeli Networks, Inc.
 // All rights reserved.
 //
@@ -127,6 +127,8 @@ CommandResponse AwsMdcSwitch::CommandClear(const bess::pb::EmptyArg &) {
 
 void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     int cnt = batch->cnt();
+
+    std::cout << "Got packets" << std::endl;
 
     for (int i = 0; i < cnt; i++) {
         bess::Packet *pkt = batch->pkts()[i];
