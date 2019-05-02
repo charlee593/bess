@@ -21,7 +21,7 @@ class MDCData(scapy.Packet):
                  {1:"REQUEST",2:"RESPONSE",3:"SUCCESS",4:"FAILURE"})
                  ]
 d = MDCData(addr=0x1a1b, mode=0x01, label=0x0)
-print(d)
+print(d.show()
 
 
 
