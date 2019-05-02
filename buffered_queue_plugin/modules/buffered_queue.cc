@@ -53,12 +53,14 @@ int BufferedQueue::Resize(int slots) {
   new_queue =
       reinterpret_cast<llring *>(std::aligned_alloc(alignof(llring), bytes));
   if (!new_queue) {
+    std::cout << "Resize: no enough memory: " + std::to_string(ENOMEM) << std::endl;
     return -ENOMEM;
   }
 
   int ret = llring_init(new_queue, slots, 0, 1);
   if (ret) {
     std::free(new_queue);
+    std::cout << "Resize: invalid: " + std::to_string(EINVAL) << std::endl;
     return -EINVAL;
   }
 
