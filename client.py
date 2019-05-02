@@ -38,7 +38,17 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
     print("Sending 'DONE' shuts down the server and quits.")
     while True:
         try:
-          client.send(unlabeled_data_pkt_bytes)
+            client.send(unlabeled_data_pkt_bytes)
+
+            data = sock.recv(16)
+            amount_received = 0
+            amount_expected = 1
+            
+            while amount_received < amount_expected:
+                data = sock.recv(16)
+                amount_received += len(data)
+                print >>sys.stderr, 'received "%s"' % data
+
         except KeyboardInterrupt as k:
             print("Shutting down.")
             client.close()
