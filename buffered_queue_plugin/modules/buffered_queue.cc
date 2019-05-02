@@ -164,7 +164,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     bess::Packet::Free(batch->pkts() + queued, to_drop);
   }
 
-  if(llring_count(queue_) > 100){
+  if(llring_count(queue_) >= 100){
     sendto_ = true;
   }
 
@@ -173,12 +173,6 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 /* to downstream */
 struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch,
                                   void *) {
-
-  if(llring_count(queue_) < 100){
-    return {
-        .block = true, .packets = 0, .bits = 0,
-    };
-  }
 
   std::cout << "BufferedQueue RunTask: " + std::to_string(llring_count(queue_)) << std::endl;
 
