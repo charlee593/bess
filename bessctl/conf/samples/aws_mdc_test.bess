@@ -138,4 +138,4 @@ tgen_src.attach_task('tgen')
 
 ret = cli.bess.run_module_command('buffered_queue', 'get_status ', 'QueueCommandGetStatusArg', 'get_status')
 
-print("Response from run_module_command": ret)
+print("Response from run_module_command", ret)
