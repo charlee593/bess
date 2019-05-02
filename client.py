@@ -23,6 +23,9 @@ class MDCData(scapy.Packet):
 d = MDCData(addr=0x1a1b, mode=0x01, label=0x0)
 print(d.show())
 
+y = IP()/TCP()/ d
+print(y[MDCData])
+
 
 
 
