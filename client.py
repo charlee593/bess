@@ -38,9 +38,14 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
     client.connect("/tmp/mdc_dp_p.sock")
     print("Ready.")
 
-    while True:
+    sent_cnt = 0
+    recv_cnt = 0
+
+
+    while sent_cnt < 10:
         try:
             client.send(unlabeled_data_pkt_bytes)
+            sent_cnt += 1
 
             data = client.recv(len(unlabeled_data_pkt_bytes))
             
@@ -48,6 +53,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
                 print("HERER.", len(data_payload), " ", data_payload)
                 print("DONE.", len(unlabeled_data_pkt_bytes), " ", unlabeled_data_pkt_bytes)
                 print("SIZEEEE.", len(data), "  ", data)
+                recv_cnt += 1
 
         except KeyboardInterrupt as k:
             print("Shutting down.")
