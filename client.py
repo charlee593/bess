@@ -30,7 +30,7 @@ print(y[MDCData].show2())
 
 
 
-
+data_eth = scapy.Ether(src='aa:bb:cc:dd:ee:01', dst='11:22:33:44:55:01', type=0x0800)
 data_ip = scapy.IP(src='10.1.0.1', dst='10.0.0.1')
 data_udp = scapy.UDP(sport=10001, dport=10002)
 unlabeled_data_mdc = MDCData(addr=0x1a1b, mode=0x01, label=0x0)
