@@ -108,8 +108,8 @@ mdc_rec1.add(entries=[{'addr': '1a:1b', 'label': 0x02}])
 mdc_switch:0 -> bq1::BufferedQueue()
 # mdc_switch:1 -> bq2::BufferedQueue() -> mdc_rec2
 
-mdc_rec1:1 -> rec1_mypkts::Sink()
-mdc_rec2:1 -> rec2_mypkts::Sink()
+# mdc_rec1:1 -> rec1_mypkts::Sink()
+# mdc_rec2:1 -> rec2_mypkts::Sink()
 
 # Traffic generator: this generates data pkts unlike the MdcPktGen that generate ctrl pkts
 # Recommended: Use when the NIC has at least 2 ports, and when you want to generate traffic using BESS
@@ -126,8 +126,8 @@ bq1 -> PortOut(port='p')
 
 
 # Creates a source, and limits its pkt rate
-tgen_src::Source()
-tgen_src.attach_task('tgen')
+# tgen_src::Source()
+# tgen_src.attach_task('tgen')
 # bq1.attach_task('tgen1')
 # bq2.attach_task('tgen2')
 
