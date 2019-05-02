@@ -45,7 +45,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
             print("Recv.")
             
             if len(data) > 0:
-                print >>sys.stderr, 'received "%s"' % data
+                print data
 
         except KeyboardInterrupt as k:
             print("Shutting down.")
