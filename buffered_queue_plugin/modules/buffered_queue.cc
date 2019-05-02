@@ -144,7 +144,7 @@ std::string BufferedQueue::GetDesc() const {
 
 /* from upstream */
 void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
-  std::cout << "Setsize resize: " + std::to_string(Resize(110)) << std::endl;
+  std::cout << "Setsize resize: " + std::to_string(Resize(4)) << std::endl;
 
   int queued =
       llring_mp_enqueue_burst(queue_, (void **)batch->pkts(), batch->cnt());
