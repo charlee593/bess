@@ -111,7 +111,7 @@ mdc_rec2:1 -> rec2_mypkts::Sink()
 # Recommended: Use when the NIC has at least 2 ports, and when you want to generate traffic using BESS
 # Data rate depends on the capacity (Gbps), and data_pkt_size and Ethernet framing overhead (bytes)
 tgen_pkt_rate = 0.05 * 1e9 / (8 * (data_pkt_size + 24))
-bess.add_tc('tgen', policy='rate_limit', resource='packet', limit={'packet': tgen_pkt_rate})
+bess.add_tc('tgen', policy='rate_limit', resource='packet', limit={'packet': int(tgen_pkt_rate)})
 bess.add_tc('tgen1', policy='rate_limit', resource='packet', limit={'packet': 1})
 bess.add_tc('tgen2', policy='rate_limit', resource='packet', limit={'packet': 1})
 
