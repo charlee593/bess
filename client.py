@@ -40,12 +40,12 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
         try:
             client.send(unlabeled_data_pkt_bytes)
 
-            data = sock.recv(16)
+            data = client.recv(16)
             amount_received = 0
             amount_expected = 1
             
             while amount_received < amount_expected:
-                data = sock.recv(16)
+                data = client.recv(16)
                 amount_received += len(data)
                 print >>sys.stderr, 'received "%s"' % data
 
