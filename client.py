@@ -41,10 +41,10 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
         try:
             client.send(unlabeled_data_pkt_bytes)
 
-            data = client.recv(16)
+            data = client.recv(982)
             
             if len(data) > 0:
-                print data
+                print("SIZEEEE.", len(data))
 
         except KeyboardInterrupt as k:
             print("Shutting down.")
