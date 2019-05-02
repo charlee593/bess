@@ -212,7 +212,7 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
     // RunChooseModule(ctx, 0, batch);
 
     for (uint32_t i = 0; i < cnt; i++) {
-      std::cout << "BufferedQueue sending packet: " + std::to_string(i)) << std::endl;
+      std::cout << "BufferedQueue sending packet: " + std::to_string(i) << std::endl;
       EmitPacket(ctx, batch->pkts()[i], 0);
     }
 
