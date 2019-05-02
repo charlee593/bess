@@ -121,7 +121,8 @@ bess.add_tc('tgen2', policy='rate_limit', resource='packet', limit={'packet': 1}
 
 p = UnixSocketPort(name='p', path=LOCAL_SOCKET_PATH)
 PortInc(port='p') -> 5:mdc_switch
-# mdc_switch:7 -> PortOut(port='p')
+mdc_switch:7 -> PortOut(port='p')
+
 
 
 # Creates a source, and limits its pkt rate
@@ -132,4 +133,4 @@ tgen_src.attach_task('tgen')
 
 # Sends generated traffic on Port1
 # Source() -> Rewrite(templates=[unlabeled_data_pkt_bytes]) -> 7:mdc_switch
-tgen_src -> Rewrite(templates=[unlabeled_data_pkt_bytes_2]) -> 6:mdc_switch
+# tgen_src -> Rewrite(templates=[unlabeled_data_pkt_bytes_2]) -> 6:mdc_switch 
