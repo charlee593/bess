@@ -26,7 +26,7 @@ data_udp = scapy.UDP(sport=10001, dport=10002)
 unlabeled_data_mdc = MDCData(addr=0x1a1b, mode=0x01, label=0x0)
 
 data_payload = bytes(unlabeled_data_mdc) + b"\0" * (data_pkt_size-CONST_DATA_SIZE)
-print("HERER.", len(data_payload))
+print("HERER.", len(data_payload), " ", data_payload)
 unlabeled_data_pkt = data_eth/data_ip/data_udp/data_payload
 unlabeled_data_pkt_bytes = bytes(unlabeled_data_pkt)
 
@@ -44,7 +44,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
             data = client.recv(982)
             
             if len(data) > 0:
-                print("SIZEEEE.", len(data))
+                print("SIZEEEE.", len(data), "  ", data)
 
         except KeyboardInterrupt as k:
             print("Shutting down.")
