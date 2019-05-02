@@ -209,7 +209,7 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
 
     std::cout << "BufferedQueue queue value in during: " + std::to_string(batch->cnt()) << std::endl;
 
-    RunNextModule(ctx, batch);
+    RunChooseModule(ctx, 0, batch);
 
     if (backpressure_ && llring_count(queue_) < low_water_) {
       SignalUnderload();
