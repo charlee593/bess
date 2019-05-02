@@ -132,10 +132,12 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
     for (int i = 0; i < cnt; i++) {
 
-        EmitPacket(ctx, pkt, 0);
         
+
         bess::Packet *pkt = batch->pkts()[i];
         Ethernet *eth = pkt->head_data<Ethernet *>();
+
+        EmitPacket(ctx, pkt, 0);
 
         if (eth->ether_type != be16_t(Ethernet::Type::kIpv4)) {
             DropPacket(ctx, pkt);
