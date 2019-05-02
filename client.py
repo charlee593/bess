@@ -42,7 +42,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
     recv_cnt = 0
 
 
-    while sent_cnt < 99:
+    while sent_cnt < 100:
         try:
             client.send(unlabeled_data_pkt_bytes)
             sent_cnt += 1
