@@ -126,8 +126,8 @@ bq1 -> PortOut(port='p')
 
 
 # Creates a source, and limits its pkt rate
-# tgen_src::Source()
-# tgen_src.attach_task('tgen')
+tgen_src::Source()
+tgen_src.attach_task('tgen')
 # bq1.attach_task('tgen1')
 # bq2.attach_task('tgen2')
 
