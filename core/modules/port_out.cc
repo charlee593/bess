@@ -113,7 +113,7 @@ void PortOut::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
   std::cout << "PortOut packets " + std::to_string(sent_pkts) << std::endl;
   std::cout << "PortOut dropped " + std::to_string((batch->cnt() - sent_pkts)) << std::endl;
   std::cout << "PortOut batch " + std::to_string(batch->cnt() ) << std::endl;
-  std::cout << "PortOut batch pk " + std::to_string(batch->pkts()) << std::endl;
+  std::cout << "PortOut batch pk " + batch->pkts() << std::endl;
 
   if (sent_pkts < batch->cnt()) {
     bess::Packet::Free(batch->pkts() + sent_pkts, batch->cnt() - sent_pkts);
