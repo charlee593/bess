@@ -33,32 +33,32 @@ unlabeled_data_pkt = data_eth/data_ip/data_udp/data_payload
 unlabeled_data_pkt_bytes = bytes(unlabeled_data_pkt)
 
 
-print("Connecting...")
-if os.path.exists("/tmp/mdc_dp_p.sock"):
-    client = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
-    client.setblocking(0)
-    client.connect("/tmp/mdc_dp_p.sock")
-    print("Ready.")
-    while True:
-        try:
-            client.send(unlabeled_data_pkt_bytes)
+# print("Connecting...")
+# if os.path.exists("/tmp/mdc_dp_p.sock"):
+#     client = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
+#     client.setblocking(0)
+#     client.connect("/tmp/mdc_dp_p.sock")
+#     print("Ready.")
+#     while True:
+#         try:
+#             client.send(unlabeled_data_pkt_bytes)
 
-            print("Sent.")
+#             print("Sent.")
 
-            data = client.recv(16)
-            print("Recv.")
+#             data = client.recv(16)
+#             print("Recv.")
             
-            if len(data) > 0:
-                print data
+#             if len(data) > 0:
+#                 print data
 
-        except KeyboardInterrupt as k:
-            print("Shutting down.")
-            client.close()
-            break
+#         except KeyboardInterrupt as k:
+#             print("Shutting down.")
+#             client.close()
+#             break
 
-        except IOError as e:  # and here it is handeled
-            print("Error.")
-            pass
-else:
-    print("Couldn't Connect!")
-    print("Done")
+#         except IOError as e:  # and here it is handeled
+#             print("Error.")
+#             pass
+# else:
+#     print("Couldn't Connect!")
+#     print("Done")
