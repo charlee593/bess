@@ -142,8 +142,8 @@ std::string BufferedQueue::GetDesc() const {
 
 /* from upstream */
 void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
+  std::cout << "Setsize resize: " + std::to_string(Resize(50)) << std::endl;
 
-  SetSize(50);
   int queued =
       llring_mp_enqueue_burst(queue_, (void **)batch->pkts(), batch->cnt());
 
@@ -166,7 +166,6 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
   if(llring_count(queue_) >= 100){
     sendto_ = true;
-    SetSize(50);
   }
 
 }
