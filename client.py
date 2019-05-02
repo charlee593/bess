@@ -47,6 +47,14 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
             client.send(unlabeled_data_pkt_bytes)
             sent_cnt += 1
 
+        except KeyboardInterrupt as k:
+            print("Shutting down.")
+            client.close()
+            break
+
+
+    while True:
+        try:
             data = client.recv(len(unlabeled_data_pkt_bytes))
             
             if len(data) > 0:
@@ -54,6 +62,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
                 print("DONE.", len(unlabeled_data_pkt_bytes), " ", unlabeled_data_pkt_bytes)
                 print("SIZEEEE.", len(data), "  ", data)
                 recv_cnt += 1
+                print("S ", sent_cnt, "R ", recv_cnt)
 
         except KeyboardInterrupt as k:
             print("Shutting down.")
@@ -62,6 +71,8 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
 
         except IOError as e:  # and here it is handeled
             pass
+
+
 else:
     print("Couldn't Connect!")
     print("Done")
