@@ -25,7 +25,7 @@ data_ip = scapy.IP(src='10.1.0.1', dst='10.0.0.1')
 data_udp = scapy.UDP(sport=10001, dport=10002)
 unlabeled_data_mdc = MDCData(addr=0x1a1b, mode=0x01, label=0x0)
 
-print("HERER.", bytes(unlabeled_data_mdc))
+print("HERER.", len(bytes(unlabeled_data_mdc)))
 
 
 data_payload = bytes(unlabeled_data_mdc) + b"\0" * (data_pkt_size-CONST_DATA_SIZE)
