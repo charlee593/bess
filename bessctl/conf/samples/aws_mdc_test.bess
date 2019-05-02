@@ -121,7 +121,7 @@ bess.add_tc('tgen2', policy='rate_limit', resource='packet', limit={'packet': 1}
 
 p = UnixSocketPort(name='p', path=LOCAL_SOCKET_PATH)
 PortInc(port='p') -> 5:mdc_switch
-bq1 -> PortOut(port='p') -
+bq1 -> PortOut(port='p') 
 
 
 
