@@ -31,58 +31,58 @@ print(y[MDCData].show2())
 
 
 
-# data_ip = scapy.IP(src='10.1.0.1', dst='10.0.0.1')
-# data_udp = scapy.UDP(sport=10001, dport=10002)
-# unlabeled_data_mdc = MDCData(addr=0x1a1b, mode=0x01, label=0x0)
-#
-# data_payload = bytes(unlabeled_data_mdc)
-# print("HERER.", len(data_payload), " ", data_payload)
-# unlabeled_data_pkt = data_eth/data_ip/data_udp/data_payload
-# unlabeled_data_pkt_bytes = bytes(unlabeled_data_pkt)
-#
-#
-# print("Connecting...")
-# if os.path.exists("/tmp/mdc_dp_p.sock"):
-#     client = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
-#     client.setblocking(0)
-#     client.connect("/tmp/mdc_dp_p.sock")
-#     print("Ready.")
-#
-#     sent_cnt = 0
-#     recv_cnt = 0
-#
-#
-#     while sent_cnt < 100:
-#         try:
-#             client.send(unlabeled_data_pkt_bytes)
-#             sent_cnt += 1
-#
-#         except KeyboardInterrupt as k:
-#             print("Shutting down.")
-#             client.close()
-#             break
-#
-#
-#     while True:
-#         try:
-#             data = client.recv(len(unlabeled_data_pkt_bytes)*8)
-#
-#             if len(data) > 0:
-#                 print("HERER.", len(data_payload), " ", data_payload)
-#                 print("DONE.", len(unlabeled_data_pkt_bytes), " ", unlabeled_data_pkt_bytes)
-#                 print("SIZEEEE.", len(data), "  ", data)
-#                 recv_cnt += 1
-#                 print("S ", sent_cnt, "R ", recv_cnt)
-#
-#         except KeyboardInterrupt as k:
-#             print("Shutting down.")
-#             client.close()
-#             break
-#
-#         except IOError as e:  # and here it is handeled
-#             pass
-#
-#
-# else:
-#     print("Couldn't Connect!")
-#     print("Done")
+data_ip = scapy.IP(src='10.1.0.1', dst='10.0.0.1')
+data_udp = scapy.UDP(sport=10001, dport=10002)
+unlabeled_data_mdc = MDCData(addr=0x1a1b, mode=0x01, label=0x0)
+
+data_payload = bytes(unlabeled_data_mdc)
+print("HERER.", len(data_payload), " ", data_payload)
+unlabeled_data_pkt = data_eth/data_ip/data_udp/data_payload
+unlabeled_data_pkt_bytes = bytes(unlabeled_data_pkt)
+
+
+print("Connecting...")
+if os.path.exists("/tmp/mdc_dp_p.sock"):
+    client = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
+    client.setblocking(0)
+    client.connect("/tmp/mdc_dp_p.sock")
+    print("Ready.")
+
+    sent_cnt = 0
+    recv_cnt = 0
+
+
+    while sent_cnt < 100:
+        try:
+            client.send(unlabeled_data_pkt_bytes)
+            sent_cnt += 1
+
+        except KeyboardInterrupt as k:
+            print("Shutting down.")
+            client.close()
+            break
+
+
+    while True:
+        try:
+            data = client.recv(len(unlabeled_data_pkt_bytes)*8)
+
+            if len(data) > 0:
+                print("HERER.", len(data_payload), " ", data_payload)
+                print("DONE.", len(unlabeled_data_pkt_bytes), " ", unlabeled_data_pkt_bytes)
+                print("SIZEEEE.", len(data), "  ", data)
+                recv_cnt += 1
+                print("S ", sent_cnt, "R ", recv_cnt)
+
+        except KeyboardInterrupt as k:
+            print("Shutting down.")
+            client.close()
+            break
+
+        except IOError as e:  # and here it is handeled
+            pass
+
+
+else:
+    print("Couldn't Connect!")
+    print("Done")
