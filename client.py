@@ -5,7 +5,7 @@ import scapy.all as scapy
 
 CONST_DATA_SIZE = 46
 
-data_pkt_size = int($BESS_DATA_PKT_SIZE!'1024')
+data_pkt_size = 1024
 
 assert 64 <= data_pkt_size <= 1024, 'Data pkts needs to be in the range [64, 1024] in bytes'
 
