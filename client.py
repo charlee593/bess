@@ -44,7 +44,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
             amount_received = 0
             amount_expected = 1
             
-            while amount_received < amount_expected:
+            if amount_received < amount_expected:
                 data = client.recv(16)
                 amount_received += len(data)
                 print >>sys.stderr, 'received "%s"' % data
