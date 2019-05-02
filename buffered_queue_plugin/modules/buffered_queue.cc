@@ -187,7 +187,7 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
   while (llring_count(queue_) > 0){
     std::cout << "BufferedQueue queue value in before: " + std::to_string(llring_count(queue_)) << std::endl;
 
-    cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), burst);
+    cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), 8);
 
     if (cnt == 0) {
       return {.block = true, .packets = 0, .bits = 0};
@@ -209,12 +209,12 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
 
     std::cout << "BufferedQueue queue batch value in during: " + std::to_string(batch->cnt()) << std::endl;
 
-    // RunChooseModule(ctx, 0, batch);
+    RunChooseModule(ctx, 0, batch);
 
-    for (uint32_t i = 0; i < cnt; i++) {
-      std::cout << "BufferedQueue sending packet: " + std::to_string(i) << std::endl;
-      EmitPacket(ctx, batch->pkts()[i], 0);
-    }
+    // for (uint32_t i = 0; i < cnt; i++) {
+    //   std::cout << "BufferedQueue sending packet: " + std::to_string(i) << std::endl;
+    //   EmitPacket(ctx, batch->pkts()[i], 0);
+    // }
 
 
 
