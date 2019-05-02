@@ -102,6 +102,9 @@ class BufferedQueue : public Module {
   // Low water occupancy
   uint64_t low_water_;
 
+
+  bool sendto_;
+
   // Accumulated statistics counters
   struct {
     uint64_t enqueued;
