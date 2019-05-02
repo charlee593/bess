@@ -24,7 +24,7 @@ d = MDCData(addr=0x1a1b, mode=0x01, label=0x0)
 print(d.show())
 
 y = scapy.IP()/ scapy.TCP() / d
-print(y[MDCData].show())
+print(y[MDCData].show2())
 
 
 
