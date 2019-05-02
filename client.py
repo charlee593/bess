@@ -51,6 +51,10 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
             print("Shutting down.")
             client.close()
             break
+
+        except IOError as e:  # and here it is handeled
+            if e.errno == errno.EWOULDBLOCK:
+                pass
 else:
     print("Couldn't Connect!")
     print("Done")
