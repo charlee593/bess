@@ -128,16 +128,10 @@ CommandResponse AwsMdcSwitch::CommandClear(const bess::pb::EmptyArg &) {
 void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     int cnt = batch->cnt();
 
-    std::cout << "Got packets" << std::endl;
-
     for (int i = 0; i < cnt; i++) {
-
-        
 
         bess::Packet *pkt = batch->pkts()[i];
         Ethernet *eth = pkt->head_data<Ethernet *>();
-
-        EmitPacket(ctx, pkt, 0);
 
         if (eth->ether_type != be16_t(Ethernet::Type::kIpv4)) {
             DropPacket(ctx, pkt);
