@@ -37,6 +37,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
     client.setblocking(0)
     client.connect("/tmp/mdc_dp_p.sock")
     print("Ready.")
+
     while True:
         try:
             client.send(unlabeled_data_pkt_bytes)
@@ -44,6 +45,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
             data = client.recv(4)
             
             if len(data) > 0:
+                print("HERER.", len(data_payload), " ", data_payload)
                 print("SIZEEEE.", len(data), "  ", data)
 
         except KeyboardInterrupt as k:
