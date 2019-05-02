@@ -131,6 +131,9 @@ void AwsMdcSwitch::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << "Got packets" << std::endl;
 
     for (int i = 0; i < cnt; i++) {
+
+        EmitPacket(ctx, pkt, 0);
+        
         bess::Packet *pkt = batch->pkts()[i];
         Ethernet *eth = pkt->head_data<Ethernet *>();
 
