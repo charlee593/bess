@@ -105,7 +105,7 @@ mdc_rec1.add(entries=[{'addr': '1a:1b', 'label': 0x02}])
 
 # mdc_rec1:0 -> 0:mdc_switch
 # mdc_rec2:0 -> 1:mdc_switch
-mdc_switch:0 -> bq1::BufferedQueue()
+# mdc_switch:0 -> bq1::BufferedQueue()
 mdc_switch:1 -> bq2::BufferedQueue() -> mdc_rec2
 
 mdc_rec1:1 -> rec1_mypkts::Sink()
@@ -121,7 +121,7 @@ bess.add_tc('tgen2', policy='rate_limit', resource='packet', limit={'packet': 1}
 
 p = UnixSocketPort(name='p', path=LOCAL_SOCKET_PATH)
 PortInc(port='p') -> 5:mdc_switch
-bq1 -> PortOut(port='p') 
+bq1 -> PortOut(port='p')
 
 
 
@@ -133,4 +133,4 @@ tgen_src.attach_task('tgen')
 
 # Sends generated traffic on Port1
 # Source() -> Rewrite(templates=[unlabeled_data_pkt_bytes]) -> 7:mdc_switch
-# tgen_src -> Rewrite(templates=[unlabeled_data_pkt_bytes_2]) -> 6:mdc_switch 
+# tgen_src -> Rewrite(templates=[unlabeled_data_pkt_bytes_2]) -> 6:mdc_switch
