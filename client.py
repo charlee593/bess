@@ -25,7 +25,7 @@ data_ip = scapy.IP(src='10.1.0.1', dst='10.0.0.1')
 data_udp = scapy.UDP(sport=10001, dport=10002)
 unlabeled_data_mdc = MDCData(addr=0x1a1b, mode=0x01, label=0x0)
 
-data_payload = bytes(unlabeled_data_mdc) + b"\0" * (data_pkt_size-CONST_DATA_SIZE)
+data_payload = bytes(unlabeled_data_mdc) 
 print("HERER.", len(data_payload), " ", data_payload)
 unlabeled_data_pkt = data_eth/data_ip/data_udp/data_payload
 unlabeled_data_pkt_bytes = bytes(unlabeled_data_pkt)
@@ -41,7 +41,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
         try:
             client.send(unlabeled_data_pkt_bytes)
 
-            data = client.recv(982)
+            data = client.recv(4)
             
             if len(data) > 0:
                 print("SIZEEEE.", len(data), "  ", data)
