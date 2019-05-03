@@ -17,17 +17,17 @@ class MDCData(scapy.Packet):
 
 
 data_eth = scapy.Ether(src='aa:bb:cc:dd:ee:01', dst='11:22:33:44:55:01', type=0x0800)
-print("Size of data_eth:", len(byte(data_eth)))
+print("Size of data_eth:", len(bytes(data_eth)))
 data_ip = scapy.IP(src='10.1.0.1', dst='10.0.0.1')
-print("Size of data_ip:", len(byte(data_ip)))
+print("Size of data_ip:", len(bytes(data_ip)))
 data_udp = scapy.UDP(sport=10001, dport=10002)
-print("Size of data_udp:", len(byte(data_udp)))
+print("Size of data_udp:", len(bytes(data_udp)))
 unlabeled_data_mdc = MDCData(addr=0x1a1b, mode=0x01, label=0x0)
-print("Size of unlabeled_data_mdc:", len(byte(unlabeled_data_mdc)))
+print("Size of unlabeled_data_mdc:", len(bytes(unlabeled_data_mdc)))
 
 unlabeled_data_pkt = data_eth/data_ip/data_udp/unlabeled_data_mdc
 
-print("Size of unlabeled_data_pkt:", len(byte(unlabeled_data_pkt)))
+print("Size of unlabeled_data_pkt:", len(bytes(unlabeled_data_pkt)))
 
 print("Connecting...")
 if os.path.exists("/tmp/mdc_dp_p.sock"):
