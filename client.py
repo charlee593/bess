@@ -49,7 +49,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
         try:
             data = client.recv(len(bytes(unlabeled_data_pkt)))
 
-            datass = sniff(filter="MulticastDataCenterData", count=len(bytes(unlabeled_data_pkt)))
+            datass = scapy.sniff(filter="MulticastDataCenterData", count=len(bytes(unlabeled_data_pkt)))
 
             print(datass.summary())
 
