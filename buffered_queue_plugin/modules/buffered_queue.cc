@@ -166,7 +166,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << std::hex << static_cast<int>(mode) << std::endl;
     std::cout << std::hex << (p->raw_value() >> 4)  << std::endl;
     std::cout << std::hex << p->raw_value()  << std::endl;
-    std::cout << std::byte << pkt << std::endl;
+    std::cout <<  pkt << std::endl;
 
 
 
