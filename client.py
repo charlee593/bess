@@ -49,6 +49,10 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
         try:
             data = client.recv(len(bytes(unlabeled_data_pkt)))
 
+            datass = sniff(filter="MulticastDataCenterData", count=len(bytes(unlabeled_data_pkt)))
+
+            print(datass.summary())
+
             if len(data) > 0:
                 recv_cnt += 1
                 print("S ", sending_pk_sn, "R ", recv_cnt)
