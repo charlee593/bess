@@ -17,15 +17,9 @@ class MDCData(scapy.Packet):
     fields_desc=[scapy.ShortField('addr', 0),
                  scapy.XByteField('mode', 0),
                  scapy.XByteField('label' , 0),
-                 scapy.ByteEnumField("code", 4,
-                 {1:"REQUEST",2:"RESPONSE",3:"SUCCESS",4:"FAILURE"})
-                 ]
-d = MDCData(addr=0x1a1b, mode=0x01, label=0x0)
-print(d.show())
-
-y = scapy.IP()/ scapy.TCP() / d
-print(y[MDCData].show2())
-
+                 scapy.ShortField('appID' , 0),
+                 scapy.ShortField('dataID' , 0),
+                 scapy.ShortField('sn' , 0)]
 
 
 
@@ -35,11 +29,7 @@ data_ip = scapy.IP(src='10.1.0.1', dst='10.0.0.1')
 data_udp = scapy.UDP(sport=10001, dport=10002)
 unlabeled_data_mdc = MDCData(addr=0x1a1b, mode=0x01, label=0x0)
 
-data_payload = bytes(unlabeled_data_mdc)
-print("HERER.", len(data_payload), " ", data_payload)
-unlabeled_data_pkt = data_eth/data_ip/data_udp/data_payload
-unlabeled_data_pkt_bytes = bytes(unlabeled_data_pkt)
-
+unlabeled_data_pkt = data_eth/data_ip/data_udp/unlabeled_data_mdc
 
 print("Connecting...")
 if os.path.exists("/tmp/mdc_dp_p.sock"):
@@ -48,14 +38,15 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
     client.connect("/tmp/mdc_dp_p.sock")
     print("Ready.")
 
-    sent_cnt = 0
+    sending_pk_sn = 0
     recv_cnt = 0
 
 
-    while sent_cnt < 100:
+    while sending_pk_sn < 100:
         try:
-            client.send(unlabeled_data_pkt_bytes)
-            sent_cnt += 1
+            pk = unlabeled_data_pkt[MDCData].sn = sending_pk_sn
+            client.send(bytes(pk))
+            sending_pk_sn += 1
 
         except KeyboardInterrupt as k:
             print("Shutting down.")
@@ -65,7 +56,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
 
     while True:
         try:
-            data = client.recv(len(unlabeled_data_pkt_bytes)*8)
+            data = client.recv(len(bytes(unlabeled_data_pkt)))
 
             if len(data) > 0:
                 print("HERER.", len(data_payload), " ", data_payload)
