@@ -43,6 +43,15 @@
 
 #include "pb/buffered_queue_msg.pb.h"
 
+using bess::utils::Error;
+
+using bess::utils::be16_t;
+using bess::utils::be32_t;
+using bess::utils::be64_t;
+using bess::utils::Ethernet;
+using bess::utils::Ipv4;
+using bess::utils::Udp;
+
 
 class BufferedQueue : public Module {
  public:
