@@ -57,9 +57,9 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
 
             if len(data) > 0:
                 data_eth_header = data[:len(bytes(data_eth))]
-                data_ip_header = data[len(bytes(data_eth)):len(bytes(data_ip))]
-                data_udp_header = data[len(bytes(data_eth))+len(bytes(data_ip)):len(bytes(data_udp))]
-                unlabeled_data_mdc_header = data[len(bytes(data_eth))+len(bytes(data_ip))+len(bytes(data_udp)):len(bytes(unlabeled_data_mdc))]
+                data_ip_header = data[len(bytes(data_eth)):len(bytes(data_eth))+len(bytes(data_ip))]
+                data_udp_header = data[len(bytes(data_eth))+len(bytes(data_ip)):len(bytes(data_eth))+len(bytes(data_ip))+len(bytes(data_udp))]
+                unlabeled_data_mdc_header = data[len(bytes(data_eth))+len(bytes(data_ip))+len(bytes(data_udp)):]
                 print("unlabeled_data_mdc_header: ", unlabeled_data_mdc_header)
                 recv_cnt += 1
                 print("S ", sending_pk_sn, "R ", recv_cnt)
