@@ -146,6 +146,36 @@ std::string BufferedQueue::GetDesc() const {
 void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
   // std::cout << "Setsize resize: " + std::to_string(Resize(4)) << std::endl;
 
+
+  for (uint32_t i = 0; i < cnt; i++) {
+
+    bess::Packet *pkt = batch->pkts()[i];
+    Ethernet *eth = pkt->head_data<Ethernet *>();
+    Ipv4 *ip = reinterpret_cast<Ipv4 *>(eth + 1);
+
+    int ip_bytes = ip->header_length << 2;
+//        Udp *udp = reinterpret_cast<Udp *>(reinterpret_cast<uint8_t *>(ip) + ip_bytes);
+    // Access UDP payload (i.e., mDC data)
+    be32_t *p = pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
+
+    // Data pkts
+    uint8_t mode = (p->raw_value() & 0x00ff0000) >> 16;
+    std::cout << "BufferedQueue Mode :::::" << std::endl;
+    std::cout << std::hex << static_cast<int>(mode) << std::endl;
+    std::cout << std::hex << (p->raw_value() >> 4)  << std::endl;
+    std::cout << std::hex << p->raw_value()  << std::endl;
+
+
+
+
+  }
+
+
+
+
+
+
+
   int queued =
       llring_mp_enqueue_burst(queue_, (void **)batch->pkts(), batch->cnt());
 
