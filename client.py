@@ -3,14 +3,6 @@ import os
 import scapy.all as scapy
 
 
-CONST_DATA_SIZE = 46
-
-data_pkt_size = 1024
-
-assert 64 <= data_pkt_size <= 1024, 'Data pkts needs to be in the range [64, 1024] in bytes'
-
-print('Data pkt size = %d' % data_pkt_size)
-
 # Data pkt
 class MDCData(scapy.Packet):
     name = 'MulticastDataCenterData '
@@ -41,11 +33,10 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
     sending_pk_sn = 0
     recv_cnt = 0
 
-
     while sending_pk_sn < 100:
         try:
-            pk = unlabeled_data_pkt[MDCData].sn = sending_pk_sn
-            client.send(bytes(pk))
+            unlabeled_data_pkt[MDCData].sn = sending_pk_sn
+            client.send(bytes(unlabeled_data_pkt))
             sending_pk_sn += 1
 
         except KeyboardInterrupt as k:
