@@ -51,7 +51,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
 
             if len(data) > 0:
                 recv_cnt += 1
-                print("S ", sent_cnt, "R ", recv_cnt)
+                print("S ", sending_pk_sn, "R ", recv_cnt)
 
         except KeyboardInterrupt as k:
             print("Shutting down.")
