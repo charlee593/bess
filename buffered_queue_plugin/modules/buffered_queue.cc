@@ -149,7 +149,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
   int cnt = batch->cnt();
 
 
-  for (uint32_t i = 0; i < cnt; i++) {
+  for (int i = 0; i < cnt; i++) {
 
     bess::Packet *pkt = batch->pkts()[i];
     Ethernet *eth = pkt->head_data<Ethernet *>();
