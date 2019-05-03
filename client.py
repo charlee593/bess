@@ -26,7 +26,7 @@ unlabeled_data_mdc = MDCData(addr=0x1a1b, mode=0x01, label=0x0)
 print("Size of unlabeled_data_mdc:", len(bytes(unlabeled_data_mdc)))
 
 unlabeled_data_pkt = data_eth/data_ip/data_udp/unlabeled_data_mdc
-
+print("Sendiing unlabeled_data_mdc_header: ", unlabeled_data_mdc)
 print("Size of unlabeled_data_pkt:", len(bytes(unlabeled_data_pkt)))
 
 print("Connecting...")
@@ -55,11 +55,12 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
         try:
             data = client.recv(len(bytes(unlabeled_data_pkt)))
 
-            datass = scapy.sniff(filter="MulticastDataCenterData", count=len(bytes(unlabeled_data_pkt)))
-
-            print(datass.summary())
-
             if len(data) > 0:
+                data_eth_header = data[:len(bytes(data_eth))]
+                data_ip_header = data[data_eth_header:len(bytes(data_ip))]
+                data_udp_header = data[data_eth_header+data_ip_header:len(bytes(data_udp))]
+                unlabeled_data_mdc_header = data[data_eth_header+data_ip_header+data_udp_header:len(bytes(unlabeled_data_mdc))]
+                print("unlabeled_data_mdc_header: ", unlabeled_data_mdc_header)
                 recv_cnt += 1
                 print("S ", sending_pk_sn, "R ", recv_cnt)
 
