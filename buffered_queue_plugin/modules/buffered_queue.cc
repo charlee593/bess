@@ -146,6 +146,8 @@ std::string BufferedQueue::GetDesc() const {
 void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
   // std::cout << "Setsize resize: " + std::to_string(Resize(4)) << std::endl;
 
+  int cnt = batch->cnt();
+
 
   for (uint32_t i = 0; i < cnt; i++) {
 
