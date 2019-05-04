@@ -158,6 +158,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     int ip_bytes = ip->header_length << 2;
 //        Udp *udp = reinterpret_cast<Udp *>(reinterpret_cast<uint8_t *>(ip) + ip_bytes);
     // Access UDP payload (i.e., mDC data)
+    pkt = pkt + 8;
     be64_t *p = pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
     char *ptr = static_cast<char *>(pkt->buffer());
 
@@ -183,7 +184,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << std::hex << static_cast<int>(label) << std::endl;
     std::cout << std::hex << (p->raw_value() >> 4)  << std::endl;
     std::cout << std::hex << p->raw_value()  << std::endl;
-    std::cout <<  *pkt << std::endl;
+    std::cout <<  pkt << std::endl;
     std::cout <<  &pkt << std::endl;
     std::cout <<  ptr << std::endl;
     std::cout <<  pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)) << std::endl;
