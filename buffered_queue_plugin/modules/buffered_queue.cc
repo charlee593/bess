@@ -36,6 +36,13 @@
 
 #define DEFAULT_BUFFEREDQUEUE_SIZE 1024
 
+struct MDCData
+{
+    char name[50];
+    int age;
+    float salary;
+};
+
 const Commands BufferedQueue::cmds = {
     {"set_burst", "BufferedQueueCommandSetBurstArg",
      MODULE_CMD_FUNC(&BufferedQueue::CommandSetBurst), Command::THREAD_SAFE},
@@ -159,7 +166,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 //        Udp *udp = reinterpret_cast<Udp *>(reinterpret_cast<uint8_t *>(ip) + ip_bytes);
     // Access UDP payload (i.e., mDC data)
     pkt = pkt + 8;
-    be64_t *p = pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
+    MDCData *p = pkt->head_data<MDCData *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
     char *ptr = static_cast<char *>(pkt->buffer());
 
            std::cout << "SWITCH";
