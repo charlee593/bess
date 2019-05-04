@@ -185,7 +185,6 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << std::hex << p->raw_value()  << std::endl;
     std::cout <<  pkt << std::endl;
     std::cout <<  ptr << std::endl;
-    std::cout <<  char *ptr = static_cast<char *>(pkt->buffer()) << std::endl;
     std::cout <<  pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)) << std::endl;
     std::cout <<  pkt->total_len() << std::endl;
     std::cout <<  p << std::endl;
