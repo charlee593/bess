@@ -8,7 +8,7 @@ class MDCData(scapy.Packet):
     name = 'MulticastDataCenterData '
     fields_desc=[scapy.ShortField('addr', 0),
                  scapy.XByteField('mode', 0),
-                 scapy.XByteField('label' , 0),
+                 scapy.XByteField('label' , 1),
                  scapy.ShortField('appID' , 0),
                  scapy.ShortField('dataID' , 0),
                  scapy.ShortField('sn' , 0)]
