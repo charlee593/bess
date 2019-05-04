@@ -166,7 +166,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
        std::cout << sizeof(Ethernet) + ip_bytes + sizeof(Udp) << std::endl;
 
     // Data pkts
-    uint8_t mode = (p->raw_value() & 0x00ff000000) >> 16;
+    mdc_mode_t mode = (p->raw_value() & 0x00ff0000) >> 16;
     uint8_t label = (p->raw_value() & 0xff000000) >> 24;
 
     std::cout << "BufferedQueue Mode :::::" << std::endl;
