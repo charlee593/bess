@@ -165,7 +165,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     int ip_bytes = ip->header_length << 2;
 //        Udp *udp = reinterpret_cast<Udp *>(reinterpret_cast<uint8_t *>(ip) + ip_bytes);
     // Access UDP payload (i.e., mDC data)
-    be16_t *p = pkt->head_data<be16_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
+    be16_t *p = pkt->head_data<be16_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+8);
     char *ptr = static_cast<char *>(pkt->buffer());
 
            std::cout << "SWITCH";
