@@ -168,7 +168,13 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     // Data pkts
     uint8_t mode = (p->raw_value() & 0x00ff0000) >> 16;
     uint8_t label = (p->raw_value() & 0xff000000) >> 24;
+    uint8_t address = (p->raw_value() & 0x0000ffff);
+    uint8_t appID = (p->raw_value() & 0xff00000000) >> 32;
 
+    std::cout << "BufferedQueue address :::::" << std::endl;
+    std::cout << std::hex << static_cast<int>(address) << std::endl;
+    std::cout << "BufferedQueue appID :::::" << std::endl;
+    std::cout << std::hex << static_cast<int>(appID) << std::endl;
     std::cout << "BufferedQueue Mode :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(mode) << std::endl;
     std::cout << "BufferedQueue Label :::::" << std::endl;
