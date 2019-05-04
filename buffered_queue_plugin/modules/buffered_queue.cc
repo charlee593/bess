@@ -161,7 +161,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     be32_t *p = pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
 
     // Data pkts
-    uint8_t mode = (p->raw_value() & 0xffff0000000000000000) >> 64;
+    int mode = (p->raw_value() & 0xffff0000000000000000) >> 64;
     std::cout << "BufferedQueue Mode :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(mode) << std::endl;
     std::cout << std::hex << (p->raw_value() >> 4)  << std::endl;
