@@ -22,7 +22,7 @@ data_ip = scapy.IP(src='10.1.0.1', dst='10.0.0.1')
 print("Size of data_ip:", len(bytes(data_ip)))
 data_udp = scapy.UDP(sport=10001, dport=10002)
 print("Size of data_udp:", len(bytes(data_udp)))
-unlabeled_data_mdc = MDCData(addr=0x1a1b, mode=0x01, label=0x01)
+unlabeled_data_mdc = MDCData(addr=0x1a1b, mode=0x02, label=0x01)
 print("Size of unlabeled_data_mdc:", len(bytes(unlabeled_data_mdc)))
 
 unlabeled_data_pkt = data_eth/data_ip/data_udp/unlabeled_data_mdc
