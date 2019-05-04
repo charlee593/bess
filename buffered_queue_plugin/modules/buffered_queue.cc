@@ -166,8 +166,8 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
        std::cout << sizeof(Ethernet) + ip_bytes + sizeof(Udp) << std::endl;
 
     // Data pkts
-    uint8_t mode = (p->raw_value() & 0xff0000000000000000) >> 64;
-    uint8_t label = (p->raw_value() & 0xff00000000000000000000) >> 80;
+    // uint8_t mode = (p->raw_value() & 0xff0000000000000000) >> 64;
+    // uint8_t label = (p->raw_value() & 0xff00000000000000000000) >> 80;
     uint16_t address = (p->raw_value() & 0x0000ffff);
     uint16_t appID = (p->raw_value() & 0xffff0000) >> 16;
 
@@ -175,17 +175,17 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << std::hex << static_cast<int>(address) << std::endl;
     std::cout << "BufferedQueue appID :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(appID) << std::endl;
-    std::cout << "BufferedQueue Mode :::::" << std::endl;
-    std::cout << std::hex << static_cast<int>(mode) << std::endl;
-    std::cout << "BufferedQueue Label :::::" << std::endl;
-    std::cout << std::hex << static_cast<int>(label) << std::endl;
-    std::cout << std::hex << (p->raw_value() >> 4)  << std::endl;
-    std::cout << std::hex << p->raw_value()  << std::endl;
-    std::cout <<  pkt << std::endl;
-    std::cout <<  (p->raw_value() & 0xffffffffff) << std::endl;
-    std::cout <<  static_cast<int>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)) << std::endl;
-    std::cout <<  pkt->head_data<be32_t *>(0) << std::endl;
-    std::cout <<  p << std::endl;
+    // std::cout << "BufferedQueue Mode :::::" << std::endl;
+    // std::cout << std::hex << static_cast<int>(mode) << std::endl;
+    // std::cout << "BufferedQueue Label :::::" << std::endl;
+    // std::cout << std::hex << static_cast<int>(label) << std::endl;
+    // std::cout << std::hex << (p->raw_value() >> 4)  << std::endl;
+    // std::cout << std::hex << p->raw_value()  << std::endl;
+    // std::cout <<  pkt << std::endl;
+    // std::cout <<  (p->raw_value() & 0xffffffffff) << std::endl;
+    // std::cout <<  static_cast<int>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)) << std::endl;
+    // std::cout <<  pkt->head_data<be32_t *>(0) << std::endl;
+    // std::cout <<  p << std::endl;
 
 
 
