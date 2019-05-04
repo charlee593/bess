@@ -7,11 +7,11 @@ import struct
 class MDCData(scapy.Packet):
     name = 'MulticastDataCenterData '
     fields_desc=[scapy.ShortField('addr', 0),
-                 scapy.XByteField('mode', 0),
-                 scapy.XByteField('label' , 0),
                  scapy.ShortField('appID' , 2),
                  scapy.ShortField('dataID' , 0),
-                 scapy.ShortField('sn' , 0)]
+                 scapy.ShortField('sn' , 0)
+                 scapy.XByteField('mode', 0),
+                 scapy.XByteField('label' , 0)]
 
 
 
@@ -62,7 +62,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
                 data_ip_header = data[len(bytes(data_eth)):len(bytes(data_eth))+len(bytes(data_ip))]
                 data_udp_header = data[len(bytes(data_eth))+len(bytes(data_ip)):len(bytes(data_eth))+len(bytes(data_ip))+len(bytes(data_udp))]
                 unlabeled_data_mdc_header = data[len(bytes(data_eth))+len(bytes(data_ip))+len(bytes(data_udp)):]
-                print("unlabeled_data_mdc_header: ", struct.unpack('>H', unlabeled_data_mdc_header[8:]), " ", unlabeled_data_mdc_header[8:])
+                print("unlabeled_data_mdc_header: ", struct.unpack('>H', unlabeled_data_mdc_header[6:]), " ", unlabeled_data_mdc_header[8:])
                 recv_cnt += 1
                 print("S ", sending_pk_sn, "R ", recv_cnt)
 

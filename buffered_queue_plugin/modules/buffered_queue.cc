@@ -166,10 +166,10 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
        std::cout << sizeof(Ethernet) + ip_bytes + sizeof(Udp) << std::endl;
 
     // Data pkts
-    uint8_t mode = (p->raw_value() & 0x00ff0000) >> 16;
-    uint8_t label = (p->raw_value() & 0xff000000) >> 24;
+    uint8_t mode = (p->raw_value() & 0xff0000000000000000) >> 64;
+    uint8_t label = (p->raw_value() & 0xff00000000000000000000) >> 80;
     uint16_t address = (p->raw_value() & 0x0000ffff);
-    uint16_t appID = (p->raw_value() & 0xff00000000) >> 32;
+    uint16_t appID = (p->raw_value() & 0xffff0000) >> 16;
 
     std::cout << "BufferedQueue address :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(address) << std::endl;
