@@ -9,7 +9,7 @@ class MDCData(scapy.Packet):
     fields_desc=[scapy.ShortField('addr', 0),
                  scapy.ShortField('appID' , 2),
                  scapy.ShortField('dataID' , 0),
-                 scapy.ShortField('sn' , 0)
+                 scapy.ShortField('sn' , 0),
                  scapy.XByteField('mode', 0),
                  scapy.XByteField('label' , 0)]
 
