@@ -160,6 +160,11 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     // Access UDP payload (i.e., mDC data)
     be64_t *p = pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
 
+           std::cout << "SWITCH";
+       std::cout << std::hex << static_cast<int>(p->value()) << std::endl;
+       std::cout << std::hex << static_cast<int>(p->raw_value()) << std::endl;
+       std::cout << sizeof(Ethernet) + ip_bytes + sizeof(Udp) << std::endl;
+
     // Data pkts
     uint8_t mode = (p->raw_value() & 0x00ff000000) >> 16;
     std::cout << "BufferedQueue Mode :::::" << std::endl;
@@ -167,7 +172,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << std::hex << (p->raw_value() >> 4)  << std::endl;
     std::cout << std::hex << p->raw_value()  << std::endl;
     std::cout <<  pkt << std::endl;
-    std::cout <<  (static_cast<uint64_t>(p) & 0xffffffffff) << std::endl;
+    std::cout <<  (p->raw_value() & 0xffffffffff) << std::endl;
     std::cout <<  static_cast<int>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)) << std::endl;
     std::cout <<  pkt->head_data<be32_t *>(0) << std::endl;
     std::cout <<  p << std::endl;
