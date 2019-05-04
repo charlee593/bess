@@ -42,6 +42,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
     while sending_pk_sn < 100:
         try:
             unlabeled_data_pkt[MDCData].sn = sending_pk_sn
+            print("Sendiing unlabeled_data_mdc_header: ", bytes(unlabeled_data_pkt[MDCData]))
             print(bytes(unlabeled_data_pkt).encode('hex'))
             client.send(bytes(unlabeled_data_pkt))
             sending_pk_sn += 1
