@@ -173,7 +173,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout <<  (p->raw_value() >> 8) << std::endl;
     std::cout <<  (p->raw_value() >> 1) << std::endl;
     std::cout <<  (p->raw_value() >> 5) << std::endl;
-    std::cout <<  (p->raw_value() >> 3) << std::endl;
+    std::cout <<  p << std::endl;
 
 
 
