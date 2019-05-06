@@ -250,7 +250,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
             std::cout << p->raw_value() << std::endl;
             std::cout << std::hex << p->raw_value() << std::endl;
 
-            bess::utils::Copy(p, hexString, 2);
+            bess::utils::Copy(p, 0x2a2b, 2);
 
             std::cout << "BufferedQueue new packet "  + std::to_string(p->raw_value())<< std::endl;
             std::cout << p->raw_value() << std::endl;
