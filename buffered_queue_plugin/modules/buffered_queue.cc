@@ -204,6 +204,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
       }
       else if(curr_ >= prior_+1 || curr_ <= initial_){
         std::cout << "Case 2" << std::endl;
+        return;
 
       }
       else{
