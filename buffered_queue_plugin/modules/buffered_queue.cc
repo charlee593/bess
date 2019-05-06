@@ -180,8 +180,8 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
 
     // Data pkts
-    uint8_t sn = (p->raw_value() & 0xff);
-    uint8_t mul_type = (p->raw_value() & 0xff00)  >> 8;
+    uint8_t mul_type = (p->raw_value() & 0xff);
+    uint8_t sn = (p->raw_value() & 0xff00)  >> 8;
     uint8_t data_size = (p->raw_value() & 0xff0000)  >> 16;
     
     uint16_t address = (p->raw_value() & 0x0000ffff);
@@ -205,11 +205,6 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
     std::cout << "BufferedQueue pkt size: " + std::to_string(pkt->total_len())<< std::endl;
     std::cout << "BufferedQueue pkt header size: " + std::to_string(sizeof(Ethernet) + ip_bytes + sizeof(Udp))<< std::endl;
-
-
-    bess::Packet *new_pkt = current_worker.packet_pool()->Alloc(42);
-    std::cout << "BufferedQueue new pkt size :::::" << std::endl;
-    std::cout << std::hex << static_cast<int>(new_pkt->total_len()) << std::endl;
 
 
     if(mul_type == 1 && !data_requested_){
@@ -239,23 +234,38 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
       else if(curr_ > (prior_+1)%data_size_  || curr_ <= initial_){
         std::cout << "Case 2" << std::endl;
 
-                        // bess::Packet *new_pkt = bess::Packet::copy(pkt);
-                        // if (new_pkt) {
-                        //     Ethernet *new_eth = new_pkt->head_data<Ethernet *>();
-                        //     Ipv4 *new_ip = reinterpret_cast<Ipv4 *>(new_eth + 1);
-                        //     be64_t *p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
-                        //     std::cout << "BufferedQueue new packet"  + std::to_string(data_receiving_)<< std::endl;
+        bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 2);
+        bess::utils::Copy(new_pkt, packet, copy_len, true);
+        std::cout << "BufferedQueue new pkt size :::::" << std::endl;
+        std::cout << std::hex << static_cast<int>(new_pkt->total_len()) << std::endl;
+
+        const char *hexString = "2a2b";
+
+
+        bess::utils::CopyInlined((new_pkt->buffer<char *>()+42), hexString, 2, true);
 
 
 
-                        //     // new_eth->dst_addr = agent_macs_[i];
-                        //     // new_ip->dst = agent_ips_[i];
+  
 
-                        //     // new_eth->src_addr = switch_macs_[i];
-                        //     // new_ip->src = switch_ips_[i];
 
-                        //     EmitPacket(ctx, new_pkt, i);
-                        // }
+
+        if (new_pkt) {
+            // Ethernet *new_eth = new_pkt->head_data<Ethernet *>();
+            // Ipv4 *new_ip = reinterpret_cast<Ipv4 *>(new_eth + 1);
+            be64_t *p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
+            std::cout << "BufferedQueue new packet"  + std::to_string(p->raw_value())<< std::endl;
+
+
+
+            // new_eth->dst_addr = agent_macs_[i];
+            // new_ip->dst = agent_ips_[i];
+
+            // new_eth->src_addr = switch_macs_[i];
+            // new_ip->src = switch_ips_[i];
+
+            EmitPacket(ctx, new_pkt, i);
+        }
 
 
 
