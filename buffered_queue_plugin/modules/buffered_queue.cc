@@ -166,10 +166,10 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     int ip_bytes = ip->header_length << 2;
 //        Udp *udp = reinterpret_cast<Udp *>(reinterpret_cast<uint8_t *>(ip) + ip_bytes);
     // Access UDP payload (i.e., mDC data)
-    be16_t *p = pkt->head_data<be16_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+8);
-    be16_t *p1 = pkt->head_data<be16_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+6);
-    be16_t *p2 = pkt->head_data<be16_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+4);
-    be16_t *p3 = pkt->head_data<be16_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+2);
+    be64_t *p = pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+8);
+    be64_t *p1 = pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+6);
+    be64_t *p2 = pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+4);
+    be64_t *p3 = pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+2);
 
       std::cout << "SWITCH";
        std::cout << std::hex << static_cast<int>(p->value()) << std::endl;
@@ -178,10 +178,10 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
 
     // Data pkts
-    uint8_t sn = (p->raw_value() & 0xffff);
-        uint8_t sn1 = (p1->raw_value() & 0xffff);
-            uint8_t sn2 = (p2->raw_value() & 0xffff);
-                uint8_t sn3 = (p3->raw_value() & 0xffff);
+    uint16_t sn = (p->raw_value() & 0xffff);
+        uint16_t sn1 = (p1->raw_value() & 0xffff);
+            uint16_t sn2 = (p2->raw_value() & 0xffff);
+                uint16_t sn3 = (p3->raw_value() & 0xffff);
     uint8_t label = (p->raw_value() & 0xff000000) >> 24;
     uint16_t address = (p->raw_value() & 0x0000ffff);
     uint8_t appID = (p->raw_value() & 0xff00000000) >> 32;
