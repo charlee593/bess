@@ -191,7 +191,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << "BufferedQueue appID :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(appID) << std::endl;
     std::cout << "BufferedQueue sn :::::" << std::endl;
-    std::cout << std::hex << _byteswap_ushort(sn); << std::endl;
+    std::cout << std::hex << _byteswap_ushort(sn) << std::endl;
         std::cout << std::hex << static_cast<int>(sn1) << std::endl;
             std::cout << std::hex << static_cast<int>(sn2) << std::endl;
                 std::cout << std::hex << static_cast<int>(sn3) << std::endl;
