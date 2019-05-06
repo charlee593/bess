@@ -238,7 +238,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
         std::cout << "BufferedQueue new pkt size :::::" << std::endl;
         std::cout << std::hex << static_cast<int>(new_pkt->total_len()) << std::endl;
 
-        const char *hexString = static_cast<char>(0x2a2b);
+        const char *hexString = static_cast<const char*>(0x2a2b);
   
 
 
