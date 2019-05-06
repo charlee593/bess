@@ -250,7 +250,9 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
             std::cout << p->raw_value() << std::endl;
             std::cout << std::hex << p->raw_value() << std::endl;
 
-            bess::utils::Copy(new_pkt->buffer<char *>(), hexString, 2);
+            char *p = new_pkt->buffer<char *>() + SNBUF_HEADROOM;
+
+            bess::utils::Copy(p, hexString, 2);
 
             be64_t *p2 = new_pkt->head_data<be64_t *>();
 
@@ -259,6 +261,15 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
             std::cout << p2->raw_value() << std::endl;
             std::cout << std::hex << p2->raw_value() << std::endl;
             std::cout << std::hex << hexString << std::endl;
+
+
+
+
+
+
+
+
+
 
 
 
