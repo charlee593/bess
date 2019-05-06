@@ -119,9 +119,11 @@ bess.add_tc('tgen', policy='rate_limit', resource='packet', limit={'packet': 10}
 bess.add_tc('tgen1', policy='rate_limit', resource='packet', limit={'packet': 1})
 bess.add_tc('tgen2', policy='rate_limit', resource='packet', limit={'packet': 1})
 
+split::RandomSplit(gates=2)
 p = UnixSocketPort(name='p', path=LOCAL_SOCKET_PATH)
 PortInc(port='p') -> bq1::BufferedQueue()
-bq1 -> RandomSplit(drop_rate=0.5) -> PortOut(port='p')
+bq1 -> split:0 -> PortOut(port='p')
+split:1 -> Sink()
 
 
 
