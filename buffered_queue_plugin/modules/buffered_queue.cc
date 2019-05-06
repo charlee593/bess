@@ -101,6 +101,7 @@ CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQu
   data_receiving_ = false;
   data_size_ = 0;
   curr_data_size_ = 0;
+  data_requested_ = false;
 
   task_id_t tid;
   CommandResponse err;
@@ -202,6 +203,20 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << std::hex << static_cast<int>(data_size+1) << std::endl;
 
 
+
+    Ethernet *new_eth = new_pkt->head_data<Ethernet *>();
+    Ipv4 *new_ip = reinterpret_cast<Ipv4 *>(new_eth + 1);
+    be64_t *p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
+    p->raw_value() = 3;
+    std::cout << "BufferedQueue new packet"  + std::to_string(new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp))) << std::endl;
+
+
+    if(mul_type == 1 && !data_requested_){
+      data_requested_ = true;
+      return;
+    }
+
+
     curr_ = sn;
     if(!data_receiving_){
       initial_ = sn;
@@ -222,6 +237,27 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
       }
       else if(curr_ > (prior_+1)%data_size_  || curr_ <= initial_){
         std::cout << "Case 2" << std::endl;
+
+                        // bess::Packet *new_pkt = bess::Packet::copy(pkt);
+                        // if (new_pkt) {
+                        //     Ethernet *new_eth = new_pkt->head_data<Ethernet *>();
+                        //     Ipv4 *new_ip = reinterpret_cast<Ipv4 *>(new_eth + 1);
+                        //     be64_t *p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
+                        //     std::cout << "BufferedQueue new packet"  + std::to_string(data_receiving_)<< std::endl;
+
+
+
+                        //     // new_eth->dst_addr = agent_macs_[i];
+                        //     // new_ip->dst = agent_ips_[i];
+
+                        //     // new_eth->src_addr = switch_macs_[i];
+                        //     // new_ip->src = switch_ips_[i];
+
+                        //     EmitPacket(ctx, new_pkt, i);
+                        // }
+
+
+
         return;
 
       }
@@ -287,7 +323,7 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
   uint32_t cnt = 0;
   uint64_t total_bytes = 0;
 
-  if (sendto_){
+  if (data_requested_){
     std::cout << "BufferedQueue queue value in before: " + std::to_string(llring_count(queue_)) << std::endl;
 
     cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), burst);
@@ -315,7 +351,7 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
     RunChooseModule(ctx, 0, batch);
 
     if(llring_count(queue_) <= 0){
-      sendto_ = false;
+      data_requested_ = false;
     }
 
     // for (uint32_t i = 0; i < cnt; i++) {

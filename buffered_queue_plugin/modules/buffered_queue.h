@@ -122,6 +122,7 @@ class BufferedQueue : public Module {
 
   bool data_ready_;
   bool data_receiving_;
+  bool data_requested_;
 
 
 
