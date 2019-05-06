@@ -166,10 +166,10 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     int ip_bytes = ip->header_length << 2;
 //        Udp *udp = reinterpret_cast<Udp *>(reinterpret_cast<uint8_t *>(ip) + ip_bytes);
     // Access UDP payload (i.e., mDC data)
-    be64_t *p = pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+8);
+    be64_t *p = pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
     be64_t *p1 = pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+6);
     be64_t *p2 = pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+4);
-    be64_t *p3 = pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
+    be64_t *p3 = pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+8);
 
       std::cout << "SWITCH";
        std::cout << std::hex << static_cast<int>(p->value()) << std::endl;
@@ -187,7 +187,6 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     uint8_t appID = (p->raw_value() & 0xff00000000) >> 32;
 
 
-    uint16_t sn5 = reinterpret_cast<uint16_t *>(p->raw_value());
 
     std::cout << "BufferedQueue address :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(address) << std::endl;
@@ -198,14 +197,13 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
         std::cout << std::hex << static_cast<int>(sn1) << std::endl;
             std::cout << std::hex << static_cast<int>(sn2) << std::endl;
                 std::cout << std::hex << static_cast<int>(sn3) << std::endl;
-                std::cout << std::hex << static_cast<int>(sn5) << std::endl;
     std::cout << "BufferedQueue Label :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(label) << std::endl;
     std::cout << std::hex << (p->raw_value() >> 4)  << std::endl;
     std::cout << std::hex << p->raw_value()  << std::endl;
     std::cout << std::hex << p1->raw_value()  << std::endl;
     std::cout << std::hex << p2->raw_value()  << std::endl;
-    std::cout << std::hex << sn5  << std::endl;
+    std::cout << std::hex << p3->raw_value()  << std::endl;
     std::cout << std::hex << appID  << std::endl;
     std::cout <<  &pkt << std::endl;
     std::cout <<  pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)) << std::endl;
