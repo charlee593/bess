@@ -99,6 +99,7 @@ CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQu
   sendto_ = false;
   data_ready_ = false;
   data_receiving_ = false;
+  data_size_ = 0;
 
   task_id_t tid;
   CommandResponse err;
@@ -179,6 +180,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     // Data pkts
     uint8_t sn = (p->raw_value() & 0xff);
     uint8_t mul_type = (p->raw_value() & 0xff00)  >> 8;
+    uint16_t data_size = (p->raw_value() & 0xff0000)  >> 16;
     
     uint16_t address = (p->raw_value() & 0x0000ffff);
     uint8_t appID = (p->raw_value() & 0xff00000000) >> 32;
@@ -194,19 +196,23 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << "BufferedQueue type :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(mul_type) << std::endl;
     std::cout << "BufferedQueue type: " + std::to_string(mul_type)<< std::endl;
+    std::cout << "BufferedQueue size: " + std::to_string(data_size)<< std::endl;
+
+
 
     curr_ = sn;
     if(!data_receiving_){
       initial_ = sn;
       prior_ = sn;
       data_receiving_ = true;
+      data_size_ = data_size;
       std::cout << "BufferedQueue initial"  + std::to_string(data_receiving_)<< std::endl;
     }
     else{
-      if(curr_ == prior_+1){
+      if(curr_ == (prior_+1)%data_size_ ){
         prior_ = curr_;
       }
-      else if(curr_ >= prior_+1 || curr_ <= initial_){
+      else if(curr_ >= (prior_+1)%data_size_  || curr_ <= initial_){
         std::cout << "Case 2" << std::endl;
         return;
 
