@@ -196,6 +196,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
       initial_ = sn;
       prior_ = sn;
       data_receiving_ = true;
+      std::cout << "BufferedQueue initial"  + std::to_string(data_receiving_)<< std::endl;
     }
     else{
       if(curr_ == prior_+1){
