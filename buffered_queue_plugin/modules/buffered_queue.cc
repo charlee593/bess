@@ -235,14 +235,13 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
         std::cout << "Case 2" << std::endl;
 
         bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 2);
-        bess::utils::Copy(new_pkt, packet, copy_len, true);
         std::cout << "BufferedQueue new pkt size :::::" << std::endl;
         std::cout << std::hex << static_cast<int>(new_pkt->total_len()) << std::endl;
 
         const char *hexString = "2a2b";
 
 
-        bess::utils::CopyInlined((new_pkt->buffer<char *>()+42), hexString, 2, true);
+        bess::utils::Copy((new_pkt->buffer<char *>()+42), hexString, 2, true);
 
 
 
