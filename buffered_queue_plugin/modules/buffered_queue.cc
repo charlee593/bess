@@ -98,6 +98,7 @@ int BufferedQueue::Resize(int slots) {
 CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQueueArg &arg) {
   sendto_ = false;
   data_ready_ = false;
+  data_receiving_ = false;
 
   task_id_t tid;
   CommandResponse err;
@@ -191,18 +192,33 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << "BufferedQueue sn :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(sn) << std::endl;
 
+    curr_ = sn;
+    if(!data_receiving_){
+      initial_ = sn;
+      prior_ = sn;
+      data_receiving_ = true;
+    }
+    else{
+      if(curr_ == prior_+1){
+        prior_ = curr_;
+      }
+      else if(curr_ >= prior_+1 || curr_ <= initial_){
+        std::cout << "Case 2" << std::endl;
+      }
+      else{
+        std::cout << "Case 3" << std::endl;
+      }
+    }
 
-    std::cout << "BufferedQueue Label :::::" << std::endl;
-    std::cout << std::hex << static_cast<int>(label) << std::endl;
-    std::cout << std::hex << (p->raw_value() >> 4)  << std::endl;
-    std::cout << std::hex << p->raw_value()  << std::endl;
+    std::cout << "BufferedQueue initial_: " + std::to_string(initial_)<< std::endl;
+    std::cout << "BufferedQueue prior_: " + std::to_string(prior_)<< std::endl;
+    std::cout << "BufferedQueue curr_: " + std::to_string(curr_)<< std::endl;
 
 
-    std::cout << std::hex << appID  << std::endl;
-    std::cout <<  &pkt << std::endl;
-    std::cout <<  pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)) << std::endl;
-    std::cout <<  pkt->total_len() << std::endl;
-    std::cout <<  p << std::endl;
+
+
+
+
 
 
 

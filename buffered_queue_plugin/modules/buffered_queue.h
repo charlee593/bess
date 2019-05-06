@@ -121,6 +121,13 @@ class BufferedQueue : public Module {
   bool sendto_;
 
   bool data_ready_;
+  bool data_receiving_;
+
+
+  uint8_t curr_;
+  uint8_t prior_;
+  uint8_t initial_;
+
 
 
 
