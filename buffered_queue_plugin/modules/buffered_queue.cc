@@ -178,10 +178,8 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
 
     // Data pkts
-    uint16_t sn = (p->raw_value() & 0xffff);
-        uint16_t sn1 = (p1->raw_value() & 0xffff);
-            uint16_t sn2 = (p2->raw_value() & 0xffff);
-                uint16_t sn3 = (p3->raw_value() & 0xffff);
+    uint8_t sn = (p->raw_value() & 0xff);
+    
     uint8_t label = (p->raw_value() & 0xff000000) >> 24;
     uint16_t address = (p->raw_value() & 0x0000ffff);
     uint8_t appID = (p->raw_value() & 0xff00000000) >> 32;
@@ -194,16 +192,14 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << std::hex << static_cast<int>(appID) << std::endl;
     std::cout << "BufferedQueue sn :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(sn) << std::endl;
-        std::cout << std::hex << static_cast<int>(sn1) << std::endl;
-            std::cout << std::hex << static_cast<int>(sn2) << std::endl;
-                std::cout << std::hex << static_cast<int>(sn3) << std::endl;
+
+
     std::cout << "BufferedQueue Label :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(label) << std::endl;
     std::cout << std::hex << (p->raw_value() >> 4)  << std::endl;
     std::cout << std::hex << p->raw_value()  << std::endl;
-    std::cout << std::hex << p1->raw_value()  << std::endl;
-    std::cout << std::hex << p2->raw_value()  << std::endl;
-    std::cout << std::hex << p3->raw_value()  << std::endl;
+
+
     std::cout << std::hex << appID  << std::endl;
     std::cout <<  &pkt << std::endl;
     std::cout <<  pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)) << std::endl;

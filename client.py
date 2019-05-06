@@ -11,7 +11,7 @@ class MDCData(scapy.Packet):
                  scapy.XByteField('label' , 0),
                  scapy.ShortField('appID' , 2),
                  scapy.ShortField('dataID' , 0),
-                 scapy.ShortField('sn' , 0)]
+                 scapy.XByteField('sn' , 0)]
 
 
 
