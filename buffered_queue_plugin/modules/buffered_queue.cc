@@ -198,6 +198,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << "BufferedQueue type: " + std::to_string(mul_type)<< std::endl;
     std::cout << "BufferedQueue size: " + std::to_string(data_size)<< std::endl;
     std::cout << std::hex << static_cast<int>(data_size) << std::endl;
+    std::cout << std::hex << static_cast<int>(data_size+1) << std::endl;
 
 
 
