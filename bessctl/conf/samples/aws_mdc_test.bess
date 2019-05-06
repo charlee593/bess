@@ -122,7 +122,7 @@ bess.add_tc('tgen2', policy='rate_limit', resource='packet', limit={'packet': 1}
 split::RandomSplit(gates=range(2))
 p = UnixSocketPort(name='p', path=LOCAL_SOCKET_PATH)
 PortInc(port='p') -> split:0 -> bq1::BufferedQueue()
-bq1  -> PortOut(port='p')
+# bq1  -> PortOut(port='p')
 split:1 -> Rewrite(templates=[unlabeled_data_pkt_bytes]) -> PortOut(port='p')
 
 
