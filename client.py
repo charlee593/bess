@@ -13,7 +13,7 @@ class MDCData(scapy.Packet):
                  scapy.ShortField('dataID' , 0),
                  scapy.XByteField('sn' , 0),
                  scapy.ByteEnumField("code", 5, {1:"REQUEST",2:"PTCH_REQ",3:"DATA_FNSD",4:"PTCH_DATA", 5:"DATA"}),
-                 scapy.ShortField('dataSize' , 63)]
+                 scapy.ShortField('dataSize' , 99)]
 
 
 
