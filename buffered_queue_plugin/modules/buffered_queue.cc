@@ -264,7 +264,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
             // new_eth->src_addr = switch_macs_[i];
             // new_ip->src = switch_ips_[i];
 
-            EmitPacket(ctx, new_pkt, i);
+            // EmitPacket(ctx, new_pkt, i);
         }
 
 
