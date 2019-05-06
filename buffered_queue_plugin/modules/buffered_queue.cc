@@ -97,6 +97,7 @@ int BufferedQueue::Resize(int slots) {
 
 CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQueueArg &arg) {
   sendto_ = false;
+  data_ready_ = false;
 
   task_id_t tid;
   CommandResponse err;
@@ -175,7 +176,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
 
     // Data pkts
-    uint8_t mode = (p->raw_value() & 0x00ff0000) >> 16;
+    uint8_t sn = (p->raw_value() & 0x00ff0000) >> 16;
     uint8_t label = (p->raw_value() & 0xff000000) >> 24;
     uint16_t address = (p->raw_value() & 0x0000ffff);
     uint8_t appID = (p->raw_value() & 0xff00000000) >> 32;
@@ -184,8 +185,8 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << std::hex << static_cast<int>(address) << std::endl;
     std::cout << "BufferedQueue appID :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(appID) << std::endl;
-    std::cout << "BufferedQueue Mode :::::" << std::endl;
-    std::cout << std::hex << static_cast<int>(mode) << std::endl;
+    std::cout << "BufferedQueue sn :::::" << std::endl;
+    std::cout << std::hex << static_cast<int>(sn) << std::endl;
     std::cout << "BufferedQueue Label :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(label) << std::endl;
     std::cout << std::hex << (p->raw_value() >> 4)  << std::endl;

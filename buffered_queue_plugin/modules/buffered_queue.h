@@ -120,6 +120,12 @@ class BufferedQueue : public Module {
 
   bool sendto_;
 
+  bool data_ready_;
+
+
+
+
+
   // Accumulated statistics counters
   struct {
     uint64_t enqueued;
