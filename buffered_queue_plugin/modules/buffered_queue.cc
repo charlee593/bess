@@ -203,7 +203,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << std::hex << static_cast<int>(data_size+1) << std::endl;
 
 
-    std::cout << "BufferedQueue pkt size: " + std::to_string(p->total_len())<< std::endl;
+    std::cout << "BufferedQueue pkt size: " + std::to_string(pkt->total_len())<< std::endl;
     std::cout << "BufferedQueue pkt header size: " + std::to_string(sizeof(Ethernet) + ip_bytes + sizeof(Udp))<< std::endl;
 
 
