@@ -203,8 +203,8 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << std::hex << static_cast<int>(data_size+1) << std::endl;
 
 
-
-    Ethernet *new_eth = new_pkt->head_data<Ethernet *>();
+    bess::Packet *new_pkt = bess::Packet::copy(pkt);
+    // Ethernet *new_eth = new_pkt->head_data<Ethernet *>();
     // Ipv4 *new_ip = reinterpret_cast<Ipv4 *>(new_eth + 1);
     be64_t *p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
     p->raw_value() = 3;
