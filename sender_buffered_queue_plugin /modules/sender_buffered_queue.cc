@@ -34,7 +34,7 @@
 
 #include "../utils/format.h"
 
-#define DEFAULT_BUFFEREDQUEUE_SIZE 1024
+#define DEFAULT_SenderBufferedQueue_SIZE 1024
 
 struct MDCData
 {
@@ -43,15 +43,15 @@ struct MDCData
     float salary;
 };
 
-const Commands BufferedQueue::cmds = {
-    {"set_burst", "BufferedQueueCommandSetBurstArg",
-     MODULE_CMD_FUNC(&BufferedQueue::CommandSetBurst), Command::THREAD_SAFE},
-    {"set_size", "BufferedQueueCommandSetSizeArg",
-     MODULE_CMD_FUNC(&BufferedQueue::CommandSetSize), Command::THREAD_UNSAFE},
-    {"get_status", "BufferedQueueCommandGetStatusArg",
-     MODULE_CMD_FUNC(&BufferedQueue::CommandGetStatus), Command::THREAD_SAFE}};
+const Commands SenderBufferedQueue::cmds = {
+    {"set_burst", "SenderBufferedQueueCommandSetBurstArg",
+     MODULE_CMD_FUNC(&SenderBufferedQueue::CommandSetBurst), Command::THREAD_SAFE},
+    {"set_size", "SenderBufferedQueueCommandSetSizeArg",
+     MODULE_CMD_FUNC(&SenderBufferedQueue::CommandSetSize), Command::THREAD_UNSAFE},
+    {"get_status", "SenderBufferedQueueCommandGetStatusArg",
+     MODULE_CMD_FUNC(&SenderBufferedQueue::CommandGetStatus), Command::THREAD_SAFE}};
 
-int BufferedQueue::Resize(int slots) {
+int SenderBufferedQueue::Resize(int slots) {
   struct llring *old_queue = queue_;
   struct llring *new_queue;
 
@@ -95,7 +95,7 @@ int BufferedQueue::Resize(int slots) {
   return 0;
 }
 
-CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQueueArg &arg) {
+CommandResponse SenderBufferedQueue::Init(const sample::sender_buffered_queue::pb::SenderBufferedQueueArg &arg) {
   sendto_ = false;
   data_ready_ = false;
   data_receiving_ = false;
@@ -113,7 +113,7 @@ CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQu
   burst_ = bess::PacketBatch::kMaxBurst;
 
   if (arg.backpressure()) {
-    VLOG(1) << "Backpressure enabled for " << name() << "::BufferedQueue";
+    VLOG(1) << "Backpressure enabled for " << name() << "::SenderBufferedQueue";
     backpressure_ = true;
   }
 
@@ -123,7 +123,7 @@ CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQu
       return err;
     }
   } else {
-    int ret = Resize(DEFAULT_BUFFEREDQUEUE_SIZE);
+    int ret = Resize(DEFAULT_SenderBufferedQueue_SIZE);
     if (ret) {
       return CommandFailure(-ret);
     }
@@ -136,7 +136,7 @@ CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQu
   return CommandSuccess();
 }
 
-void BufferedQueue::DeInit() {
+void SenderBufferedQueue::DeInit() {
   bess::Packet *pkt;
 
   if (queue_) {
@@ -147,14 +147,14 @@ void BufferedQueue::DeInit() {
   }
 }
 
-std::string BufferedQueue::GetDesc() const {
+std::string SenderBufferedQueue::GetDesc() const {
   const struct llring *ring = queue_;
 
   return bess::utils::Format("%u/%u", llring_count(ring), ring->common.slots);
 }
 
 /* from upstream */
-void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
+void SenderBufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
   // std::cout << "Setsize resize: " + std::to_string(Resize(4)) << std::endl;
 
   int cnt = batch->cnt();
@@ -188,16 +188,16 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
 
 
-    std::cout << "BufferedQueue address :::::" << std::endl;
+    std::cout << "SenderBufferedQueue address :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(address) << std::endl;
-    std::cout << "BufferedQueue appID :::::" << std::endl;
+    std::cout << "SenderBufferedQueue appID :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(appID) << std::endl;
-    std::cout << "BufferedQueue sn :::::" << std::endl;
+    std::cout << "SenderBufferedQueue sn :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(sn) << std::endl;
-    std::cout << "BufferedQueue type :::::" << std::endl;
+    std::cout << "SenderBufferedQueue type :::::" << std::endl;
     std::cout << std::hex << static_cast<int>(mul_type) << std::endl;
-    std::cout << "BufferedQueue type: " + std::to_string(mul_type)<< std::endl;
-    std::cout << "BufferedQueue size: " + std::to_string(data_size)<< std::endl;
+    std::cout << "SenderBufferedQueue type: " + std::to_string(mul_type)<< std::endl;
+    std::cout << "SenderBufferedQueue size: " + std::to_string(data_size)<< std::endl;
     std::cout << std::hex << static_cast<int>(data_size) << std::endl;
     std::cout << std::hex << static_cast<int>(data_size+1) << std::endl;
 
@@ -208,7 +208,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
       prior_ = sn;
       data_receiving_ = true;
       data_size_ = data_size;
-      std::cout << "BufferedQueue initial"  + std::to_string(data_receiving_)<< std::endl;
+      std::cout << "SenderBufferedQueue initial"  + std::to_string(data_receiving_)<< std::endl;
     }
     else{
       if(curr_ == (prior_+1)%data_size_ ){
@@ -232,9 +232,9 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
       }
     }
 
-    std::cout << "BufferedQueue initial_: " + std::to_string(initial_)<< std::endl;
-    std::cout << "BufferedQueue prior_: " + std::to_string(prior_)<< std::endl;
-    std::cout << "BufferedQueue curr_: " + std::to_string(curr_)<< std::endl;
+    std::cout << "SenderBufferedQueue initial_: " + std::to_string(initial_)<< std::endl;
+    std::cout << "SenderBufferedQueue prior_: " + std::to_string(prior_)<< std::endl;
+    std::cout << "SenderBufferedQueue curr_: " + std::to_string(curr_)<< std::endl;
 
   }
 
@@ -271,10 +271,10 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 }
 
 /* to downstream */
-struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch,
+struct task_result SenderBufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch,
                                   void *) {
 
-  // std::cout << "BufferedQueue RunTask: " + std::to_string(llring_count(queue_)) << std::endl;
+  // std::cout << "SenderBufferedQueue RunTask: " + std::to_string(llring_count(queue_)) << std::endl;
 
   if (children_overload_ > 0 ) {
     return {
@@ -288,7 +288,7 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
   uint64_t total_bytes = 0;
 
   if (sendto_){
-    std::cout << "BufferedQueue queue value in before: " + std::to_string(llring_count(queue_)) << std::endl;
+    std::cout << "SenderBufferedQueue queue value in before: " + std::to_string(llring_count(queue_)) << std::endl;
 
     cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), burst);
 
@@ -310,7 +310,7 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
       }
     }
 
-    std::cout << "BufferedQueue queue batch value in during: " + std::to_string(batch->cnt()) << std::endl;
+    std::cout << "SenderBufferedQueue queue batch value in during: " + std::to_string(batch->cnt()) << std::endl;
 
     RunChooseModule(ctx, 0, batch);
 
@@ -319,7 +319,7 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
     }
 
     // for (uint32_t i = 0; i < cnt; i++) {
-    //   std::cout << "BufferedQueue sending packet: " + std::to_string(i) << std::endl;
+    //   std::cout << "SenderBufferedQueue sending packet: " + std::to_string(i) << std::endl;
     //   EmitPacket(ctx, batch->pkts()[i], 0);
     // }
 
@@ -328,7 +328,7 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
       SignalUnderload();
     }
 
-    std::cout << "BufferedQueue queue value in after: " + std::to_string(llring_count(queue_)) << std::endl;
+    std::cout << "SenderBufferedQueue queue value in after: " + std::to_string(llring_count(queue_)) << std::endl;
 
 
   }
@@ -338,8 +338,8 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
           .bits = (total_bytes + cnt * pkt_overhead) * 8};
 }
 
-CommandResponse BufferedQueue::CommandSetBurst(
-    const sample::buffered_queue::pb::BufferedQueueCommandSetBurstArg &arg) {
+CommandResponse SenderBufferedQueue::CommandSetBurst(
+    const sample::sender_buffered_queue::pb::SenderBufferedQueueCommandSetBurstArg &arg) {
   uint64_t burst = arg.burst();
 
   if (burst > bess::PacketBatch::kMaxBurst) {
@@ -351,7 +351,7 @@ CommandResponse BufferedQueue::CommandSetBurst(
   return CommandSuccess();
 }
 
-CommandResponse BufferedQueue::SetSize(uint64_t size) {
+CommandResponse SenderBufferedQueue::SetSize(uint64_t size) {
   std::cout << "Here in Setsize: " << std::endl;
   if (size < 4 || size > 16384) {
     return CommandFailure(EINVAL, "must be in [4, 16384]");
@@ -370,14 +370,14 @@ CommandResponse BufferedQueue::SetSize(uint64_t size) {
   return CommandSuccess();
 }
 
-CommandResponse BufferedQueue::CommandSetSize(
-    const sample::buffered_queue::pb::BufferedQueueCommandSetSizeArg &arg) {
+CommandResponse SenderBufferedQueue::CommandSetSize(
+    const sample::sender_buffered_queue::pb::SenderBufferedQueueCommandSetSizeArg &arg) {
   return SetSize(arg.size());
 }
 
-CommandResponse BufferedQueue::CommandGetStatus(
-    const sample::buffered_queue::pb::BufferedQueueCommandGetStatusArg &) {
-  sample::buffered_queue::pb::BufferedQueueCommandGetStatusResponse resp;
+CommandResponse SenderBufferedQueue::CommandGetStatus(
+    const sample::sender_buffered_queue::pb::SenderBufferedQueueCommandGetStatusArg &) {
+  sample::sender_buffered_queue::pb::SenderBufferedQueueCommandGetStatusResponse resp;
   resp.set_count(llring_count(queue_));
   resp.set_size(size_);
   resp.set_enqueued(stats_.enqueued);
@@ -386,15 +386,15 @@ CommandResponse BufferedQueue::CommandGetStatus(
   return CommandSuccess(resp);
 }
 
-void BufferedQueue::AdjustWaterLevels() {
+void SenderBufferedQueue::AdjustWaterLevels() {
   high_water_ = static_cast<uint64_t>(size_ * kHighWaterRatio);
   low_water_ = static_cast<uint64_t>(size_ * kLowWaterRatio);
 }
 
-CheckConstraintResult BufferedQueue::CheckModuleConstraints() const {
+CheckConstraintResult SenderBufferedQueue::CheckModuleConstraints() const {
   CheckConstraintResult status = CHECK_OK;
   if (num_active_tasks() - tasks().size() < 1) {  // Assume multi-producer.
-    LOG(ERROR) << "BufferedQueue has no producers";
+    LOG(ERROR) << "SenderBufferedQueue has no producers";
     status = CHECK_NONFATAL_ERROR;
   }
 
@@ -406,5 +406,5 @@ CheckConstraintResult BufferedQueue::CheckModuleConstraints() const {
   return status;
 }
 
-ADD_MODULE(BufferedQueue, "buffered_queue",
+ADD_MODULE(SenderBufferedQueue, "sender_buffered_queue",
            "terminates current task and enqueue packets for new task")

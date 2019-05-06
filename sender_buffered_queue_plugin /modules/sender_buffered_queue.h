@@ -41,7 +41,7 @@
 #include "utils/udp.h"
 #include "utils/exact_match_table.h"
 
-#include "pb/buffered_queue_msg.pb.h"
+#include "pb/sender_buffered_queue_msg.pb.h"
 
 using bess::utils::Error;
 
@@ -53,11 +53,11 @@ using bess::utils::Ipv4;
 using bess::utils::Udp;
 
 
-class BufferedQueue : public Module {
+class SenderBufferedQueue : public Module {
  public:
   static const Commands cmds;
 
-  BufferedQueue()
+  SenderBufferedQueue()
       : Module(),
         queue_(),
         prefetch_(),
@@ -72,7 +72,7 @@ class BufferedQueue : public Module {
     max_allowed_workers_ = Worker::kMaxWorkers;
   }
 
-  CommandResponse Init(const sample::buffered_queue::pb::BufferedQueueArg &arg);
+  CommandResponse Init(const sample::sender_buffered_queue::pb::SenderBufferedQueueArg &arg);
 
   void DeInit() override;
 
@@ -82,10 +82,10 @@ class BufferedQueue : public Module {
 
   std::string GetDesc() const override;
 
-  CommandResponse CommandSetBurst(const sample::buffered_queue::pb::BufferedQueueCommandSetBurstArg &arg);
-  CommandResponse CommandSetSize(const sample::buffered_queue::pb::BufferedQueueCommandSetSizeArg &arg);
+  CommandResponse CommandSetBurst(const sample::sender_buffered_queue::pb::SenderBufferedQueueCommandSetBurstArg &arg);
+  CommandResponse CommandSetSize(const sample::sender_buffered_queue::pb::SenderBufferedQueueCommandSetSizeArg &arg);
   CommandResponse CommandGetStatus(
-      const sample::buffered_queue::pb::BufferedQueueCommandGetStatusArg &arg);
+      const sample::sender_buffered_queue::pb::SenderBufferedQueueCommandGetStatusArg &arg);
 
   CheckConstraintResult CheckModuleConstraints() const override;
 
