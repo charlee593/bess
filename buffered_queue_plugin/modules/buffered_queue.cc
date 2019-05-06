@@ -179,7 +179,6 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     // Data pkts
     uint8_t sn = (p->raw_value() & 0xff);
     
-    uint8_t label = (p->raw_value() & 0xff000000) >> 24;
     uint16_t address = (p->raw_value() & 0x0000ffff);
     uint8_t appID = (p->raw_value() & 0xff00000000) >> 32;
 
