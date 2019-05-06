@@ -264,6 +264,14 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
 
 
+            be64_t *p4 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
+            std::cout << "BufferedQueue new packet "  + std::to_string(p4->raw_value())<< std::endl;
+            std::cout << p4->raw_value() << std::endl;
+            std::cout << std::hex << p4->raw_value() << std::endl;
+            std::cout << std::hex << hexString << std::endl;
+
+
+
 
 
 
