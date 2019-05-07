@@ -179,14 +179,14 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
       be64_t *new_p = new_pkt->head_data<be64_t *>
       (sizeof(Ethernet) + ip_bytes + sizeof(Udp)); // First 8 bytes
 
-      uint64_t template = 0x000000000000ffff;
+      uint64_t tempplate = 0x000000000000ffff;
       // template = template | (0xff0000 & mode);
       // template = template | (0xff000000 & label);
       // template = template | (0xff00000000 & code);
       // template = template | (0xff0000000000 & app_id);
       // template = template | (0xff000000000000 & data_id);
       // template = template | (0xff00000000000000 & lrange);
-      bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&template), 16);
+      bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&tempplate), 16);
 
       new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 8);
       bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&addr), 2);
