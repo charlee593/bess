@@ -181,7 +181,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
     std::cout << "ProcessBatch ID";
     std::cout << std::hex << addr << std::endl;
-    std::cout << std::hex << mode << std::endl;
+    std::cout << std::hex << static_cast<int>(mode) << std::endl;
     std::cout << std::hex << label << std::endl;
     std::cout << std::hex << code << std::endl;
     std::cout << std::hex << appID << std::endl;
