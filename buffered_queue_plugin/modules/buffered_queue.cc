@@ -190,7 +190,7 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
       std::cout << "BufferedQueue new packet mDC"  << std::hex <<  mDC << std::endl;
       bess::utils::Copy(new_p, reinterpret_cast<uint64_t *>(&mDC), 16);
 
-      new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 64);
+      new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 8);
       bess::utils::Copy(new_p, reinterpret_cast<uint64_t *>(&rrange), 2);
 
 
