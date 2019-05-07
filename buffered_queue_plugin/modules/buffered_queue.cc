@@ -154,7 +154,7 @@ std::string BufferedQueue::GetDesc() const {
 }
 
 int BufferedQueue::Enqueue(bess::Packet *pkt) {
-  if (llring_enqueue(queue_, (void *)pkt) == 0){
+  if (llring_enqueue(queue_, (void *)pkt) != 0){
     return 0;
   }
 
