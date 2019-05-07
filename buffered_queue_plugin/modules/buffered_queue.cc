@@ -186,10 +186,10 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
       mDC = mDC | (0xff0000000000 & app_id);
       mDC = mDC | (0xff000000000000 & data_id);
       mDC = mDC | (0xff00000000000000 & lrange);
-      bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&mDC), 16);
+      bess::utils::Copy(new_p, reinterpret_cast<uint64_t *>(&mDC), 64);
 
       new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 8);
-      bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&rrange), 2);
+      bess::utils::Copy(new_p, reinterpret_cast<uint64_t *>(&rrange), 8);
 
 
       be64_t *p4 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
