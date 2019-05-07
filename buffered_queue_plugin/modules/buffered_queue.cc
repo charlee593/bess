@@ -252,7 +252,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
             char *p3 = new_pkt->buffer<char *>() + SNBUF_HEADROOM + sizeof(Ethernet) + ip_bytes + sizeof(Udp);
 
-            const char *hexString = "1";
+            const char *hexString = "05";
 
             bess::utils::Copy(p3, hexString, 2);
 
