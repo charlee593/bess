@@ -179,7 +179,7 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
       be64_t *new_p = new_pkt->head_data<be64_t *>
       (sizeof(Ethernet) + ip_bytes + sizeof(Udp)); // First 8 bytes
 
-      uint64_t template = 0x000000000000ffff & addr;
+      uint64_t template = 0x000000000000ffff;
       template = template | (0xff0000 & mode);
       template = template | (0xff000000 & label);
       template = template | (0xff00000000 & code);
