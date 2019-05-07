@@ -154,15 +154,17 @@ std::string BufferedQueue::GetDesc() const {
 }
 
 int BufferedQueue::Enqueue(bess::Packet *pkt) {
-  int queued =
-      llring_enqueue(queue_, (void *)pkt);
+  if (llring_enqueue(queue_, (void *)pkt) == 0){
+    return 0;
+  }
+
   if (backpressure_ && llring_count(queue_) > high_water_) {
     SignalOverload();
   }
 
-  stats_.enqueued += queued;
+  stats_.enqueued += 1;
 
-  return queued;
+  return 1;
 }
 
 /* from upstream */
@@ -204,17 +206,17 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << "ProcessBatch batch queued: " + std::to_string(queued)<< std::endl;
     std::cout << queued << std::endl;
 
-    if(code == 1){
+    if (code == 1) {
       /* Recv Request from Receiver */
       data_requested_ = true;
       if(curr_data_size_ == 0){
         //Send request to sender
       }
-    }else{
+    } else {
       curr_ = sn;
       
       /* Recv Data from Sender - intial*/
-      if(code == 5 && !data_receiving_){
+      if (code == 5 && !data_receiving_) {
         data_receiving_ = true;
         prior_ = curr_;
         initial_ = curr_;
