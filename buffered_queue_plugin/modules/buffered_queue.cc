@@ -154,6 +154,16 @@ std::string BufferedQueue::GetDesc() const {
   return bess::utils::Format("%u/%u", llring_count(ring), ring->common.slots);
 }
 
+void Queue::Enqueue(bess::Packet *pkt) {
+  int queued =
+      llring_enqueue(queue_, pkt);
+  if (backpressure_ && llring_count(queue_) > high_water_) {
+    SignalOverload();
+  }
+
+  stats_.enqueued += queued;
+}
+
 /* from upstream */
 void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
   int cnt = batch->cnt();
@@ -174,20 +184,51 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     uint8_t mode = (mdc_p1->raw_value() & 0xff0000) >> 16;
     uint8_t label = (mdc_p1->raw_value() & 0xff000000) >> 24;
     uint8_t code = (mdc_p1->raw_value() & 0xff00000000) >> 32;
-    uint8_t appID = (mdc_p1->raw_value() & 0xff0000000000) >> 40;
-    uint8_t dataID = (mdc_p1->raw_value() & 0xff000000000000) >> 48;
+    uint8_t app_id = (mdc_p1->raw_value() & 0xff0000000000) >> 40;
+    uint8_t data_id = (mdc_p1->raw_value() & 0xff000000000000) >> 48;
     uint8_t sn = (mdc_p1->raw_value() & 0xff00000000000000) >> 56;
-    uint8_t dataSize = (mdc_p2->raw_value() & 0xff);
+    uint8_t data_size = (mdc_p2->raw_value() & 0xff);
 
-    std::cout << "ProcessBatch batch size: " + cnt + " pkt: " + i << std::endl;
+    std::cout << "ProcessBatch batch size: " + std::to_string(cnt) + " pkt: " + std::to_string(i) << std::endl;
     std::cout << std::hex << addr << std::endl;
     std::cout << std::hex << static_cast<int>(mode) << std::endl;
     std::cout << std::hex << static_cast<int>(label) << std::endl;
     std::cout << std::hex << static_cast<int>(code) << std::endl;
-    std::cout << std::hex << static_cast<int>(appID) << std::endl;
-    std::cout << std::hex << static_cast<int>(dataID) << std::endl;
+    std::cout << std::hex << static_cast<int>(app_id) << std::endl;
+    std::cout << std::hex << static_cast<int>(data_id) << std::endl;
     std::cout << std::hex << std::to_string(sn) << std::endl;
-    std::cout << std::hex << std::to_string(dataSize) << std::endl;
+    std::cout << std::hex << std::to_string(data_size) << std::endl;
+
+    int queued = Enqueue(pkt);
+    std::cout << "ProcessBatch batch queued: " + std::to_string(queued)<< std::endl;
+
+    if(code == 1){
+      /* Recv Request from Receiver */
+      data_requested_ = true;
+      if(curr_data_size_ == 0){
+        //Send request to sender
+      }
+    }else{
+      curr_ = sn;
+      
+      /* Recv Data from Sender - intial*/
+      if(code == 5 && !data_receiving_){
+        data_receiving_ = true;
+        prior_ = curr_;
+        initial_ = curr_;
+        data_size_ = data_size;
+        curr_data_size_ = 1;
+
+        //Send INTL_SEQ to sender
+      }
+
+      /* Recv Data from Sender - PTCH_DATAs*/
+      /* Recv Data from Sender - DATA_FNSD*/
+
+      /* Recv Data from Sender - case 1*/
+      /* Recv Data from Sender - case 2*/
+      /* Recv Data from Sender - case 3*/
+    }
   
   }
 
@@ -365,10 +406,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 /* to downstream */
 struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch,
                                   void *) {
-
-  // std::cout << "BufferedQueue RunTask: " + std::to_string(llring_count(queue_)) << std::endl;
-
-  if (children_overload_ > 0 ) {
+  if (!data_requested_ || children_overload_ > 0) {
     return {
         .block = true, .packets = 0, .bits = 0,
     };
@@ -376,53 +414,33 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
 
   const int burst = ACCESS_ONCE(burst_);
   const int pkt_overhead = 24;
-  uint32_t cnt = 0;
+
   uint64_t total_bytes = 0;
 
-  if (data_requested_){
-    std::cout << "BufferedQueue queue value in before: " + std::to_string(llring_count(queue_)) << std::endl;
+  uint32_t cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), burst);
 
-    cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), burst);
+  if (cnt == 0) {
+    return {.block = true, .packets = 0, .bits = 0};
+  }
 
-    if (cnt == 0) {
-      return {.block = true, .packets = 0, .bits = 0};
+  stats_.dequeued += cnt;
+  batch->set_cnt(cnt);
+
+  if (prefetch_) {
+    for (uint32_t i = 0; i < cnt; i++) {
+      total_bytes += batch->pkts()[i]->total_len();
+      rte_prefetch0(batch->pkts()[i]->head_data());
     }
-
-    stats_.dequeued += cnt;
-    batch->set_cnt(cnt);
-
-    if (prefetch_) {
-      for (uint32_t i = 0; i < cnt; i++) {
-        total_bytes += batch->pkts()[i]->total_len();
-        rte_prefetch0(batch->pkts()[i]->head_data());
-      }
-    } else {
-      for (uint32_t i = 0; i < cnt; i++) {
-        total_bytes += batch->pkts()[i]->total_len();
-      }
+  } else {
+    for (uint32_t i = 0; i < cnt; i++) {
+      total_bytes += batch->pkts()[i]->total_len();
     }
+  }
 
-    std::cout << "BufferedQueue queue batch value in during: " + std::to_string(batch->cnt()) << std::endl;
+  RunNextModule(ctx, batch);
 
-    RunChooseModule(ctx, 0, batch);
-
-    if(llring_count(queue_) <= 0){
-      data_requested_ = false;
-    }
-
-    // for (uint32_t i = 0; i < cnt; i++) {
-    //   std::cout << "BufferedQueue sending packet: " + std::to_string(i) << std::endl;
-    //   EmitPacket(ctx, batch->pkts()[i], 0);
-    // }
-
-
-    if (backpressure_ && llring_count(queue_) < low_water_) {
-      SignalUnderload();
-    }
-
-    std::cout << "BufferedQueue queue value in after: " + std::to_string(llring_count(queue_)) << std::endl;
-
-
+  if (backpressure_ && llring_count(queue_) < low_water_) {
+    SignalUnderload();
   }
 
   return {.block = false,

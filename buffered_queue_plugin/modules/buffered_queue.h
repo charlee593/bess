@@ -118,13 +118,9 @@ class BufferedQueue : public Module {
   uint64_t low_water_;
 
 
-  bool sendto_;
-
   bool data_ready_;
   bool data_receiving_;
   bool data_requested_;
-
-
 
   uint8_t curr_;
   uint8_t prior_;
@@ -132,7 +128,9 @@ class BufferedQueue : public Module {
 
   uint8_t data_size_;
   uint8_t curr_data_size_;
+  uint8_t curr_data_id_;
 
+  uint8_t curr_data_sent_to_receiver;
 
 
 
