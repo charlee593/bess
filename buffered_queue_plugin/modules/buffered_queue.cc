@@ -241,7 +241,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
             uint32_t code = 0x022bc5;
 
-            bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&code), 2);
+            bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&code), 6);
 
             be32_t *p4 = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+ 8);
             std::cout << "BufferedQueue new packet "  + std::to_string(p4->raw_value())<< std::endl;
