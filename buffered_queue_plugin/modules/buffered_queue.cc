@@ -183,6 +183,7 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
       (0x0000ff0000000000 & app_id)| (0x00ff000000000000 & data_id) | 
       (0xff00000000000000 & lrange);
       std::cout << "BufferedQueue new packet mDC"  << std::hex <<  mDC << std::endl;
+      std::cout << "BufferedQueue new packet mode"  << std::hex <<  mode << std::endl;
       bess::utils::Copy(new_p, reinterpret_cast<uint64_t *>(&mDC), 16);
 
       new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 8);
