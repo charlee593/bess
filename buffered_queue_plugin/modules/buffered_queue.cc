@@ -185,6 +185,7 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
       mDC = mDC | (0xff0000000000 & app_id);
       mDC = mDC | (0xff000000000000 & data_id);
       mDC = mDC | (0xff00000000000000 & lrange);
+      std::cout << "BufferedQueue new packet "  << std::hex <<  mDC << std::endl;
       bess::utils::Copy(new_p, reinterpret_cast<uint64_t *>(&mDC), 16);
 
       new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 8);
@@ -192,9 +193,9 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
 
 
       be64_t *p4 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
-      std::cout << "BufferedQueue new packet "  << p4->raw_value() << std::endl;
+      std::cout << "BufferedQueue new packet "  << std::hex << p4->raw_value() << std::endl;
       be64_t *p3 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 2);
-      std::cout << "BufferedQueue new packet "  << p3->raw_value() << std::endl;
+      std::cout << "BufferedQueue new packet "  << std::hex << p3->raw_value() << std::endl;
 
       // EmitPacket(ctx, new_pkt, i);
   }
