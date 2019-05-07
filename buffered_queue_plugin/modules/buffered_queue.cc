@@ -277,10 +277,10 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
         }else if (code != 3 && (curr_ > (prior_+1)%data_size_ && curr_ <= initial_)) {
           /* Recv Data from Sender - case 2*/
-          SendReq(0x02, prior_, curr_, app_id, data_id, mode, label, addr);
+          SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr);
         }else{
           /* Recv Data from Sender - case 3*/
-          SendReq(0x02, prior_, curr_, app_id, data_id, mode, label, addr);
+          SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr);
         }
       }
     }
