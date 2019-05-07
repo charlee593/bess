@@ -41,18 +41,18 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
     sending_pk_sn = 0
     recv_cnt = 0
 
-    while sending_pk_sn < 300:
-        try:
-            unlabeled_data_pkt[MDCData].sn = sending_pk_sn
-            print("Sendiing unlabeled_data_mdc_header: ", bytes(unlabeled_data_pkt[MDCData]).encode('hex'))
-            print(bytes(unlabeled_data_pkt).encode('hex'))
-            client.send(bytes(unlabeled_data_pkt))
-            sending_pk_sn += 1
+    # while sending_pk_sn < 10:
+    #     try:
+    #         unlabeled_data_pkt[MDCData].sn = sending_pk_sn
+    #         print("Sendiing unlabeled_data_mdc_header: ", bytes(unlabeled_data_pkt[MDCData]).encode('hex'))
+    #         print(bytes(unlabeled_data_pkt).encode('hex'))
+    #         client.send(bytes(unlabeled_data_pkt))
+    #         sending_pk_sn += 1
 
-        except KeyboardInterrupt as k:
-            print("Shutting down.")
-            client.close()
-            break
+    #     except KeyboardInterrupt as k:
+    #         print("Shutting down.")
+    #         client.close()
+    #         break
 
 
     while True:
