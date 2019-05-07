@@ -238,7 +238,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
         std::cout << "BufferedQueue new pkt size :::::" << std::endl;
         std::cout << std::hex << static_cast<int>(new_pkt->total_len()) << std::endl;
 
-        const char *hexString = ":";
+        
   
 
 
@@ -250,7 +250,9 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
             std::cout << p->raw_value() << std::endl;
             std::cout << std::hex << p->raw_value() << std::endl;
 
-            char *p3 = new_pkt->buffer<char *>() + SNBUF_HEADROOM;
+            char *p3 = new_pkt->buffer<char *>() + SNBUF_HEADROOM + sizeof(Ethernet) + ip_bytes + sizeof(Udp);
+
+            const char *hexString = "1";
 
             bess::utils::Copy(p3, hexString, 2);
 
@@ -269,15 +271,6 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
             std::cout << p4->raw_value() << std::endl;
             std::cout << std::hex << p4->raw_value() << std::endl;
             std::cout << std::hex << hexString << std::endl;
-
-
-
-
-
-
-
-
-
 
 
 
