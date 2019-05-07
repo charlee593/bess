@@ -122,7 +122,7 @@ class BufferedQueue : public Module {
 
   // Send a request packet
   void SendReq(uint8_t code, uint8_t lrange, uint8_t rrange, 
-  uint8_t app_id, uint8_t data_id, uint8_t mode, uint8_t label, uint16_t addr);
+  uint8_t app_id, uint8_t data_id, uint8_t mode, uint8_t label, uint16_t addr, Context *ctx);
 
 
   bool data_ready_;

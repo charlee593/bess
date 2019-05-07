@@ -168,7 +168,7 @@ int BufferedQueue::Enqueue(bess::Packet *pkt) {
 }
 
 void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange, 
-  uint8_t app_id, uint8_t data_id, uint8_t mode, uint8_t label, uint16_t addr) {
+  uint8_t app_id, uint8_t data_id, uint8_t mode, uint8_t label, uint16_t addr, Context *ctx) {
 
   bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(42 + 9);
   Ethernet *eth = new_pkt->head_data<Ethernet *>(); // Ethernet
@@ -201,12 +201,12 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
       be64_t *p3 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 2);
       std::cout << "BufferedQueue new packet "  << std::hex << p3->raw_value() << std::endl;
 
-      EmitPacket(ctx, new_pkt, i);
+      EmitPacket(ctx, new_pkt, 1);
   }
 }
 
 /* from upstream */
-void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
+void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
   int cnt = batch->cnt();
 
   for (int i = 0; i < cnt; i++) {
@@ -279,10 +279,10 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
         }else if (code != 3 && (curr_ > (prior_+1)%data_size_ && curr_ <= initial_)) {
           /* Recv Data from Sender - case 2*/
-          SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr);
+          SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
         }else{
           /* Recv Data from Sender - case 3*/
-          SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr);
+          SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
         }
       }
     }
