@@ -254,7 +254,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
             uint8_t hexString = 0xff;
 
-            bess::utils::Copy(p3, reinterpret_cast<uint8_t *>(0xff), 2);
+            bess::utils::Copy(p3, reinterpret_cast<uint8_t *>(&hexString), 2);
 
             be64_t *p2 = new_pkt->head_data<be64_t *>();
 
