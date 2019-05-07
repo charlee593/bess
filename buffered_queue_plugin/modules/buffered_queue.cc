@@ -179,7 +179,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     uint8_t sn = (mdc_p1->raw_value() & 0xff00000000000000) >> 56;
     uint8_t dataSize = (mdc_p2->raw_value() & 0xff);
 
-    std::cout << "ProcessBatch batch size: " + std::to_string(cnt) + " pkt: " + std::to_string(i) << std::endl;
+    std::cout << "ProcessBatch batch size: " + cnt + " pkt: " + i << std::endl;
     std::cout << std::hex << addr << std::endl;
     std::cout << std::hex << static_cast<int>(mode) << std::endl;
     std::cout << std::hex << static_cast<int>(label) << std::endl;
