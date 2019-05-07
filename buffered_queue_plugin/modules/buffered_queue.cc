@@ -167,20 +167,32 @@ int BufferedQueue::Enqueue(bess::Packet *pkt) {
   return 1;
 }
 
-void BufferedQueue::SendReq() {
+void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange, 
+  uint8_t app_id, uint8_t data_id, uint8_t mode, uint8_t label, uint16_t addr) {
+
   bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(42 + 9);
   Ethernet *eth = new_pkt->head_data<Ethernet *>(); // Ethernet
   Ipv4 *ip = reinterpret_cast<Ipv4 *>(eth + 1); // IP
   int ip_bytes = ip->header_length << 2;
 
   if (new_pkt) {
-      be32_t *new_p = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
+      be64_t *new_p = new_pkt->head_data<be64_t *>
+      (sizeof(Ethernet) + ip_bytes + sizeof(Udp)); // First 8 bytes
 
-      uint32_t code = 0x022bc5;
+      uint64_t template = 0xffff & addr;
+      template = template | (0xff0000 & mode);
+      template = template | (0xff000000 & label);
+      template = template | (0xff00000000 & code);
+      template = template | (0xff0000000000 & app_id);
+      template = template | (0xff000000000000 & data_id);
+      template = template | (0xff00000000000000 & lrange);
+      bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&template), 16);
 
-      bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&code), 6);
+      new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 8);
+      bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&addr), 2);
 
-      be32_t *p4 = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
+
+      be64_t *p4 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
       std::cout << "BufferedQueue new packet "  << p4->raw_value() << std::endl;
 
       // EmitPacket(ctx, new_pkt, i);
@@ -275,7 +287,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
           //     // EmitPacket(ctx, new_pkt, i);
           // }
-          SendReq();
+          SendReq(code=0x02, lrange=prior_, rrange=curr_, app_id=app_id, data_id=data_id, mode=mode, label=label, addr=addr);
         }else{
           /* Recv Data from Sender - case 3*/
           bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(Ethernet) + ip_bytes + sizeof(Udp) +11);
