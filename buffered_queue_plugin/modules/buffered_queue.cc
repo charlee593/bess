@@ -167,6 +167,23 @@ int BufferedQueue::Enqueue(bess::Packet *pkt) {
   return 1;
 }
 
+void BufferedQueue::SendReq() {
+  bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 9);
+
+  if (new_pkt) {
+      be32_t *new_p = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
+
+      uint32_t code = 0x022bc5;
+
+      bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&code), 6);
+
+      be32_t *p4 = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+ 8);
+      std::cout << "BufferedQueue new packet "  << p4->raw_value() << std::endl;
+
+      // EmitPacket(ctx, new_pkt, i);
+  }
+}
+
 /* from upstream */
 void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
   int cnt = batch->cnt();
