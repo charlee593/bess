@@ -29,6 +29,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "buffered_queue.h"
+#include <iostream>
 
 #include <cstdlib>
 
@@ -252,7 +253,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
             char *p3 = new_pkt->buffer<char *>() + SNBUF_HEADROOM;
 
-            const char *hexString = "05";
+            const char *hexString = std::to_string(0x05);
 
             bess::utils::Copy(p3, hexString, 2);
 
