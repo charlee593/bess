@@ -239,7 +239,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
           int queued = Enqueue(pkt);
           std::cout << "ProcessBatch batch queued: " + std::to_string(queued)<< std::endl;
 
-        }else if (code != 3 && curr_ > (prior_+1)%data_size_  || curr_ <= initial_) {
+        }else if (code != 3 && (curr_ > (prior_+1)%data_size_ && curr_ <= initial_)) {
           /* Recv Data from Sender - case 2*/
           bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(Ethernet) + ip_bytes + sizeof(Udp) +11);
 
