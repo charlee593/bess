@@ -155,7 +155,7 @@ std::string BufferedQueue::GetDesc() const {
 
 int BufferedQueue::Enqueue(bess::Packet *pkt) {
   int queued =
-      llring_enqueue(queue_, pkt);
+      llring_enqueue(queue_, (void *)pkt);
   if (backpressure_ && llring_count(queue_) > high_water_) {
     SignalOverload();
   }
@@ -202,6 +202,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
     int queued = Enqueue(pkt);
     std::cout << "ProcessBatch batch queued: " + std::to_string(queued)<< std::endl;
+    std::cout << queued << std::endl;
 
     if(code == 1){
       /* Recv Request from Receiver */
