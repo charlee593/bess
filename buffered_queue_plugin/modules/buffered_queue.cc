@@ -202,10 +202,6 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << std::hex << std::to_string(sn) << std::endl;
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
-    int queued = Enqueue(pkt);
-    std::cout << "ProcessBatch batch queued: " + std::to_string(queued)<< std::endl;
-    std::cout << queued << std::endl;
-
     if (code == 1) {
       /* Recv Request from Receiver */
       data_requested_ = true;
@@ -223,188 +219,63 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
         data_size_ = data_size;
         curr_data_size_ = 1;
 
+        std::free(queue_);
+
         //Send INTL_SEQ to sender
       }
 
-      /* Recv Data from Sender - PTCH_DATAs*/
-      /* Recv Data from Sender - DATA_FNSD*/
+      if(!data_receiving_){
+        initial_ = sn;
+        prior_ = sn;
+        data_receiving_ = true;
+        data_size_ = data_size;
+        std::cout << "BufferedQueue initial"  + std::to_string(data_receiving_)<< std::endl;
+      } else{
+        /* Recv Data from Sender - case 1*/
+        if (code != 3 && curr_ == (prior_+1)%data_size_) {
+          prior_ = curr_;
+          curr_data_size_++;
 
-      /* Recv Data from Sender - case 1*/
-      /* Recv Data from Sender - case 2*/
-      /* Recv Data from Sender - case 3*/
+          int queued = Enqueue(pkt);
+          std::cout << "ProcessBatch batch queued: " + std::to_string(queued)<< std::endl;
+
+        }else if (code != 3 && curr_ > (prior_+1)%data_size_  || curr_ <= initial_) {
+          /* Recv Data from Sender - case 2*/
+          bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(Ethernet) + ip_bytes + sizeof(Udp) +11);
+
+          if (new_pkt) {
+              be32_t *new_p = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 8);
+
+              uint32_t code = 0x022bc5;
+
+              bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&code), 6);
+
+              be32_t *p4 = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+ 8);
+              std::cout << "BufferedQueue new packet "  << p4->raw_value() << std::endl;
+
+              // EmitPacket(ctx, new_pkt, i);
+          }
+
+        }else{
+          /* Recv Data from Sender - case 3*/
+          bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(Ethernet) + ip_bytes + sizeof(Udp) +11);
+
+          if (new_pkt) {
+              be32_t *new_p = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 8);
+
+              uint32_t code = 0x022bc5;
+
+              bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&code), 6);
+
+              be32_t *p4 = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+ 8);
+              std::cout << "BufferedQueue new packet "  << p4->raw_value() << std::endl;
+
+              // EmitPacket(ctx, new_pkt, i);
+          }
+        }
+      }
     }
-  
   }
-
-
-//     // Data pkts
-//     uint8_t mul_type = (p->raw_value() & 0xff);
-//     uint8_t sn = (p->raw_value() & 0xff00)  >> 8;
-//     uint8_t data_size = (p->raw_value() & 0xff0000)  >> 16;
-    
-//     uint16_t address = (p->raw_value() & 0x0000ffff);
-//     uint8_t appID = (p->raw_value() & 0xff00000000) >> 32;
-
-
-
-//     /* Recv Request from Receiver */
-//     if(data_size_ != 0 && data_size_ == curr_data_size_){
-//       data_ready_ = true;
-//       data_receiving_ = false;
-//       data_requested_ = true;
-//     }
-
-//     /* Recv Data from Sender - intial*/
-//     /* Recv Data from Sender - case 1*/
-//     /* Recv Data from Sender - case 2*/
-//     /* Recv Data from Sender - case 3*/
-//     /* Recv Data from Sender - DATA_FNSD*/
-//     /* Recv Data from Sender - PTCH_DATAs*/
-
-//   }
-
-
-
-
-//   for (int i = 0; i < cnt; i++) {
-
-//     bess::Packet *pkt = batch->pkts()[i];
-//     Ethernet *eth = pkt->head_data<Ethernet *>();
-//     Ipv4 *ip = reinterpret_cast<Ipv4 *>(eth + 1);
-
-//     int ip_bytes = ip->header_length << 2;
-// //        Udp *udp = reinterpret_cast<Udp *>(reinterpret_cast<uint8_t *>(ip) + ip_bytes);
-//     // Access UDP payload (i.e., mDC data)
-//     be64_t *p = pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+8);
-
-
-//       std::cout << "SWITCH";
-//        std::cout << std::hex << static_cast<int>(p->value()) << std::endl;
-//        std::cout << std::hex << static_cast<int>(p->raw_value()) << std::endl;
-//        std::cout << sizeof(Ethernet) + ip_bytes + sizeof(Udp) << std::endl;
-
-
-//     // Data pkts
-//     uint8_t mul_type = (p->raw_value() & 0xff);
-//     uint8_t sn = (p->raw_value() & 0xff00)  >> 8;
-//     uint8_t data_size = (p->raw_value() & 0xff0000)  >> 16;
-    
-//     uint16_t address = (p->raw_value() & 0x0000ffff);
-//     uint8_t appID = (p->raw_value() & 0xff00000000) >> 32;
-
-
-
-//     std::cout << "BufferedQueue address :::::" << std::endl;
-//     std::cout << std::hex << static_cast<int>(address) << std::endl;
-//     std::cout << "BufferedQueue appID :::::" << std::endl;
-//     std::cout << std::hex << static_cast<int>(appID) << std::endl;
-//     std::cout << "BufferedQueue sn :::::" << std::endl;
-//     std::cout << std::hex << static_cast<int>(sn) << std::endl;
-//     std::cout << "BufferedQueue type :::::" << std::endl;
-//     std::cout << std::hex << static_cast<int>(mul_type) << std::endl;
-//     std::cout << "BufferedQueue type: " + std::to_string(mul_type)<< std::endl;
-//     std::cout << "BufferedQueue size: " + std::to_string(data_size)<< std::endl;
-//     std::cout << std::hex << static_cast<int>(data_size) << std::endl;
-//     std::cout << std::hex << static_cast<int>(data_size+1) << std::endl;
-
-
-//     std::cout << "BufferedQueue pkt size: " + std::to_string(pkt->total_len())<< std::endl;
-//     std::cout << "BufferedQueue pkt header size: " + std::to_string(sizeof(Ethernet) + ip_bytes + sizeof(Udp))<< std::endl;
-
-
-//     if(mul_type == 1 && !data_requested_){
-//       data_requested_ = true;
-//       return;
-//     }
-
-
-//     curr_ = sn;
-//     if(!data_receiving_){
-//       initial_ = sn;
-//       prior_ = sn;
-//       data_receiving_ = true;
-//       data_size_ = data_size;
-//       std::cout << "BufferedQueue initial"  + std::to_string(data_receiving_)<< std::endl;
-//     }
-//     else{
-//       if(curr_ == (prior_+1)%data_size_ ){
-//         prior_ = curr_;
-//         curr_data_size_++;
-
-//         if(curr_data_size_ == data_size_){
-//             data_ready_ = true;
-//         }
-
-//       }
-//       else if(curr_ > (prior_+1)%data_size_  || curr_ <= initial_){
-//         std::cout << "Case 2" << std::endl;
-
-//         bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(Ethernet) + ip_bytes + sizeof(Udp) +11);
-
-//         if (new_pkt) {
-//             be32_t *new_p = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 8);
-
-//             uint32_t code = 0x022bc5;
-
-//             bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&code), 6);
-
-//             be32_t *p4 = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+ 8);
-//             std::cout << "BufferedQueue new packet "  << p4->raw_value() << std::endl;
-
-//             // EmitPacket(ctx, new_pkt, i);
-//         }
-
-//         return;
-
-//       }
-//       else{
-//         std::cout << "Case 3" << std::endl;
-
-//         bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(Ethernet) + ip_bytes + sizeof(Udp) +11);
-
-//         if (new_pkt) {
-//             be32_t *new_p = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 8);
-
-//             uint32_t code = 0x022bc5;
-
-//             bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&code), 6);
-
-//             be32_t *p4 = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+ 8);
-//             std::cout << "BufferedQueue new packet "  << p4->raw_value() << std::endl;
-
-//             // EmitPacket(ctx, new_pkt, i);
-//         }
-//         return;
-
-//       }
-//     }
-
-//     std::cout << "BufferedQueue initial_: " + std::to_string(initial_)<< std::endl;
-//     std::cout << "BufferedQueue prior_: " + std::to_string(prior_)<< std::endl;
-//     std::cout << "BufferedQueue curr_: " + std::to_string(curr_)<< std::endl;
-
-//   }
-
-//   int queued =
-//       llring_mp_enqueue_burst(queue_, (void **)batch->pkts(), batch->cnt());
-
-//   std::cout << "Queued value in llring_mp_enqueue_burst: " + std::to_string(queued) << std::endl;
-
-//   std::cout << "Queued value in llring_count: " + std::to_string(llring_count(queue_)) << std::endl;
-
-//   if (backpressure_ && llring_count(queue_) > high_water_) {
-//     SignalOverload();
-//   }
-
-//   stats_.enqueued += queued; // Total enqueued stat
-
-//   // Drop if batch size is larger than queued packet in this round
-//   if (queued < batch->cnt()) {
-//     int to_drop = batch->cnt() - queued;
-//     stats_.dropped += to_drop;
-//     bess::Packet::Free(batch->pkts() + queued, to_drop);
-//   }
-
 }
 
 /* to downstream */
