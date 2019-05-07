@@ -252,7 +252,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
             uint8_t *p3 = new_pkt->buffer<uint8_t *>() + SNBUF_HEADROOM;
 
-            uint8_t hexString = 0x05;
+            uint8_t *hexString = 0x05;
 
             bess::utils::Copy(p3, hexString, 2);
 
