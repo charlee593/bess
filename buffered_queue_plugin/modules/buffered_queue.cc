@@ -180,7 +180,7 @@ void BufferedQueue::SendReq() {
 
       bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&code), 6);
 
-      be32_t *p4 = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+ 8);
+      be32_t *p4 = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
       std::cout << "BufferedQueue new packet "  << p4->raw_value() << std::endl;
 
       // EmitPacket(ctx, new_pkt, i);
