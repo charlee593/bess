@@ -154,7 +154,7 @@ std::string BufferedQueue::GetDesc() const {
   return bess::utils::Format("%u/%u", llring_count(ring), ring->common.slots);
 }
 
-void Queue::Enqueue(bess::Packet *pkt) {
+int Queue::Enqueue(bess::Packet *pkt) {
   int queued =
       llring_enqueue(queue_, pkt);
   if (backpressure_ && llring_count(queue_) > high_water_) {
@@ -162,6 +162,8 @@ void Queue::Enqueue(bess::Packet *pkt) {
   }
 
   stats_.enqueued += queued;
+
+  return queued;
 }
 
 /* from upstream */
