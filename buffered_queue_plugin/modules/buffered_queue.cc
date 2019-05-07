@@ -234,25 +234,20 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
       else if(curr_ > (prior_+1)%data_size_  || curr_ <= initial_){
         std::cout << "Case 2" << std::endl;
 
-        bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 9);
+        bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(Ethernet) + ip_bytes + sizeof(Udp) +11);
 
         if (new_pkt) {
-            be64_t *new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 8);
+            be32_t *new_p = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 8);
 
-            uint8_t code = 0x02;
+            uint32_t code = 0x022bc5;
 
-            bess::utils::Copy(new_p, reinterpret_cast<uint8_t *>(&code), 2);
+            bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&code), 2);
 
-            be64_t *p4 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+ 8);
+            be32_t *p4 = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)+ 8);
             std::cout << "BufferedQueue new packet "  + std::to_string(p4->raw_value())<< std::endl;
-            std::cout << p4->raw_value() << std::endl;
-            std::cout << std::hex << p4->raw_value() << std::endl;
-            std::cout << std::hex << static_cast<int>(code) << std::endl;
 
             // EmitPacket(ctx, new_pkt, i);
         }
-
-
 
         return;
 
