@@ -74,14 +74,6 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
                     client.close()
                     break
 
-    except KeyboardInterrupt as k:
-        print("Shutting down.")
-        client.close()
-        break
-
-    except IOError as e:  # and here it is handeled
-        pass
-
     while True:
         try:
             unlabeled_data_pkt[MDCData].sn = sending_pk_sn
