@@ -178,26 +178,19 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
   if (new_pkt) {
       be64_t *new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)); // First 8 bytes
 
-      uint64_t mDC = 0x000000000000ffff & addr;
-      std::cout << "BufferedQueue new packet addr"  << std::hex <<  mDC << std::endl;
+      uint64_t mDC = 0xffff & addr;
       mDC = (mDC << 8) | mode;
-      std::cout << "BufferedQueue new packet mode"  << std::hex <<  mDC << std::endl;
       mDC = (mDC << 8) | label;
-      std::cout << "BufferedQueue new packet label"  << std::hex <<  mDC << std::endl;
       mDC = (mDC << 8) | code;
-      std::cout << "BufferedQueue new packet code"  << std::hex <<  mDC << std::endl;
       mDC = (mDC << 8) | app_id;
-      std::cout << "BufferedQueue new packet app_id"  << std::hex <<  mDC << std::endl;
       mDC = (mDC << 8) | data_id;
-      std::cout << "BufferedQueue new packet data_id"  << std::hex <<  mDC << std::endl;
       mDC = (mDC << 8) | lrange;
-      std::cout << "BufferedQueue new packet lrange"  << std::hex <<  mDC << std::endl;
 
 
       std::cout << "BufferedQueue new packet mDC"  << std::hex <<  mDC << std::endl;
       bess::utils::Copy(new_p, reinterpret_cast<uint64_t *>(&mDC), 16);
 
-      new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 8);
+      new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 64);
       bess::utils::Copy(new_p, reinterpret_cast<uint64_t *>(&rrange), 2);
 
 
