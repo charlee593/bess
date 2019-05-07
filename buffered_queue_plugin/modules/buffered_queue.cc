@@ -184,6 +184,7 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
       (0xff00000000000000 & lrange);
       std::cout << "BufferedQueue new packet mDC"  << std::hex <<  mDC << std::endl;
       std::cout << "BufferedQueue new packet mode"  << std::hex <<  mode << std::endl;
+      std::cout << "BufferedQueue new packet mode"  << std::hex <<  mode << std::endl;
       bess::utils::Copy(new_p, reinterpret_cast<uint64_t *>(&mDC), 16);
 
       new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 8);
@@ -273,10 +274,10 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
         }else if (code != 3 && (curr_ > (prior_+1)%data_size_ && curr_ <= initial_)) {
           /* Recv Data from Sender - case 2*/
-          SendReq(0x02, prior_, curr_, app_id, data_id, mode, label, addr);
+          SendReq(0x02, prior_, curr_, app_id, data_id, &mode, label, addr);
         }else{
           /* Recv Data from Sender - case 3*/
-          SendReq(0x02, prior_, curr_, app_id, data_id, mode, label, addr);
+          SendReq(0x02, prior_, curr_, app_id, data_id, &mode, label, addr);
         }
       }
     }
