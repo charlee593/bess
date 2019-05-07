@@ -201,7 +201,7 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
       be64_t *p3 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 2);
       std::cout << "BufferedQueue new packet "  << std::hex << p3->raw_value() << std::endl;
 
-      // EmitPacket(ctx, new_pkt, i);
+      EmitPacket(ctx, new_pkt, i);
   }
 }
 
