@@ -178,7 +178,7 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
   if (new_pkt) {
       be64_t *new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)); // First 8 bytes
 
-      uint64_t mDC = (0xffff & addr) | (mode << 2) | 
+      uint64_t mDC = (0xffff & addr) | (mode << 4) | 
       (0x00000000ff000000 & label) | (0x000000ff & code) | 
       (0x0000ff0000000000 & app_id)| (0x00ff000000000000 & data_id) | 
       (0xff00000000000000 & lrange);
