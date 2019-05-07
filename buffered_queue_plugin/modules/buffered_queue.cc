@@ -188,6 +188,8 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
     std::cout << std::hex << dataID << std::endl;
     std::cout << std::hex << sn << std::endl;
     std::cout << std::hex << dataSize << std::endl;
+  
+  }
 
 
 //     // Data pkts
