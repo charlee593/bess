@@ -169,6 +169,9 @@ int BufferedQueue::Enqueue(bess::Packet *pkt) {
 
 void BufferedQueue::SendReq() {
   bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 9);
+  Ethernet *eth = new_pkt->head_data<Ethernet *>(); // Ethernet
+  Ipv4 *ip = reinterpret_cast<Ipv4 *>(eth + 1); // IP
+  int ip_bytes = ip->header_length << 2;
 
   if (new_pkt) {
       be32_t *new_p = new_pkt->head_data<be32_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
