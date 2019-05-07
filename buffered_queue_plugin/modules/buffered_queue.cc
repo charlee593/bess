@@ -240,12 +240,12 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << std::to_string(sn) << std::endl;
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
-    SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
+    // SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
 
     bess::Packet *new_pkt = bess::Packet::copy(pkt);
     if (new_pkt) {
 
-        EmitPacket(ctx, new_pkt, 0);
+        EmitPacket(ctx, new_pkt, 1);
     }
 
 
