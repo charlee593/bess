@@ -120,6 +120,9 @@ class BufferedQueue : public Module {
   // Enqueue a packet
   int Enqueue(bess::Packet *pkt);
 
+  // Send a request packet
+  int SendReq();
+
 
   bool data_ready_;
   bool data_receiving_;
