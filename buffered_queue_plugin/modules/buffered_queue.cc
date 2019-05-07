@@ -96,7 +96,6 @@ int BufferedQueue::Resize(int slots) {
 }
 
 CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQueueArg &arg) {
-  sendto_ = false;
   data_ready_ = false;
   data_receiving_ = false;
   data_size_ = 0;

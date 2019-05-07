@@ -117,6 +117,8 @@ class BufferedQueue : public Module {
   // Low water occupancy
   uint64_t low_water_;
 
+  int Enqueue(bess::Packet *pkt);
+
 
   bool data_ready_;
   bool data_receiving_;
