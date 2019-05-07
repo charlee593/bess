@@ -189,7 +189,7 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
       bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&mDC), 16);
 
       new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 8);
-      bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&addr), 2);
+      bess::utils::Copy(new_p, reinterpret_cast<uint32_t *>(&rrange), 2);
 
 
       be64_t *p4 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
@@ -287,7 +287,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
 
           //     // EmitPacket(ctx, new_pkt, i);
           // }
-          SendReq(code=0x02, lrange=prior_, rrange=curr_, app_id=app_id, data_id=data_id, mode=mode, label=label, addr=addr);
+          SendReq(0x02, prior_, curr_, app_id, data_id, mode, label, addr);
         }else{
           /* Recv Data from Sender - case 3*/
           bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(Ethernet) + ip_bytes + sizeof(Udp) +11);
