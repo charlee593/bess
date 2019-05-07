@@ -250,7 +250,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
             std::cout << p->raw_value() << std::endl;
             std::cout << std::hex << p->raw_value() << std::endl;
 
-            char *p3 = new_pkt->buffer<char *>() + SNBUF_HEADROOM + sizeof(Ethernet) + ip_bytes + sizeof(Udp);
+            char *p3 = new_pkt->buffer<char *>() + sizeof(Ethernet) + ip_bytes + sizeof(Udp);
 
             const char *hexString = "05";
 
