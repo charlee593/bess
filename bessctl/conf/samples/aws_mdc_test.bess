@@ -50,7 +50,12 @@ class MDCData(scapy.Packet):
     name = 'MulticastDataCenterData '
     fields_desc=[scapy.ShortField('addr', 0),
                  scapy.XByteField('mode', 0),
-                 scapy.XByteField('label' , 0)]
+                 scapy.XByteField('label' , 0),
+                 scapy.ByteEnumField("code", 5, {1:"REQUEST",2:"PTCH_REQ",3:"DATA_FNSD",4:"PTCH_DATA", 5:"DATA"}),
+                 scapy.XByteField('appID' , 2),
+                 scapy.XByteField('dataID' , 0),
+                 scapy.XByteField('sn' , 0),
+                 scapy.XByteField('dataSize' , 99)]
 
 
 # Data pkt template
@@ -121,9 +126,9 @@ bess.add_tc('tgen2', policy='rate_limit', resource='packet', limit={'packet': 1}
 
 split::RandomSplit(gates=range(2))
 p = UnixSocketPort(name='p', path=LOCAL_SOCKET_PATH)
-PortInc(port='p') -> bq1::BufferedQueue()
-bq1  -> PortOut(port='p')
-# Source() -> Rewrite(templates=[unlabeled_data_pkt_bytes]) -> PortOut(port='p')
+# PortInc(port='p') -> bq1::BufferedQueue()
+# bq1  -> PortOut(port='p')
+Source() -> Rewrite(templates=[unlabeled_data_pkt_bytes]) -> bq1::BufferedQueue() -> PortOut(port='p')
 
 
 
