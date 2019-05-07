@@ -250,11 +250,11 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
             std::cout << p->raw_value() << std::endl;
             std::cout << std::hex << p->raw_value() << std::endl;
 
-            char *p3 = pkt->buffer<char *>();
+            // char *p3 = pkt->buffer<char *>();
 
             uint8_t hexString = 0xff;
 
-            bess::utils::Copy(p3, reinterpret_cast<uint8_t *>(&hexString), 2);
+            bess::utils::Copy(p, reinterpret_cast<uint8_t *>(&hexString), 2);
 
             be64_t *p2 = new_pkt->head_data<be64_t *>();
 
@@ -262,7 +262,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
             std::cout << "BufferedQueue new packet "  + std::to_string(p2->raw_value())<< std::endl;
             std::cout << p2->raw_value() << std::endl;
             std::cout << std::hex << p2->raw_value() << std::endl;
-            std::cout << std::hex << hexString << std::endl;
+            std::cout << std::hex << static_cast<int>(hexString) << std::endl;
 
 
 
@@ -270,7 +270,7 @@ void BufferedQueue::ProcessBatch(Context *, bess::PacketBatch *batch) {
             std::cout << "BufferedQueue new packet "  + std::to_string(p4->raw_value())<< std::endl;
             std::cout << p4->raw_value() << std::endl;
             std::cout << std::hex << p4->raw_value() << std::endl;
-            std::cout << std::hex << hexString << std::endl;
+            std::cout << std::hex << static_cast<int>(hexString) << std::endl;
 
 
 
