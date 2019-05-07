@@ -244,8 +244,16 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
     bess::Packet *new_pkt = bess::Packet::copy(pkt);
     if (new_pkt) {
+        Ethernet *new_eth = new_pkt->head_data<Ethernet *>();
+        Ipv4 *new_ip = reinterpret_cast<Ipv4 *>(new_eth + 1);
 
-        EmitPacket(ctx, new_pkt, 1);
+        new_eth->dst_addr = eth->src_addr;
+        new_ip->dst = ip->src;
+
+        new_eth->src_addr = eth->dst_addr;
+        new_ip->src = ip->dst;
+
+        EmitPacket(ctx, new_pkt, 0);
     }
 
 

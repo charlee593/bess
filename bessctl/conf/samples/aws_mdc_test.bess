@@ -123,7 +123,7 @@ split::RandomSplit(gates=range(2))
 p = UnixSocketPort(name='p', path=LOCAL_SOCKET_PATH)
 PortInc(port='p') -> bq1::BufferedQueue()
 bq1  -> PortOut(port='p')
-# split:1 -> Rewrite(templates=[unlabeled_data_pkt_bytes]) -> PortOut(port='p')
+# bq1 -> Rewrite(templates=[unlabeled_data_pkt_bytes]) -> PortOut(port='p')
 
 
 
