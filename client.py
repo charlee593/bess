@@ -69,10 +69,17 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
                     client.send(bytes(unlabeled_data_pkt))
                     sending_pk_sn += 1
 
-                except KeyboardInterrupt as k:
-                    print("Shutting down.")
-                    client.close()
-                    break
+            except KeyboardInterrupt as k:
+                print("Shutting down.")
+                client.close()
+                break
+    except KeyboardInterrupt as k:
+        print("Shutting down.")
+        client.close()
+        break
+
+    except IOError as e:  # and here it is handeled
+        pass
 
     while True:
         try:
