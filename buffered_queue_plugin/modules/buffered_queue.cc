@@ -176,8 +176,6 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
   int ip_bytes = ip->header_length << 2;
 
   if (new_pkt) {
-      be64_t *new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp)); // First 8 bytes
-
       uint64_t mDC = 0xffff & addr;
       mDC = (mDC << 8) | mode;
       mDC = (mDC << 8) | label;
@@ -186,12 +184,16 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
       mDC = (mDC << 8) | data_id;
       mDC = (mDC << 8) | lrange;
 
+      be16_t *new_p2 = new_pkt->head_data<be16_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
+      bess::utils::Copy(new_p2, &rrange, 2);
+
+      be64_t *new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 1); // First 8 bytes
+
 
       std::cout << "BufferedQueue new packet mDC"  << std::hex <<  mDC << std::endl;
       bess::utils::Copy(new_p, reinterpret_cast<uint64_t *>(&mDC), 16);
 
-      be16_t *new_p2 = new_pkt->head_data<be16_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 1);
-      bess::utils::Copy(new_p2, &rrange, 2);
+
 
 
       be64_t *p4 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
