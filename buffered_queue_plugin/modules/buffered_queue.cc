@@ -180,7 +180,7 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
 
       uint64_t mDC = 0x000000000000ffff & addr;
       std::cout << "BufferedQueue new packet addr"  << std::hex <<  mDC << std::endl;
-      mDC = (mDC << 16) | mode;
+      mDC = (mDC << 8) | mode;
       std::cout << "BufferedQueue new packet mode"  << std::hex <<  mDC << std::endl;
       mDC = (mDC << 8) | label;
       std::cout << "BufferedQueue new packet label"  << std::hex <<  mDC << std::endl;
