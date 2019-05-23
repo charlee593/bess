@@ -46,11 +46,11 @@ struct MDCData
     float salary;
 };
 
-typedef struct _recverState {/* the state variable related to the receiver machine */
+struct RecverState {/* the state variable related to the receiver machine */
 
 	char bcd_filename[FILENAME_LEN];
 
-} RecverState;
+} ;
 
 
 const Commands BufferedQueue::cmds = {
