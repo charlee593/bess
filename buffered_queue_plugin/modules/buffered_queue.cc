@@ -212,7 +212,7 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
   int cnt = batch->cnt();
 
   bess::utils::CuckooMap<uint32_t, uint16_t> cuckoo;
-  cuckoo.Insert(1, 99)
+  cuckoo.Insert(1, 99);
   std::pair<uint32_t, uint64_t>* result = cuckoo.Find(1)
   std::cout << "CuckooMap: " + std::to_string(result->second) << std::endl;
 
