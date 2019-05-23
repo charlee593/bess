@@ -40,7 +40,7 @@
 #include "utils/ip.h"
 #include "utils/udp.h"
 #include "utils/exact_match_table.h"
-#include "cuckoo_map.h"
+#include "utils/cuckoo_map.h"
 
 #include "pb/buffered_queue_msg.pb.h"
 
