@@ -216,7 +216,7 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
   auto result = cuckoo.Find(1);
   std::cout << "CuckooMap: " + std::to_string(result->second) << std::endl;
 
-  for (int i = 0; i < cnt; i++) {
+  // for (int i = 0; i < cnt; i++) {
     bess::Packet *pkt = batch->pkts()[i];
 
     Ethernet *eth = pkt->head_data<Ethernet *>(); // Ethernet
