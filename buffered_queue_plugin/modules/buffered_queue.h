@@ -40,6 +40,7 @@
 #include "utils/ip.h"
 #include "utils/udp.h"
 #include "utils/exact_match_table.h"
+#include "cuckoo_map.h"
 
 #include "pb/buffered_queue_msg.pb.h"
 
@@ -121,7 +122,7 @@ class BufferedQueue : public Module {
   int Enqueue(bess::Packet *pkt);
 
   // Send a request packet
-  void SendReq(uint8_t code, uint8_t lrange, uint8_t rrange, 
+  void SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
   uint8_t app_id, uint8_t data_id, uint8_t mode, uint8_t label, uint16_t addr, Context *ctx);
 
 

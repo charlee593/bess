@@ -167,7 +167,7 @@ int BufferedQueue::Enqueue(bess::Packet *pkt) {
   return 1;
 }
 
-void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange, 
+void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
   uint8_t app_id, uint8_t data_id, uint8_t mode, uint8_t label, uint16_t addr, Context *ctx) {
 
   bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(42 + 9);
@@ -209,6 +209,11 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
 void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
   int cnt = batch->cnt();
 
+  CuckooMap<uint32_t, uint16_t> cuckoo;
+  cuckoo.Insert(1, 99)
+  std::pair<uint32_t, uint64_t>* result = cuckoo.Find(1)
+  std::cout << "CuckooMap: " + std::to_string(result->second) << std::endl;
+
   for (int i = 0; i < cnt; i++) {
     bess::Packet *pkt = batch->pkts()[i];
 
@@ -217,7 +222,7 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     int ip_bytes = ip->header_length << 2;
 
     // Access UDP payload (i.e., mDC data)
-    uint8_t offset = sizeof(Ethernet) + ip_bytes + sizeof(Udp); 
+    uint8_t offset = sizeof(Ethernet) + ip_bytes + sizeof(Udp);
     be64_t *mdc_p1 = pkt->head_data<be64_t *>(offset); // first 8 bytes
     be64_t *mdc_p2 = pkt->head_data<be64_t *>(offset + 8); // second 8 bytes
 
@@ -267,7 +272,7 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
       }
     } else {
       curr_ = sn;
-      
+
       /* Recv Data from Sender - intial*/
       if (code == 5 && !data_receiving_) {
         data_receiving_ = true;
