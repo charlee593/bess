@@ -123,18 +123,20 @@ tgen_pkt_rate = 0.05 * 1e9 / (8 * (data_pkt_size + 24))
 bess.add_tc('tgen', policy='rate_limit', resource='packet', limit={'packet': 10})
 bess.add_tc('tgen1', policy='rate_limit', resource='packet', limit={'packet': 1})
 bess.add_tc('tgen2', policy='rate_limit', resource='packet', limit={'packet': 1})
+tgen_src::Source()
+tgen_src.attach_task('tgen')
 
 split::RandomSplit(gates=range(2))
 p = UnixSocketPort(name='p', path=LOCAL_SOCKET_PATH)
 # PortInc(port='p') -> bq1::BufferedQueue()
 # bq1  -> PortOut(port='p')
-Source() -> Rewrite(templates=[unlabeled_data_pkt_bytes]) -> bq1::BufferedQueue() -> PortOut(port='p')
+tgen_src -> bq1::BufferedQueue() -> PortOut(port='p')
 
 
 
 # Creates a source, and limits its pkt rate
-tgen_src::Source()
-tgen_src.attach_task('tgen')
+# tgen_src::Source()
+# tgen_src.attach_task('tgen')
 # bq1.attach_task('tgen1')
 # bq2.attach_task('tgen2')
 
