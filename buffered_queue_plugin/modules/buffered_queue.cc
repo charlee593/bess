@@ -251,7 +251,7 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
 
-    bess::utils::CuckooMap<uint8_t, RecverState> cuckoo2;
+    bess::utils::CuckooMap<uint8_t, RecverState> cuckoo;
     cuckoo.Insert(app_id, "Hello");
     auto result = cuckoo.Find(1);
     std::cout << "CuckooMap: " + std::to_string(result->second) << std::endl;
