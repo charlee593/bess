@@ -216,103 +216,103 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
   auto result = cuckoo.Find(1);
   std::cout << "CuckooMap: " + std::to_string(result->second) << std::endl;
 
-  // for (int i = 0; i < cnt; i++) {
-  //   bess::Packet *pkt = batch->pkts()[i];
-  //
-  //   Ethernet *eth = pkt->head_data<Ethernet *>(); // Ethernet
-  //   Ipv4 *ip = reinterpret_cast<Ipv4 *>(eth + 1); // IP
-  //   int ip_bytes = ip->header_length << 2;
-  //
-  //   // Access UDP payload (i.e., mDC data)
-  //   uint8_t offset = sizeof(Ethernet) + ip_bytes + sizeof(Udp);
-  //   be64_t *mdc_p1 = pkt->head_data<be64_t *>(offset); // first 8 bytes
-  //   be64_t *mdc_p2 = pkt->head_data<be64_t *>(offset + 8); // second 8 bytes
-  //
-  //   uint16_t addr = (mdc_p1->raw_value() & 0xffff);
-  //   uint8_t mode = (mdc_p1->raw_value() & 0xff0000) >> 16;
-  //   uint8_t label = (mdc_p1->raw_value() & 0xff000000) >> 24;
-  //   uint8_t code = (mdc_p1->raw_value() & 0xff00000000) >> 32;
-  //   uint8_t app_id = (mdc_p1->raw_value() & 0xff0000000000) >> 40;
-  //   uint8_t data_id = (mdc_p1->raw_value() & 0xff000000000000) >> 48;
-  //   uint8_t sn = (mdc_p1->raw_value() & 0xff00000000000000) >> 56;
-  //   uint8_t data_size = (mdc_p2->raw_value() & 0xff);
-  //
-  //   std::cout << "ProcessBatch batch size: " + std::to_string(cnt) + " pkt: " + std::to_string(i) << std::endl;
-  //   std::cout << std::hex << addr << std::endl;
-  //   std::cout << std::hex << static_cast<int>(mode) << std::endl;
-  //   std::cout << std::hex << static_cast<int>(label) << std::endl;
-  //   std::cout << std::hex << static_cast<int>(code) << std::endl;
-  //   std::cout << std::hex << static_cast<int>(app_id) << std::endl;
-  //   std::cout << std::hex << static_cast<int>(data_id) << std::endl;
-  //   std::cout << std::hex << std::to_string(sn) << std::endl;
-  //   std::cout << std::hex << std::to_string(data_size) << std::endl;
-  //
-  //   // SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
-  //   // RunNextModule(ctx, batch);
-  //   EmitPacket(ctx, pkt, 0);
-  //
-  //   // bess::Packet *new_pkt = bess::Packet::copy(pkt);
-  //   // if (new_pkt) {
-  //   //     Ethernet *new_eth = new_pkt->head_data<Ethernet *>();
-  //   //     Ipv4 *new_ip = reinterpret_cast<Ipv4 *>(new_eth + 1);
-  //
-  //   //     new_eth->dst_addr = eth->src_addr;
-  //   //     new_ip->dst = ip->src;
-  //
-  //   //     new_eth->src_addr = eth->dst_addr;
-  //   //     new_ip->src = ip->dst;
-  //
-  //   //     EmitPacket(ctx, new_pkt, 0);
-  //   // }
-  //
-  //
-  //   if (code == 1) {
-  //     /* Recv Request from Receiver */
-  //     data_requested_ = true;
-  //     if(curr_data_size_ == 0){
-  //       //Send request to sender
-  //     }
-  //   } else {
-  //     curr_ = sn;
-  //
-  //     /* Recv Data from Sender - intial*/
-  //     if (code == 5 && !data_receiving_) {
-  //       data_receiving_ = true;
-  //       prior_ = curr_;
-  //       initial_ = curr_;
-  //       data_size_ = data_size;
-  //       curr_data_size_ = 1;
-  //
-  //       std::free(queue_);
-  //
-  //       //Send INTL_SEQ to sender
-  //     }
-  //
-  //     if(!data_receiving_){
-  //       initial_ = sn;
-  //       prior_ = sn;
-  //       data_receiving_ = true;
-  //       data_size_ = data_size;
-  //       std::cout << "BufferedQueue initial"  + std::to_string(data_receiving_)<< std::endl;
-  //     } else{
-  //       /* Recv Data from Sender - case 1*/
-  //       if (code != 3 && curr_ == (prior_+1)%data_size_) {
-  //         prior_ = curr_;
-  //         curr_data_size_++;
-  //
-  //         int queued = Enqueue(pkt);
-  //         std::cout << "ProcessBatch batch queued: " + std::to_string(queued)<< std::endl;
-  //
-  //       }else if (code != 3 && (curr_ > (prior_+1)%data_size_ && curr_ <= initial_)) {
-  //         /* Recv Data from Sender - case 2*/
-  //         SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
-  //       }else{
-  //         /* Recv Data from Sender - case 3*/
-  //         SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
-  //       }
-  //     }
-  //   }
-  // }
+  for (int i = 0; i < cnt; i++) {
+    // bess::Packet *pkt = batch->pkts()[i];
+    //
+    // Ethernet *eth = pkt->head_data<Ethernet *>(); // Ethernet
+    // Ipv4 *ip = reinterpret_cast<Ipv4 *>(eth + 1); // IP
+    // int ip_bytes = ip->header_length << 2;
+    //
+    // // Access UDP payload (i.e., mDC data)
+    // uint8_t offset = sizeof(Ethernet) + ip_bytes + sizeof(Udp);
+    // be64_t *mdc_p1 = pkt->head_data<be64_t *>(offset); // first 8 bytes
+    // be64_t *mdc_p2 = pkt->head_data<be64_t *>(offset + 8); // second 8 bytes
+    //
+    // uint16_t addr = (mdc_p1->raw_value() & 0xffff);
+    // uint8_t mode = (mdc_p1->raw_value() & 0xff0000) >> 16;
+    // uint8_t label = (mdc_p1->raw_value() & 0xff000000) >> 24;
+    // uint8_t code = (mdc_p1->raw_value() & 0xff00000000) >> 32;
+    // uint8_t app_id = (mdc_p1->raw_value() & 0xff0000000000) >> 40;
+    // uint8_t data_id = (mdc_p1->raw_value() & 0xff000000000000) >> 48;
+    // uint8_t sn = (mdc_p1->raw_value() & 0xff00000000000000) >> 56;
+    // uint8_t data_size = (mdc_p2->raw_value() & 0xff);
+    //
+    // std::cout << "ProcessBatch batch size: " + std::to_string(cnt) + " pkt: " + std::to_string(i) << std::endl;
+    // std::cout << std::hex << addr << std::endl;
+    // std::cout << std::hex << static_cast<int>(mode) << std::endl;
+    // std::cout << std::hex << static_cast<int>(label) << std::endl;
+    // std::cout << std::hex << static_cast<int>(code) << std::endl;
+    // std::cout << std::hex << static_cast<int>(app_id) << std::endl;
+    // std::cout << std::hex << static_cast<int>(data_id) << std::endl;
+    // std::cout << std::hex << std::to_string(sn) << std::endl;
+    // std::cout << std::hex << std::to_string(data_size) << std::endl;
+    //
+    // // SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
+    // // RunNextModule(ctx, batch);
+    // EmitPacket(ctx, pkt, 0);
+    //
+    // // bess::Packet *new_pkt = bess::Packet::copy(pkt);
+    // // if (new_pkt) {
+    // //     Ethernet *new_eth = new_pkt->head_data<Ethernet *>();
+    // //     Ipv4 *new_ip = reinterpret_cast<Ipv4 *>(new_eth + 1);
+    //
+    // //     new_eth->dst_addr = eth->src_addr;
+    // //     new_ip->dst = ip->src;
+    //
+    // //     new_eth->src_addr = eth->dst_addr;
+    // //     new_ip->src = ip->dst;
+    //
+    // //     EmitPacket(ctx, new_pkt, 0);
+    // // }
+    //
+    //
+    // if (code == 1) {
+    //   /* Recv Request from Receiver */
+    //   data_requested_ = true;
+    //   if(curr_data_size_ == 0){
+    //     //Send request to sender
+    //   }
+    // } else {
+    //   curr_ = sn;
+    //
+    //   /* Recv Data from Sender - intial*/
+    //   if (code == 5 && !data_receiving_) {
+    //     data_receiving_ = true;
+    //     prior_ = curr_;
+    //     initial_ = curr_;
+    //     data_size_ = data_size;
+    //     curr_data_size_ = 1;
+    //
+    //     std::free(queue_);
+    //
+    //     //Send INTL_SEQ to sender
+    //   }
+    //
+    //   if(!data_receiving_){
+    //     initial_ = sn;
+    //     prior_ = sn;
+    //     data_receiving_ = true;
+    //     data_size_ = data_size;
+    //     std::cout << "BufferedQueue initial"  + std::to_string(data_receiving_)<< std::endl;
+    //   } else{
+    //     /* Recv Data from Sender - case 1*/
+    //     if (code != 3 && curr_ == (prior_+1)%data_size_) {
+    //       prior_ = curr_;
+    //       curr_data_size_++;
+    //
+    //       int queued = Enqueue(pkt);
+    //       std::cout << "ProcessBatch batch queued: " + std::to_string(queued)<< std::endl;
+    //
+    //     }else if (code != 3 && (curr_ > (prior_+1)%data_size_ && curr_ <= initial_)) {
+    //       /* Recv Data from Sender - case 2*/
+    //       SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
+    //     }else{
+    //       /* Recv Data from Sender - case 3*/
+    //       SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
+    //     }
+    //   }
+    // }
+  }
 }
 
 /* to downstream */
