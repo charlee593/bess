@@ -30,9 +30,11 @@
 
 #include "buffered_queue.h"
 
+
 #include <cstdlib>
 
 #include "../utils/format.h"
+#include "../utils/cuckoo_map.h"
 
 #define DEFAULT_BUFFEREDQUEUE_SIZE 1024
 
