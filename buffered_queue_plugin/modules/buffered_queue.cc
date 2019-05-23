@@ -46,7 +46,7 @@ struct MDCData
     float salary;
 };
 
-typedef struct RecverState {/* the state variable related to the receiver machine */
+typedef struct _recverState {/* the state variable related to the receiver machine */
 
 	char bcd_filename[FILENAME_LEN];
 
@@ -250,11 +250,17 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << std::to_string(sn) << std::endl;
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
+    RecverState * recv_p = (RecverState *) malloc(sizeof(RecverState));
+
+    bzero(recv_p, sizeof(RecverState));
+
+    recv_p->bcd_filename = "Hello";
+
 
     bess::utils::CuckooMap<uint8_t, RecverState> cuckoo;
-    cuckoo.Insert(app_id, "Hello");
+    cuckoo.Insert(app_id, recv_p);
     auto result = cuckoo.Find(1);
-    std::cout << "CuckooMap: " + std::to_string(result->second) << std::endl;
+    std::cout << "CuckooMap: " << result->second << std::endl;
 
     // SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
     // RunNextModule(ctx, batch);
