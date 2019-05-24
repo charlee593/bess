@@ -73,8 +73,6 @@ RecverState * CreateRecverState(uint8_t data_id, int64_t data_size) {
   recv_p->is_finished = 0;
   recv_p->num_recv_ed = 0;
 
-  sprintf(buf_p, "/tmp/%lx", data_id);
-
   if ((recv_p->fd_p = fopen("/tmp/hello", "w")) == NULL) {
    free(recv_p);
    std::cout << "Not good!!!!!!!!!" << std::endl;
