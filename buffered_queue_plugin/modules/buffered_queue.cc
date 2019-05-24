@@ -62,6 +62,8 @@ struct RecverState {/* the state variable related to the receiver machine */
   /* recver state */
   uint8_t is_finished;		// the status of the receiving: 0->the file has not completely received..
 
+  char bcd_filename[FILENAME_LEN];
+
 } ;
 
 
@@ -72,6 +74,33 @@ const Commands BufferedQueue::cmds = {
      MODULE_CMD_FUNC(&BufferedQueue::CommandSetSize), Command::THREAD_UNSAFE},
     {"get_status", "BufferedQueueCommandGetStatusArg",
      MODULE_CMD_FUNC(&BufferedQueue::CommandGetStatus), Command::THREAD_SAFE}};
+
+
+RecverState *createRecverState(uint8_t data_id, int64_t data_size) {
+  RecverState * recv_p = (RecverState *) malloc(sizeof(RecverState));
+  bzero(recv_p, sizeof(RecverState));
+
+  recv_p->data_id = data_id;
+  recv_p->data_size = data_size;
+  recv_p->is_finished = 0;
+  recv_p->num_recv_ed = 0;
+
+  if ((recv_p->fd_p = fopen(recv_p->bcd_filename, "w")) == NULL) {
+    free(recv_p);
+    return NULL;
+  }
+
+}
+
+  int32_t num_recv_ed;
+
+  /* recver state */
+  uint8_t is_finished;
+
+	return recv_p;
+
+}
+
 
 int BufferedQueue::Resize(int slots) {
   struct llring *old_queue = queue_;
@@ -274,6 +303,22 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     auto result = cuckoo.Find(app_id);
     RecverState * recv_r = &(result->second);
     std::cout << "CuckooMap: " << std::to_string(recv_r->data_id) << std::endl;
+
+
+    // if found RecverState in hash
+    // else create RecverState
+
+    // write data into fd
+
+    // if data is complete, set is_finished to true
+
+
+
+
+
+
+
+
 
     // SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
     // RunNextModule(ctx, batch);
