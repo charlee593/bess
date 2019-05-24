@@ -74,7 +74,7 @@ const Commands Controller::cmds = {
     {"get_status", "ControllerCommandGetStatusArg",
      MODULE_CMD_FUNC(&Controller::CommandGetStatus), Command::THREAD_SAFE}};
 
-RecverState * CreateRecverState(uint8_t data_id, int64_t data_size, char * bcd_filename) {
+RecverState * CreateRecverState(uint8_t data_id, int64_t data_size) {
   RecverState * recv_p = (RecverState *) malloc(sizeof(RecverState));
   bzero(recv_p, sizeof(RecverState));
 
@@ -82,7 +82,7 @@ RecverState * CreateRecverState(uint8_t data_id, int64_t data_size, char * bcd_f
   recv_p->data_size = data_size;
   recv_p->is_finished = 0;
   recv_p->num_recv_ed = 0;
-  sprintf(recv_p->bcd_filename, bcd_filename);
+  sprintf(recv_p->bcd_filename, "hello");
 
 
   if ((recv_p->fd_p = fopen(recv_p->bcd_filename, "w")) == NULL) {
@@ -283,7 +283,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << std::to_string(sn) << std::endl;
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
-    RecverState * recv_p = CreateRecverState(0xff, 64, { 'H', 'e', 'l', 'l', 'o', '\0' });
+    RecverState * recv_p = CreateRecverState(0xff, 64);
     std::cout << "CuckooMap: " << std::to_string(recv_r->data_id) << std::to_string(recv_r->data_size) << std::to_string(recv_r->num_recv_ed) << std::to_string(recv_r->bcd_filename) << std::endl;
 
     // bess::utils::CuckooMap<uint8_t, RecverState> cuckoo;
