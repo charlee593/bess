@@ -74,7 +74,7 @@ const Commands Controller::cmds = {
     {"get_status", "ControllerCommandGetStatusArg",
      MODULE_CMD_FUNC(&Controller::CommandGetStatus), Command::THREAD_SAFE}};
 
-RecverState * CreateRecverState(uint8_t data_id, int64_t data_size, char* bcd_filename) {
+RecverState * CreateRecverState(uint8_t data_id, int64_t data_size, string bcd_filename) {
   RecverState * recv_p = (RecverState *) malloc(sizeof(RecverState));
   bzero(recv_p, sizeof(RecverState));
 
