@@ -265,15 +265,21 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
     auto result = cuckoo.Find(app_id);
-    RecverState * recv_r = &(result->second);
-    std::cout << "CuckooMap: " << std::to_string(recv_r->data_id) << std::endl;
 
-    RecverState * recv_p = CreateRecverState(0xff, 64);
-    std::cout << "CuckooMap: " << std::to_string(recv_p->data_id) << std::to_string(recv_p->data_size) << std::to_string(recv_p->num_recv_ed)  << std::endl;
-    RunNextModule(ctx, batch);
+    RecverState * recv_s = result->second;
 
-    // bess::utils::CuckooMap<uint8_t, RecverState> cuckoo;
-    cuckoo.Insert(app_id, *recv_p);
+    if(!recv_s){
+      std::cout << "CuckooMap INSSSSSSSSSSSSSIIIIIIIIIDEEEE" << std::endl;
+      recv_s = CreateRecverState(data_id, data_size);
+      cuckoo.Insert(data_id, *recv_p);
+    }
+
+    // std::cout << "CuckooMap: " << std::to_string(recv_r->data_id) << std::endl;
+    //
+    // RecverState * recv_p = CreateRecverState(0xff, 64);
+    // std::cout << "CuckooMap: " << std::to_string(recv_p->data_id) << std::to_string(recv_p->data_size) << std::to_string(recv_p->num_recv_ed)  << std::endl;
+    // RunNextModule(ctx, batch);
+
 
 
   }
