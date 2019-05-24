@@ -30,6 +30,7 @@
 
 #ifndef BESS_MODULES_QUEUE_H_
 #define BESS_MODULES_QUEUE_H_
+#define FILENAME_LEN			(6)
 
 #include "../kmod/llring.h"
 #include "../module.h"
@@ -55,9 +56,6 @@ using bess::utils::Udp;
 
 
 class Controller : public Module {
- public:
-  static const Commands cmds;
-
   struct RecverState {/* the state variable related to the receiver machine */
 
     uint8_t data_id;
@@ -77,6 +75,9 @@ class Controller : public Module {
     char bcd_filename[FILENAME_LEN];
 
   };
+  
+ public:
+  static const Commands cmds;
 
   Controller()
       : Module(),
