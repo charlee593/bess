@@ -73,7 +73,7 @@ RecverState * CreateRecverState(uint8_t data_id, int64_t data_size) {
   recv_p->is_finished = 0;
   recv_p->num_recv_ed = 0;
 
-  if ((recv_p->fd_p = fopen("/tmp/hello", "w")) == NULL) {
+  if ((recv_p->fd_p = fopen("/tmp/" +  + std::to_string(data_id), "w")) == NULL) {
    free(recv_p);
    std::cout << "Not good!!!!!!!!!" << std::endl;
    return NULL;
@@ -272,7 +272,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
     RecverState * recv_p = CreateRecverState(0xff, 64);
-    std::cout << "CuckooMap: " << std::to_string(recv_p->data_id) << std::to_string(recv_p->data_size) << std::to_string(recv_p->num_recv_ed) << std::endl;
+    std::cout << "CuckooMap: " << std::to_string(recv_p->data_id) << std::to_string(recv_p->data_size) << std::to_string(recv_p->num_recv_ed)  << std::endl;
     RunNextModule(ctx, batch);
 
     // bess::utils::CuckooMap<uint8_t, RecverState> cuckoo;
