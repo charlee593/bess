@@ -58,6 +58,26 @@ class Controller : public Module {
  public:
   static const Commands cmds;
 
+  struct RecverState {/* the state variable related to the receiver machine */
+
+    uint8_t data_id;
+
+    /* updated by the zero packet */
+    int64_t data_size;		// number of bytes in the data
+
+
+    /* file descripter for writing the files */
+    FILE * fd_p;		// file descriptor for writing from the slow path
+
+    int32_t num_recv_ed;
+
+    /* recver state */
+    uint8_t is_finished;		// the status of the receiving: 0->the file has not completely received..
+
+    char bcd_filename[FILENAME_LEN];
+
+  };
+
   Controller()
       : Module(),
         queue_(),

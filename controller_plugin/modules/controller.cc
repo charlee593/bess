@@ -64,7 +64,7 @@ struct RecverState {/* the state variable related to the receiver machine */
 
   char bcd_filename[FILENAME_LEN];
 
-} ;
+};
 
 
 const Commands BufferedQueue::cmds = {
