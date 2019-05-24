@@ -38,17 +38,6 @@
 
 #define DEFAULT_BUFFEREDQUEUE_SIZE 1024
 
-struct RecverState
-{
-  uint8_t data_id;
-  int64_t data_size;
-  int64_t num_recv_ed;
-
-  FILE * fd_p;
-
-  uint8_t is_finished;
-};
-
 struct MDCData
 {
     char name[50];

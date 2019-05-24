@@ -55,6 +55,16 @@ using bess::utils::Ipv4;
 using bess::utils::Udp;
 using bess::utils::CuckooMap;
 
+struct RecverState
+{
+  uint8_t data_id;
+  int64_t data_size;
+  int64_t num_recv_ed;
+
+  FILE * fd_p;
+
+  uint8_t is_finished;
+};
 
 class Controller : public Module {
 
