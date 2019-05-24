@@ -42,7 +42,7 @@
 #include "utils/exact_match_table.h"
 #include "utils/cuckoo_map.h"
 
-#include "pb/controller.pb.h"
+#include "pb/controller_msg.pb.h"
 
 using bess::utils::Error;
 
