@@ -266,7 +266,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
     auto result = cuckoo.Find(app_id);
 
-    RecverState * recv_s = result->second;
+    RecverState * recv_s = &(result->second);
 
     if(!recv_s){
       std::cout << "CuckooMap INSSSSSSSSSSSSSIIIIIIIIIDEEEE" << std::endl;
@@ -278,7 +278,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     //
     // RecverState * recv_p = CreateRecverState(0xff, 64);
     // std::cout << "CuckooMap: " << std::to_string(recv_p->data_id) << std::to_string(recv_p->data_size) << std::to_string(recv_p->num_recv_ed)  << std::endl;
-    // RunNextModule(ctx, batch);
+    RunNextModule(ctx, batch);
 
 
 
