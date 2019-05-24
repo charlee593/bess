@@ -284,7 +284,9 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
     RecverState * recv_p = CreateRecverState(0xff, 64);
-    std::cout << "CuckooMap: " << std::to_string(recv_r->data_id) << std::to_string(recv_r->data_size) << std::to_string(recv_r->num_recv_ed) << std::to_string(recv_r->bcd_filename) << std::endl;
+    std::cout << "CuckooMap: " << std::to_string(recv_r->data_id) << std::to_string(recv_r->data_size) << std::to_string(recv_r->num_recv_ed) << recv_r->bcd_filename << std::endl;
+    free(recv_p);
+    RunNextModule(ctx, batch);
 
     // bess::utils::CuckooMap<uint8_t, RecverState> cuckoo;
     // cuckoo.Insert(app_id, *recv_p);
