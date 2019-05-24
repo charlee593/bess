@@ -53,6 +53,7 @@ using bess::utils::be64_t;
 using bess::utils::Ethernet;
 using bess::utils::Ipv4;
 using bess::utils::Udp;
+using bess::utils::CuckooMap;
 
 
 class Controller : public Module {
@@ -141,6 +142,8 @@ class Controller : public Module {
   uint8_t curr_data_id_;
 
   uint8_t curr_data_sent_to_receiver;
+
+  CuckooMap<uint8_t, RecverState> cuckoo;
 
 
 
