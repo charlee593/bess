@@ -75,24 +75,24 @@ const Commands BufferedQueue::cmds = {
     {"get_status", "ControllerCommandGetStatusArg",
      MODULE_CMD_FUNC(&Controller::CommandGetStatus), Command::THREAD_SAFE}};
 
-RecverState *createRecverState(uint8_t data_id, int64_t data_size, char* bcd_filename) {
- RecverState * recv_p = (RecverState *) malloc(sizeof(RecverState));
- bzero(recv_p, sizeof(RecverState));
+RecverState * Controller::CreateRecverState(uint8_t data_id, int64_t data_size, char* bcd_filename) {
+  RecverState * recv_p = (RecverState *) malloc(sizeof(RecverState));
+  bzero(recv_p, sizeof(RecverState));
 
- recv_p->data_id = data_id;
- recv_p->data_size = data_size;
- recv_p->is_finished = 0;
- recv_p->num_recv_ed = 0;
- sprintf(recv_p->bcd_filename, bcd_filename)
+  recv_p->data_id = data_id;
+  recv_p->data_size = data_size;
+  recv_p->is_finished = 0;
+  recv_p->num_recv_ed = 0;
+  sprintf(recv_p->bcd_filename, bcd_filename)
 
 
- if ((recv_p->fd_p = fopen(recv_p->bcd_filename, "w")) == NULL) {
+  if ((recv_p->fd_p = fopen(recv_p->bcd_filename, "w")) == NULL) {
    free(recv_p);
+   std::cout << "Not good!!!!!!!!!" << std::endl;
    return NULL;
- }
+  }
 
-	return recv_p;
-
+  return recv_p;
 }
 
 int Controller::Resize(int slots) {
@@ -274,7 +274,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     uint8_t sn = (mdc_p1->raw_value() & 0xff00000000000000) >> 56;
     uint8_t data_size = (mdc_p2->raw_value() & 0xff);
 
-    std::cout << "ProcessBatch batch size: " + std::to_string(cnt) + " pkt: " + std::to_string(i) << std::endl;
+    std::cout << "Controller ProcessBatch batch size: " + std::to_string(cnt) + " pkt: " + std::to_string(i) << std::endl;
     std::cout << std::hex << addr << std::endl;
     std::cout << std::hex << static_cast<int>(mode) << std::endl;
     std::cout << std::hex << static_cast<int>(label) << std::endl;
@@ -284,100 +284,15 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << std::to_string(sn) << std::endl;
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
-    RecverState * recv_p = (RecverState *) malloc(sizeof(RecverState));
+    RecverState * recv_p = CreateRecverState(0xff, 64, "Hello");
+    std::cout << "CuckooMap: " << std::to_string(recv_r->data_id) << std::to_string(recv_r->data_size) << std::to_string(recv_r->num_recv_ed) << std::to_string(recv_r->bcd_filename) << std::endl;
 
-    bzero(recv_p, sizeof(RecverState));
+    // bess::utils::CuckooMap<uint8_t, RecverState> cuckoo;
+    // cuckoo.Insert(app_id, *recv_p);
+    // auto result = cuckoo.Find(app_id);
+    // RecverState * recv_r = &(result->second);
+    // std::cout << "CuckooMap: " << std::to_string(recv_r->data_id) << std::endl;
 
-    recv_p->data_id= 0xff;
-
-
-    bess::utils::CuckooMap<uint8_t, RecverState> cuckoo;
-    cuckoo.Insert(app_id, *recv_p);
-    auto result = cuckoo.Find(app_id);
-    RecverState * recv_r = &(result->second);
-    std::cout << "CuckooMap: " << std::to_string(recv_r->data_id) << std::endl;
-
-
-    // if found RecverState in hash
-    // else create RecverState
-
-    // write data into fd
-
-    // if data is complete, set is_finished to true
-
-
-
-
-
-
-
-
-
-    // SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
-    // RunNextModule(ctx, batch);
-    EmitPacket(ctx, pkt, 0);
-
-    // bess::Packet *new_pkt = bess::Packet::copy(pkt);
-    // if (new_pkt) {
-    //     Ethernet *new_eth = new_pkt->head_data<Ethernet *>();
-    //     Ipv4 *new_ip = reinterpret_cast<Ipv4 *>(new_eth + 1);
-
-    //     new_eth->dst_addr = eth->src_addr;
-    //     new_ip->dst = ip->src;
-
-    //     new_eth->src_addr = eth->dst_addr;
-    //     new_ip->src = ip->dst;
-
-    //     EmitPacket(ctx, new_pkt, 0);
-    // }
-
-
-    if (code == 1) {
-      /* Recv Request from Receiver */
-      data_requested_ = true;
-      if(curr_data_size_ == 0){
-        //Send request to sender
-      }
-    } else {
-      curr_ = sn;
-
-      /* Recv Data from Sender - intial*/
-      if (code == 5 && !data_receiving_) {
-        data_receiving_ = true;
-        prior_ = curr_;
-        initial_ = curr_;
-        data_size_ = data_size;
-        curr_data_size_ = 1;
-
-        std::free(queue_);
-
-        //Send INTL_SEQ to sender
-      }
-
-      if(!data_receiving_){
-        initial_ = sn;
-        prior_ = sn;
-        data_receiving_ = true;
-        data_size_ = data_size;
-        std::cout << "Controller initial"  + std::to_string(data_receiving_)<< std::endl;
-      } else{
-        /* Recv Data from Sender - case 1*/
-        if (code != 3 && curr_ == (prior_+1)%data_size_) {
-          prior_ = curr_;
-          curr_data_size_++;
-
-          int queued = Enqueue(pkt);
-          std::cout << "ProcessBatch batch queued: " + std::to_string(queued)<< std::endl;
-
-        }else if (code != 3 && (curr_ > (prior_+1)%data_size_ && curr_ <= initial_)) {
-          /* Recv Data from Sender - case 2*/
-          SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
-        }else{
-          /* Recv Data from Sender - case 3*/
-          SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
-        }
-      }
-    }
   }
 }
 

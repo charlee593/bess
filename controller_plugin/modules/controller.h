@@ -96,6 +96,8 @@ class Controller : public Module {
 
   int Resize(int slots);
 
+  RecverState * Controller::CreateRecverState(uint8_t data_id, int64_t data_size, char* bcd_filename);
+
   // Readjusts the water level according to `size_`.
   void AdjustWaterLevels();
 
