@@ -266,7 +266,7 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
     bzero(recv_p, sizeof(RecverState));
 
-    sprintf(recv_p->data_id, 7);
+    recv_p->data_id= 7;
 
 
     bess::utils::CuckooMap<uint8_t, RecverState> cuckoo;
