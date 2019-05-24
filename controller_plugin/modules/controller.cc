@@ -271,7 +271,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     if(!recv_s){
       std::cout << "CuckooMap INSSSSSSSSSSSSSIIIIIIIIIDEEEE" << std::endl;
       recv_s = CreateRecverState(data_id, data_size);
-      cuckoo.Insert(data_id, *recv_p);
+      cuckoo.Insert(data_id, *recv_s);
     }
 
     // std::cout << "CuckooMap: " << std::to_string(recv_r->data_id) << std::endl;
