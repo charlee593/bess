@@ -56,26 +56,7 @@ using bess::utils::Udp;
 
 
 class Controller : public Module {
-  struct RecverState {/* the state variable related to the receiver machine */
 
-    uint8_t data_id;
-
-    /* updated by the zero packet */
-    int64_t data_size;		// number of bytes in the data
-
-
-    /* file descripter for writing the files */
-    FILE * fd_p;		// file descriptor for writing from the slow path
-
-    int32_t num_recv_ed;
-
-    /* recver state */
-    uint8_t is_finished;		// the status of the receiving: 0->the file has not completely received..
-
-    char bcd_filename[FILENAME_LEN];
-
-  };
-  
  public:
   static const Commands cmds;
 
@@ -116,8 +97,6 @@ class Controller : public Module {
   const double kLowWaterRatio = 0.15;
 
   int Resize(int slots);
-
-  RecverState * CreateRecverState(uint8_t data_id, int64_t data_size, char* bcd_filename);
 
   // Readjusts the water level according to `size_`.
   void AdjustWaterLevels();
