@@ -83,10 +83,10 @@ class Controller : public Module {
 
   std::string GetDesc() const override;
 
-  CommandResponse CommandSetBurst(const sample::buffered_queue::pb::ControllerCommandSetBurstArg &arg);
-  CommandResponse CommandSetSize(const sample::buffered_queue::pb::ControllerCommandSetSizeArg &arg);
+  CommandResponse CommandSetBurst(const sample::controller::pb::ControllerCommandSetBurstArg &arg);
+  CommandResponse CommandSetSize(const sample::controller::pb::ControllerCommandSetSizeArg &arg);
   CommandResponse CommandGetStatus(
-      const sample::buffered_queue::pb::ControllerCommandGetStatusArg &arg);
+      const sample::controller::pb::ControllerCommandGetStatusArg &arg);
 
   CheckConstraintResult CheckModuleConstraints() const override;
 

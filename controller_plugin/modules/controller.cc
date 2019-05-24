@@ -139,7 +139,7 @@ int Controller::Resize(int slots) {
   return 0;
 }
 
-CommandResponse Controller::Init(const sample::buffered_queue::pb::ControllerArg &arg) {
+CommandResponse Controller::Init(const sample::controller::pb::ControllerArg &arg) {
   data_ready_ = false;
   data_receiving_ = false;
   data_size_ = 0;
@@ -342,7 +342,7 @@ struct task_result Controller::RunTask(Context *ctx, bess::PacketBatch *batch,
 }
 
 CommandResponse Controller::CommandSetBurst(
-    const sample::buffered_queue::pb::ControllerCommandSetBurstArg &arg) {
+    const sample::controller::pb::ControllerCommandSetBurstArg &arg) {
   uint64_t burst = arg.burst();
 
   if (burst > bess::PacketBatch::kMaxBurst) {
@@ -374,13 +374,13 @@ CommandResponse Controller::SetSize(uint64_t size) {
 }
 
 CommandResponse Controller::CommandSetSize(
-    const sample::buffered_queue::pb::ControllerCommandSetSizeArg &arg) {
+    const sample::controller::pb::ControllerCommandSetSizeArg &arg) {
   return SetSize(arg.size());
 }
 
 CommandResponse Controller::CommandGetStatus(
-    const sample::buffered_queue::pb::ControllerCommandGetStatusArg &) {
-  sample::buffered_queue::pb::ControllerCommandGetStatusResponse resp;
+    const sample::controller::pb::ControllerCommandGetStatusArg &) {
+  sample::controller::pb::ControllerCommandGetStatusResponse resp;
   resp.set_count(llring_count(queue_));
   resp.set_size(size_);
   resp.set_enqueued(stats_.enqueued);
