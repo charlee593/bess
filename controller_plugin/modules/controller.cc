@@ -85,7 +85,7 @@ RecverState * CreateRecverState(uint8_t data_id, int64_t data_size) {
   sprintf(recv_p->bcd_filename, "hello");
 
 
-  if ((recv_p->fd_p = fopen(recv_p->bcd_filename, "w")) == NULL) {
+  if ((recv_p->fd_p = fopen("/tmp/" + recv_p->bcd_filename, "w")) == NULL) {
    free(recv_p);
    std::cout << "Not good!!!!!!!!!" << std::endl;
    return NULL;
