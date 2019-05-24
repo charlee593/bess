@@ -48,7 +48,19 @@ struct MDCData
 
 struct RecverState {/* the state variable related to the receiver machine */
 
-	char bcd_filename[FILENAME_LEN];
+  uint8_t data_id;
+
+  /* updated by the zero packet */
+  int64_t data_size;		// number of bytes in the data
+
+
+  /* file descripter for writing the files */
+  FILE * fd_p;		// file descriptor for writing from the slow path
+
+  int32_t num_recv_ed;
+
+  /* recver state */
+  uint8_t is_finished;		// the status of the receiving: 0->the file has not completely received..
 
 } ;
 
@@ -254,14 +266,14 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
     bzero(recv_p, sizeof(RecverState));
 
-    sprintf(recv_p->bcd_filename, "Hello");
+    sprintf(recv_p->data_id, 7);
 
 
     bess::utils::CuckooMap<uint8_t, RecverState> cuckoo;
     cuckoo.Insert(app_id, *recv_p);
     auto result = cuckoo.Find(app_id);
     RecverState * recv_r = &(result->second);
-    std::cout << "CuckooMap: " << recv_r->bcd_filename << std::endl;
+    std::cout << "CuckooMap: " << recv_r->data_id << std::endl;
 
     // SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
     // RunNextModule(ctx, batch);
