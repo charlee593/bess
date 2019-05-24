@@ -73,7 +73,10 @@ RecverState * CreateRecverState(uint8_t data_id, int64_t data_size) {
   recv_p->is_finished = 0;
   recv_p->num_recv_ed = 0;
 
-  if ((recv_p->fd_p = fopen("/tmp/" +  std::to_string(data_id).c_str(), "w")) == NULL) {
+  string str = "/tmp/" +  std::to_string(data_id);
+  char *cstr = &str[0u];
+
+  if ((recv_p->fd_p = fopen(cstr, "w")) == NULL) {
    free(recv_p);
    std::cout << "Not good!!!!!!!!!" << std::endl;
    return NULL;
