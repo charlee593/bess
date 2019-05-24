@@ -67,7 +67,7 @@ struct RecverState {/* the state variable related to the receiver machine */
 };
 
 
-const Commands BufferedQueue::cmds = {
+const Commands Controller::cmds = {
     {"set_burst", "ControllerCommandSetBurstArg",
      MODULE_CMD_FUNC(&Controller::CommandSetBurst), Command::THREAD_SAFE},
     {"set_size", "ControllerCommandSetSizeArg",
