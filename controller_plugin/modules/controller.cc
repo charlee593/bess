@@ -283,8 +283,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << std::to_string(sn) << std::endl;
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
-    char *p = "Hello";
-    RecverState * recv_p = CreateRecverState(0xff, 64, p);
+    RecverState * recv_p = CreateRecverState(0xff, 64, { 'H', 'e', 'l', 'l', 'o', '\0' });
     std::cout << "CuckooMap: " << std::to_string(recv_r->data_id) << std::to_string(recv_r->data_size) << std::to_string(recv_r->num_recv_ed) << std::to_string(recv_r->bcd_filename) << std::endl;
 
     // bess::utils::CuckooMap<uint8_t, RecverState> cuckoo;
