@@ -28,7 +28,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "buffered_queue.h"
+#include "controller.h"
 
 
 #include <cstdlib>
@@ -46,15 +46,56 @@ struct MDCData
     float salary;
 };
 
-const Commands BufferedQueue::cmds = {
-    {"set_burst", "BufferedQueueCommandSetBurstArg",
-     MODULE_CMD_FUNC(&BufferedQueue::CommandSetBurst), Command::THREAD_SAFE},
-    {"set_size", "BufferedQueueCommandSetSizeArg",
-     MODULE_CMD_FUNC(&BufferedQueue::CommandSetSize), Command::THREAD_UNSAFE},
-    {"get_status", "BufferedQueueCommandGetStatusArg",
-     MODULE_CMD_FUNC(&BufferedQueue::CommandGetStatus), Command::THREAD_SAFE}};
+struct RecverState {/* the state variable related to the receiver machine */
 
-int BufferedQueue::Resize(int slots) {
+  uint8_t data_id;
+
+  /* updated by the zero packet */
+  int64_t data_size;		// number of bytes in the data
+
+
+  /* file descripter for writing the files */
+  FILE * fd_p;		// file descriptor for writing from the slow path
+
+  int32_t num_recv_ed;
+
+  /* recver state */
+  uint8_t is_finished;		// the status of the receiving: 0->the file has not completely received..
+
+  char bcd_filename[FILENAME_LEN];
+
+} ;
+
+
+const Commands BufferedQueue::cmds = {
+    {"set_burst", "ControllerCommandSetBurstArg",
+     MODULE_CMD_FUNC(&Controller::CommandSetBurst), Command::THREAD_SAFE},
+    {"set_size", "ControllerCommandSetSizeArg",
+     MODULE_CMD_FUNC(&Controller::CommandSetSize), Command::THREAD_UNSAFE},
+    {"get_status", "ControllerCommandGetStatusArg",
+     MODULE_CMD_FUNC(&Controller::CommandGetStatus), Command::THREAD_SAFE}};
+
+RecverState *createRecverState(uint8_t data_id, int64_t data_size, char* bcd_filename) {
+ RecverState * recv_p = (RecverState *) malloc(sizeof(RecverState));
+ bzero(recv_p, sizeof(RecverState));
+
+ recv_p->data_id = data_id;
+ recv_p->data_size = data_size;
+ recv_p->is_finished = 0;
+ recv_p->num_recv_ed = 0;
+ sprintf(recv_p->bcd_filename, bcd_filename)
+
+
+ if ((recv_p->fd_p = fopen(recv_p->bcd_filename, "w")) == NULL) {
+   free(recv_p);
+   return NULL;
+ }
+
+	return recv_p;
+
+}
+
+int Controller::Resize(int slots) {
   struct llring *old_queue = queue_;
   struct llring *new_queue;
 
@@ -98,7 +139,7 @@ int BufferedQueue::Resize(int slots) {
   return 0;
 }
 
-CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQueueArg &arg) {
+CommandResponse Controller::Init(const sample::buffered_queue::pb::ControllerArg &arg) {
   data_ready_ = false;
   data_receiving_ = false;
   data_size_ = 0;
@@ -116,7 +157,7 @@ CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQu
   burst_ = bess::PacketBatch::kMaxBurst;
 
   if (arg.backpressure()) {
-    VLOG(1) << "Backpressure enabled for " << name() << "::BufferedQueue";
+    VLOG(1) << "Backpressure enabled for " << name() << "::Controller";
     backpressure_ = true;
   }
 
@@ -139,7 +180,7 @@ CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQu
   return CommandSuccess();
 }
 
-void BufferedQueue::DeInit() {
+void Controller::DeInit() {
   bess::Packet *pkt;
 
   if (queue_) {
@@ -150,13 +191,13 @@ void BufferedQueue::DeInit() {
   }
 }
 
-std::string BufferedQueue::GetDesc() const {
+std::string Controller::GetDesc() const {
   const struct llring *ring = queue_;
 
   return bess::utils::Format("%u/%u", llring_count(ring), ring->common.slots);
 }
 
-int BufferedQueue::Enqueue(bess::Packet *pkt) {
+int Controller::Enqueue(bess::Packet *pkt) {
   if (llring_enqueue(queue_, (void *)pkt) != 0){
     return 0;
   }
@@ -170,7 +211,7 @@ int BufferedQueue::Enqueue(bess::Packet *pkt) {
   return 1;
 }
 
-void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
+void Controller::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
   uint8_t app_id, uint8_t data_id, uint8_t mode, uint8_t label, uint16_t addr, Context *ctx) {
 
   bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(42 + 9);
@@ -192,20 +233,24 @@ void BufferedQueue::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
 
       be64_t *new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 1); // First 8 bytes
 
-      std::cout << "BufferedQueue new packet mDC"  << std::hex <<  mDC << std::endl;
+
+      std::cout << "Controller new packet mDC"  << std::hex <<  mDC << std::endl;
       bess::utils::Copy(new_p, reinterpret_cast<uint64_t *>(&mDC), 16);
 
+
+
+
       be64_t *p4 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
-      std::cout << "BufferedQueue new packet "  << std::hex << p4->raw_value() << std::endl;
+      std::cout << "Controller new packet "  << std::hex << p4->raw_value() << std::endl;
       be64_t *p3 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 2);
-      std::cout << "BufferedQueue new packet "  << std::hex << p3->raw_value() << std::endl;
+      std::cout << "Controller new packet "  << std::hex << p3->raw_value() << std::endl;
 
       EmitPacket(ctx, new_pkt, 1);
   }
 }
 
 /* from upstream */
-void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
+void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
   int cnt = batch->cnt();
 
   for (int i = 0; i < cnt; i++) {
@@ -238,6 +283,34 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << static_cast<int>(data_id) << std::endl;
     std::cout << std::hex << std::to_string(sn) << std::endl;
     std::cout << std::hex << std::to_string(data_size) << std::endl;
+
+    RecverState * recv_p = (RecverState *) malloc(sizeof(RecverState));
+
+    bzero(recv_p, sizeof(RecverState));
+
+    recv_p->data_id= 0xff;
+
+
+    bess::utils::CuckooMap<uint8_t, RecverState> cuckoo;
+    cuckoo.Insert(app_id, *recv_p);
+    auto result = cuckoo.Find(app_id);
+    RecverState * recv_r = &(result->second);
+    std::cout << "CuckooMap: " << std::to_string(recv_r->data_id) << std::endl;
+
+
+    // if found RecverState in hash
+    // else create RecverState
+
+    // write data into fd
+
+    // if data is complete, set is_finished to true
+
+
+
+
+
+
+
 
 
     // SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
@@ -286,7 +359,7 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
         prior_ = sn;
         data_receiving_ = true;
         data_size_ = data_size;
-        std::cout << "BufferedQueue initial"  + std::to_string(data_receiving_)<< std::endl;
+        std::cout << "Controller initial"  + std::to_string(data_receiving_)<< std::endl;
       } else{
         /* Recv Data from Sender - case 1*/
         if (code != 3 && curr_ == (prior_+1)%data_size_) {
@@ -309,7 +382,7 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 }
 
 /* to downstream */
-struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch,
+struct task_result Controller::RunTask(Context *ctx, bess::PacketBatch *batch,
                                   void *) {
   if (!data_requested_ || children_overload_ > 0) {
     return {
@@ -353,8 +426,8 @@ struct task_result BufferedQueue::RunTask(Context *ctx, bess::PacketBatch *batch
           .bits = (total_bytes + cnt * pkt_overhead) * 8};
 }
 
-CommandResponse BufferedQueue::CommandSetBurst(
-    const sample::buffered_queue::pb::BufferedQueueCommandSetBurstArg &arg) {
+CommandResponse Controller::CommandSetBurst(
+    const sample::buffered_queue::pb::ControllerCommandSetBurstArg &arg) {
   uint64_t burst = arg.burst();
 
   if (burst > bess::PacketBatch::kMaxBurst) {
@@ -366,7 +439,7 @@ CommandResponse BufferedQueue::CommandSetBurst(
   return CommandSuccess();
 }
 
-CommandResponse BufferedQueue::SetSize(uint64_t size) {
+CommandResponse Controller::SetSize(uint64_t size) {
   std::cout << "Here in Setsize: " << std::endl;
   if (size < 4 || size > 16384) {
     return CommandFailure(EINVAL, "must be in [4, 16384]");
@@ -385,14 +458,14 @@ CommandResponse BufferedQueue::SetSize(uint64_t size) {
   return CommandSuccess();
 }
 
-CommandResponse BufferedQueue::CommandSetSize(
-    const sample::buffered_queue::pb::BufferedQueueCommandSetSizeArg &arg) {
+CommandResponse Controller::CommandSetSize(
+    const sample::buffered_queue::pb::ControllerCommandSetSizeArg &arg) {
   return SetSize(arg.size());
 }
 
-CommandResponse BufferedQueue::CommandGetStatus(
-    const sample::buffered_queue::pb::BufferedQueueCommandGetStatusArg &) {
-  sample::buffered_queue::pb::BufferedQueueCommandGetStatusResponse resp;
+CommandResponse Controller::CommandGetStatus(
+    const sample::buffered_queue::pb::ControllerCommandGetStatusArg &) {
+  sample::buffered_queue::pb::ControllerCommandGetStatusResponse resp;
   resp.set_count(llring_count(queue_));
   resp.set_size(size_);
   resp.set_enqueued(stats_.enqueued);
@@ -401,15 +474,15 @@ CommandResponse BufferedQueue::CommandGetStatus(
   return CommandSuccess(resp);
 }
 
-void BufferedQueue::AdjustWaterLevels() {
+void Controller::AdjustWaterLevels() {
   high_water_ = static_cast<uint64_t>(size_ * kHighWaterRatio);
   low_water_ = static_cast<uint64_t>(size_ * kLowWaterRatio);
 }
 
-CheckConstraintResult BufferedQueue::CheckModuleConstraints() const {
+CheckConstraintResult Controller::CheckModuleConstraints() const {
   CheckConstraintResult status = CHECK_OK;
   if (num_active_tasks() - tasks().size() < 1) {  // Assume multi-producer.
-    LOG(ERROR) << "BufferedQueue has no producers";
+    LOG(ERROR) << "Controller has no producers";
     status = CHECK_NONFATAL_ERROR;
   }
 
@@ -421,5 +494,5 @@ CheckConstraintResult BufferedQueue::CheckModuleConstraints() const {
   return status;
 }
 
-ADD_MODULE(BufferedQueue, "buffered_queue",
+ADD_MODULE(Controller, "controller",
            "terminates current task and enqueue packets for new task")
