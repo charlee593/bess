@@ -38,24 +38,15 @@
 
 #define DEFAULT_BUFFEREDQUEUE_SIZE 1024
 
-struct RecverState {/* the state variable related to the receiver machine */
-
+struct RecverState
+{
   uint8_t data_id;
+  int64_t data_size;
+  int64_t num_recv_ed;
 
-  /* updated by the zero packet */
-  int64_t data_size;		// number of bytes in the data
+  FILE * fd_p;
 
-
-  /* file descripter for writing the files */
-  FILE * fd_p;		// file descriptor for writing from the slow path
-
-  int32_t num_recv_ed;
-
-  /* recver state */
-  uint8_t is_finished;		// the status of the receiving: 0->the file has not completely received..
-
-  char bcd_filename[FILENAME_LEN];
-
+  uint8_t is_finished;
 };
 
 struct MDCData
@@ -64,7 +55,6 @@ struct MDCData
     int age;
     float salary;
 };
-
 
 const Commands Controller::cmds = {
     {"set_burst", "ControllerCommandSetBurstArg",
@@ -82,8 +72,8 @@ RecverState * CreateRecverState(uint8_t data_id, int64_t data_size) {
   recv_p->data_size = data_size;
   recv_p->is_finished = 0;
   recv_p->num_recv_ed = 0;
-  sprintf(recv_p->bcd_filename, "hello");
 
+  sprintf(buf_p, "/tmp/%lx", data_id);
 
   if ((recv_p->fd_p = fopen("/tmp/hello", "w")) == NULL) {
    free(recv_p);
