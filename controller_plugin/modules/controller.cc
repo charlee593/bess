@@ -38,6 +38,11 @@
 
 #define DEFAULT_BUFFEREDQUEUE_SIZE 1024
 
+enum {
+  ATTR_W_DATA_ID,
+  ATTR_W_DATA_SIZE
+};
+
 struct MDCData
 {
     char name[50];
@@ -119,6 +124,10 @@ int Controller::Resize(int slots) {
 }
 
 CommandResponse Controller::Init(const sample::controller::pb::ControllerArg &arg) {
+  using AccessMode = bess::metadata::Attribute::AccessMode;
+
+  AddMetadataAttr("data_id", 1, AccessMode::kWrite);
+  AddMetadataAttr("data_size", 1, AccessMode::kWrite);
 
   data_ready_ = false;
   data_receiving_ = false;
@@ -274,11 +283,17 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
       cuckoo.Insert(data_id, *recv_s);
     }
 
+
+    // If to file writer
+    set_attr<uint8_t>(this, ATTR_W_DATA_ID, pkt, recv_s->data_id);
+    set_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt, recv_s->data_size);
+
+    EmitPacket(ctx, pkt, 1);
+
     // std::cout << "CuckooMap: " << std::to_string(recv_r->data_id) << std::endl;
     //
     // RecverState * recv_p = CreateRecverState(0xff, 64);
     // std::cout << "CuckooMap: " << std::to_string(recv_p->data_id) << std::to_string(recv_p->data_size) << std::to_string(recv_p->num_recv_ed)  << std::endl;
-    RunNextModule(ctx, batch);
 
 
 
