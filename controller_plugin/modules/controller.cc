@@ -274,7 +274,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
 
-    std::cout << "Controller ProcessBatch DATA: " + std::to_string(pkt->data()) << std::endl;
+    std::cout << "Controller ProcessBatch DATA: " << std::endl;
     std::cout << pkt->data() << std::endl;
 
     auto result = cuckoo.Find(app_id);
