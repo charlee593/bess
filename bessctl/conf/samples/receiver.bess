@@ -128,7 +128,7 @@ tgen_src.attach_task('tgen')
 
 split::RandomSplit(gates=range(2))
 p = UnixSocketPort(name='p', path=LOCAL_SOCKET_PATH)
-PortInc(port='p') -> bq1::Controller()
+PortInc(port='p') -> bq1::Controller() -> FileWriter()
 # bq1  -> PortOut(port='p')
 # tgen_src -> bq1::Controller() -> BufferedQueue() -> Sink()
 
