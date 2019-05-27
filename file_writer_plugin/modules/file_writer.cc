@@ -44,15 +44,6 @@ enum {
   ATTR_R_DATA_SIZE
 };
 
-const Commands FileWriter::cmds = {
-    {"set_burst", "FileWriterCommandSetBurstArg",
-     MODULE_CMD_FUNC(&FileWriter::CommandSetBurst), Command::THREAD_SAFE},
-    {"set_size", "FileWriterCommandSetSizeArg",
-     MODULE_CMD_FUNC(&FileWriter::CommandSetSize), Command::THREAD_UNSAFE},
-    {"get_status", "FileWriterCommandGetStatusArg",
-     MODULE_CMD_FUNC(&FileWriter::CommandGetStatus), Command::THREAD_SAFE}};
-
-
 CommandResponse FileWriter::Init(const bess::pb::IPEncapArg &arg[[maybe_unused]]) {
   using AccessMode = bess::metadata::Attribute::AccessMode;
 
@@ -100,7 +91,7 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
     FILE * fd_d = get_attr<FILE *>(this, ATTR_R_FILE_D, pkt);
-    uint8_t data_id_ = get_attr<uint8_t>(this, ATTR_R_DATA_ID, pkt);
+    uint8_t data_id_ = get_attr<uint8_t>(this, ATTR_R_HEADER_SIZE, pkt);
     uint8_t data_size_ = get_attr<uint8_t>(this, ATTR_R_DATA_SIZE, pkt);
 
     std::cout << "FileWriter ProcessBatch get_attr: " + std::to_string(data_id_) + std::to_string(data_size_) << std::endl;

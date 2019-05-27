@@ -73,7 +73,7 @@ class FileWriter : public Module {
       : Module() { max_allowed_workers_ = Worker::kMaxWorkers;
   }
 
-  CommandResponse Init(const bess::pb::IPEncapArg &arg[[maybe_unused]);
+  CommandResponse Init(const bess::pb::IPEncapArg &arg);
 
   void ProcessBatch(Context *ctx, bess::PacketBatch *batch) override;
 
