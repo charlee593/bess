@@ -288,7 +288,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     set_attr<uint8_t>(this, ATTR_W_DATA_ID, pkt, recv_s->data_id);
     set_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt, recv_s->data_size);
 
-    EmitPacket(ctx, pkt, 1);
+    EmitPacket(ctx, pkt, 0);
 
     // std::cout << "CuckooMap: " << std::to_string(recv_r->data_id) << std::endl;
     //
