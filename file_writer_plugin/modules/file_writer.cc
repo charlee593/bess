@@ -94,7 +94,7 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     uint8_t data_id_ = get_attr<uint8_t>(this, ATTR_R_HEADER_SIZE, pkt);
     uint8_t data_size_ = get_attr<uint8_t>(this, ATTR_R_DATA_SIZE, pkt);
 
-    std::cout << "FileWriter ProcessBatch get_attr: " + std::to_string(data_id_) + std::to_string(data_size_) << std::endl;
+    std::cout << "FileWriter ProcessBatch get_attr: " + std::to_string(data_id_) + std::to_string(data_size_) << fd_d << std::endl;
 
 
     fwrite(pkt->data(), sizeof(char), 3, fd_d);
