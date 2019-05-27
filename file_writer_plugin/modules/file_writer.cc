@@ -114,7 +114,7 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     uint8_t data_size = get_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt);
 
 
-    fwrite(p + DATA_PAYLOAD_OFFSET, sizeof(char), dh.len, recv_p - > fd_p);
+    fwrite(pkt.data(), sizeof(char), 3, fd_d);
 
     EmitPacket(ctx, pkt, 0);
 
