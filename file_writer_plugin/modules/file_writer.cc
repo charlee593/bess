@@ -48,8 +48,8 @@ CommandResponse FileWriter::Init(const bess::pb::IPEncapArg &arg[[maybe_unused]]
   using AccessMode = bess::metadata::Attribute::AccessMode;
 
   AddMetadataAttr("file_d", sizeof(FILE *), AccessMode::kRead);
-  AddMetadataAttr("header_size", 4, AccessMode::kRead);
-  AddMetadataAttr("data_size", 4, AccessMode::kRead);
+  AddMetadataAttr("header_size", 1, AccessMode::kRead);
+  AddMetadataAttr("data_size", 1, AccessMode::kRead);
 
   return CommandSuccess();
 }
