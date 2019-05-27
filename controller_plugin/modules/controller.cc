@@ -303,7 +303,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     set_attr<uint8_t>(this, ATTR_W_DATA_ID, pkt, 0xff);
     set_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt, 0xac);
 
-    std::cout << "Controller ddddd " + std::to_string(recv_p->fd_p) << std::endl;
+    std::cout << "Controller ddddd " << recv_p->fd_p << std::endl;
 
     EmitPacket(ctx, pkt, 0);
 
