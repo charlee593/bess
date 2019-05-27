@@ -277,6 +277,13 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << "Controller ProcessBatch DATA: " << std::endl;
     std::cout << pkt->data() << std::endl;
 
+    int ret = recv(client_fd, pkt->data(), SNBUF_DATA, 0);
+    std::cout << ret << std::endl;
+
+    std::cout << "Controllerend: " << std::endl;
+
+
+
     auto result = cuckoo.Find(app_id);
 
     RecverState * recv_s = &(result->second);
