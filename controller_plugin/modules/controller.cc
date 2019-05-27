@@ -277,6 +277,9 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << "Controller ProcessBatch DATA: " << std::endl;
     std::cout << pkt->data<be64_t *>() << std::endl;
 
+    std::cout << "Controller ProcessBatch header: " << std::endl;
+    std::cout << pkt->head_data<be64_t *>() << std::endl;
+
 
     std::cout << "Controllerend: " << std::endl;
 
