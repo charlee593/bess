@@ -126,8 +126,8 @@ int FileWriter::Resize(int slots) {
 CommandResponse FileWriter::Init(const sample::file_writer::pb::FileWriterArg &arg) {
   using AccessMode = bess::metadata::Attribute::AccessMode;
 
-  AddMetadataAttr("data_id", 1, AccessMode::kWrite);
-  AddMetadataAttr("data_size", 1, AccessMode::kWrite);
+  AddMetadataAttr("data_id", 1, AccessMode::kRead);
+  AddMetadataAttr("data_size", 1, AccessMode::kRead);
 
   data_ready_ = false;
   data_receiving_ = false;
@@ -284,9 +284,11 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     }
 
 
-    // If to file writer
-    set_attr<uint8_t>(this, ATTR_W_DATA_ID, pkt, 0xff);
-    set_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt, 0xac);
+    uint8_t data_id = get_attr<uint8_t>(this, ATTR_W_DATA_ID, pkt);
+    uint8_t data_size = get_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt);
+
+
+    fwrite(p + DATA_PAYLOAD_OFFSET, sizeof(char), dh.len, recv_p - > fd_p);
 
     EmitPacket(ctx, pkt, 0);
 
