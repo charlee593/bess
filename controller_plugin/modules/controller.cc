@@ -39,6 +39,7 @@
 #define DEFAULT_BUFFEREDQUEUE_SIZE 1024
 
 enum {
+  ATTR_W_FILE_D,
   ATTR_W_DATA_ID,
   ATTR_W_DATA_SIZE
 };
@@ -126,6 +127,7 @@ int Controller::Resize(int slots) {
 CommandResponse Controller::Init(const sample::controller::pb::ControllerArg &arg) {
   using AccessMode = bess::metadata::Attribute::AccessMode;
 
+  AddMetadataAttr("file_d", sizeof(FILE *), AccessMode::kWrite);
   AddMetadataAttr("data_id", 1, AccessMode::kWrite);
   AddMetadataAttr("data_size", 1, AccessMode::kWrite);
 
@@ -287,16 +289,17 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
     auto result = cuckoo.Find(app_id);
 
-    RecverState * recv_s = &(result->second);
+    RecverState * recv_p = &(result->second);
 
     if (result == nullptr) {
       std::cout << "CuckooMap INSSSSSSSSSSSSSIIIIIIIIIDEEEE" << std::endl;
-      recv_s = CreateRecverState(data_id, data_size);
-      cuckoo.Insert(data_id, *recv_s);
+      recv_p = CreateRecverState(data_id, data_size);
+      cuckoo.Insert(data_id, *recv_p);
     }
 
 
     // If to file writer
+    set_attr<FILE *>(this, ATTR_W_FILE_D, pkt, recv_p->fd_p);
     set_attr<uint8_t>(this, ATTR_W_DATA_ID, pkt, 0xff);
     set_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt, 0xac);
 
