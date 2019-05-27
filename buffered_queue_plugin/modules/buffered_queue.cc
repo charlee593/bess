@@ -39,6 +39,12 @@
 #define DEFAULT_BUFFEREDQUEUE_SIZE 1024
 #define FILENAME_LEN			(6)
 
+enum {
+  ATTR_W_DATA_ID,
+  ATTR_W_DATA_SIZE
+};
+
+
 struct MDCData
 {
     char name[50];
@@ -107,6 +113,11 @@ CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQu
 
   task_id_t tid;
   CommandResponse err;
+
+  using AccessMode = bess::metadata::Attribute::AccessMode;
+
+  AddMetadataAttr("data_id", 4, AccessMode::kRead);
+  AddMetadataAttr("data_size", 4, AccessMode::kRead);
 
   tid = RegisterTask(nullptr);
   if (tid == INVALID_TASK_ID) {
@@ -238,6 +249,12 @@ void BufferedQueue::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << static_cast<int>(data_id) << std::endl;
     std::cout << std::hex << std::to_string(sn) << std::endl;
     std::cout << std::hex << std::to_string(data_size) << std::endl;
+
+    uint8_t ip_src = get_attr<uint8_t>(this, ATTR_W_DATA_ID, pkt);
+    uint8_t ip_dst = get_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt);
+
+
+    std::cout << "BufferedQueue Metatdata: " + std::to_string(ip_src)  + std::to_string(ip_dst)  << std::endl;
 
 
     // SendReq(0x02, prior_, 0xcc, app_id, data_id, mode, label, addr, ctx);
