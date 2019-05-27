@@ -100,8 +100,10 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
     FILE * fd_d = get_attr<FILE *>(this, ATTR_R_FILE_D, pkt);
-    uint8_t data_id_ = get_attr<uint8_t>(this, ATTR_W_DATA_ID, pkt);
-    uint8_t data_size_ = get_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt);
+    uint8_t data_id_ = get_attr<uint8_t>(this, ATTR_R_DATA_ID, pkt);
+    uint8_t data_size_ = get_attr<uint8_t>(this, ATTR_R_DATA_SIZE, pkt);
+
+    std::cout << "FileWriter ProcessBatch get_attr: " + std::to_string(data_id_) + std::to_string(data_size_) << std::endl;
 
 
     fwrite(pkt->data(), sizeof(char), 3, fd_d);
