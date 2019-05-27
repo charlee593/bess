@@ -116,8 +116,8 @@ CommandResponse BufferedQueue::Init(const sample::buffered_queue::pb::BufferedQu
 
   using AccessMode = bess::metadata::Attribute::AccessMode;
 
-  AddMetadataAttr("data_id", 4, AccessMode::kRead);
-  AddMetadataAttr("data_size", 4, AccessMode::kRead);
+  AddMetadataAttr("data_id", 1, AccessMode::kRead);
+  AddMetadataAttr("data_size", 1, AccessMode::kRead);
 
   tid = RegisterTask(nullptr);
   if (tid == INVALID_TASK_ID) {
