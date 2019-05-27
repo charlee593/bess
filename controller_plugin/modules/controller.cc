@@ -285,8 +285,8 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
 
     // If to file writer
-    set_attr<uint8_t>(this, ATTR_W_DATA_ID, pkt, recv_s->data_id);
-    set_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt, recv_s->data_size);
+    set_attr<uint8_t>(this, ATTR_W_DATA_ID, pkt, 0xff);
+    set_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt, 0xac);
 
     EmitPacket(ctx, pkt, 0);
 
