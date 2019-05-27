@@ -53,7 +53,7 @@ const Commands FileWriter::cmds = {
      MODULE_CMD_FUNC(&FileWriter::CommandGetStatus), Command::THREAD_SAFE}};
 
 
-CommandResponse FileWriter::Init(const sample::file_writer::pb::FileWriterArg &arg) {
+CommandResponse FileWriter::Init(const bess::pb::IPEncapArg &arg[[maybe_unused]]) {
   using AccessMode = bess::metadata::Attribute::AccessMode;
 
   AddMetadataAttr("file_d", sizeof(FILE *), AccessMode::kRead);
@@ -63,16 +63,6 @@ CommandResponse FileWriter::Init(const sample::file_writer::pb::FileWriterArg &a
   return CommandSuccess();
 }
 
-void FileWriter::DeInit() {
-  bess::Packet *pkt;
-
-  if (queue_) {
-    while (llring_sc_dequeue(queue_, (void **)&pkt) == 0) {
-      bess::Packet::Free(pkt);
-    }
-    std::free(queue_);
-  }
-}
 
 /* from upstream */
 void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
@@ -110,11 +100,11 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
     FILE * fd_d = get_attr<FILE *>(this, ATTR_R_FILE_D, pkt);
-    uint8_t data_id = get_attr<uint8_t>(this, ATTR_W_DATA_ID, pkt);
-    uint8_t data_size = get_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt);
+    uint8_t data_id_ = get_attr<uint8_t>(this, ATTR_W_DATA_ID, pkt);
+    uint8_t data_size_ = get_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt);
 
 
-    fwrite(pkt.data(), sizeof(char), 3, fd_d);
+    fwrite(pkt->data(), sizeof(char), 3, fd_d);
 
     EmitPacket(ctx, pkt, 0);
 
