@@ -98,7 +98,7 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
     std::cout << "FileWriter ProcessBatch head_data: "  << std::endl;
     std::cout << std::hex << pkt->data() << std::endl;
-    std::cout << std::hex << pkt->head_data<char *>() << std::endl;
+    std::cout << std::hex << pkt->head_data<char *>()->raw_value() << std::endl;
 
 
 
