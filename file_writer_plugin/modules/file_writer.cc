@@ -97,7 +97,7 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << "FileWriter ProcessBatch get_attr: " + std::to_string(data_id_) + ", " + std::to_string(data_size_) << fd_d << std::endl;
 
     std::cout << "FileWriter ProcessBatch head_data: "  << std::endl;
-    std::cout << (pkt+offset)->data() << std::endl;
+    std::cout << std::hex << (pkt+offset)->data() << std::endl;
     std::cout << pkt << std::endl;
 
 
