@@ -99,6 +99,18 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
     fwrite(pkt->data(), sizeof(char), 3, fd_d);
 
+    // Reply with data id, amount of data written,
+
+    char *head = pkt->head_data<char *>();
+
+    uint8_t *p = reinterpret_cast<uint8_t *>(head + 2);
+
+    std::cout << "FileWriter after: " + std::to_string(p->raw_value()) << std::endl;
+
+    *p = (*p & 0x00) | 0xbc;
+
+    std::cout << "FileWriter after change: " + std::to_string(p->raw_value()) << std::endl;
+
     EmitPacket(ctx, pkt, 0);
 
   }
