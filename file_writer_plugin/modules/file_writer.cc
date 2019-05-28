@@ -110,10 +110,10 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
     *p = (*p & 0x00) | 0xbc;
 
-    uint8_t mode = (mdc_p1->raw_value() & 0xff0000) >> 16;
+    uint8_t mode2 = (mdc_p1->raw_value() & 0xff0000) >> 16;
 
     std::cout << "FileWriter after change: " << std::endl;
-    std::cout << std::hex << static_cast<int>(mode) << std::endl;
+    std::cout << std::hex << static_cast<int>(mode2) << std::endl;
 
     EmitPacket(ctx, pkt, 0);
 
