@@ -94,12 +94,17 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     uint8_t data_id_ = get_attr<uint8_t>(this, ATTR_R_HEADER_SIZE, pkt);
     uint8_t data_size_ = get_attr<uint8_t>(this, ATTR_R_DATA_SIZE, pkt);
 
-    std::cout << "FileWriter ProcessBatch get_attr: " + std::to_string(data_id_) + std::to_string(data_size_) << fd_d << std::endl;
+    std::cout << "FileWriter ProcessBatch get_attr: " + std::to_string(data_id_) + ", " + std::to_string(data_size_) << fd_d << std::endl;
 
 
-    uint8_t data_written = fwrite(pkt->data(), sizeof(char), 3, fd_d);
+    char *head_data = pkt->data<char *>(offset + 8);
+    uint8_t *size_data = reinterpret_cast<uint8_t *>(head_data);
+    std::cout << "FileWriter ProcessBatch head_data: " + std::to_string(size_data)<< fd_d << std::endl;
 
-    std::cout << "FileWriter fwrtite written: " + std::to_string(data_written) << fd_d << std::endl;
+
+
+    // fwrite to fd_d
+    uint8_t data_written = fwrite(pkt->data(), sizeof(char), data_size, fd_d);
 
     // Reply with data id, amount of data written,
     // Rewrite mode field to 0x14
@@ -108,16 +113,6 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     uint8_t *data_size_p = reinterpret_cast<uint8_t *>(head + 8);
     *mode_p = (*mode_p & 0x00) | 0x14;
     *data_size_p = (*data_size_p & 0x00) | data_written;
-
-    be64_t *mdc_p1_ = pkt->head_data<be64_t *>(offset); // first 8 bytes
-    be64_t *mdc_p2_ = pkt->head_data<be64_t *>(offset + 8); // second 8 bytes
-
-    uint8_t mode_ = (mdc_p1_->raw_value() & 0xff0000) >> 16;
-    uint8_t data_size_1 = (mdc_p2_->raw_value() & 0xff);
-
-    std::cout << "FileWriter ProcessBatch batch size after: " + std::to_string(cnt) + " pkt: " + std::to_string(i) << std::endl;
-    std::cout << std::hex << static_cast<int>(mode_) << std::endl;
-    std::cout << std::hex << std::to_string(data_size_1) << std::endl;
 
     EmitPacket(ctx, pkt, 0);
 
