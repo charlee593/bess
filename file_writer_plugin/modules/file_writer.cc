@@ -113,11 +113,11 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     be64_t *mdc_p2_ = pkt->head_data<be64_t *>(offset + 8); // second 8 bytes
 
     uint8_t mode_ = (mdc_p1_->raw_value() & 0xff0000) >> 16;
-    uint8_t data_size_ = (mdc_p2_->raw_value() & 0xff);
+    uint8_t data_size_1 = (mdc_p2_->raw_value() & 0xff);
 
     std::cout << "FileWriter ProcessBatch batch size after: " + std::to_string(cnt) + " pkt: " + std::to_string(i) << std::endl;
     std::cout << std::hex << static_cast<int>(mode_) << std::endl;
-    std::cout << std::hex << std::to_string(data_size_) << std::endl;
+    std::cout << std::hex << std::to_string(data_size_1) << std::endl;
 
     EmitPacket(ctx, pkt, 0);
 
