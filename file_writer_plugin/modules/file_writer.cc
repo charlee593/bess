@@ -98,8 +98,9 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
 
     char *head_data = pkt->data<char *>(offset + 8);
-    uint8_t *size_data = reinterpret_cast<uint8_t *>(head_data);
-    std::cout << "FileWriter ProcessBatch head_data: " + std::to_string(size_data)<< fd_d << std::endl;
+    be64_t *size_data_p = reinterpret_cast<be64_t *>(head_data);
+    uint8_t *size_data = size_data_p->raw_value();
+    std::cout << "FileWriter ProcessBatch head_data: " + std::to_string(size_data) << fd_d << std::endl;
 
 
 
