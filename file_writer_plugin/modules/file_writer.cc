@@ -105,11 +105,11 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
     uint8_t *p = reinterpret_cast<uint8_t *>(head + 2);
 
-    std::cout << "FileWriter after: " + std::to_string(p) << std::endl;
+    std::cout << "FileWriter after: " << p << std::endl;
 
     *p = (*p & 0x00) | 0xbc;
 
-    std::cout << "FileWriter after change: " + std::to_string(p) << std::endl;
+    std::cout << "FileWriter after change: " << p << std::endl;
 
     EmitPacket(ctx, pkt, 0);
 
