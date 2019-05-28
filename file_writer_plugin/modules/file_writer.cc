@@ -101,8 +101,7 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << pkt->head_data<char *>(offset) << std::endl;
 
     // fwrite to fd_d
-    char buffer[] = { 'x' , 'y' , 'z' };
-    uint8_t data_written = fwrite(buffer, sizeof(char), sizeof(buffer), fd_d);
+    uint8_t data_written = fwrite( pkt->head_data<char *>(offset) , sizeof(char), 4, fd_d);
     fclose (fd_d);
 
     std::cout << "FileWriter ProcessBatch written: " + std::to_string(data_written)  << std::endl;
