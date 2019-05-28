@@ -27,7 +27,7 @@ print("Size of data_udp:", len(bytes(data_udp)))
 unlabeled_data_mdc = MDCData(addr=0x1a1b, mode=0x02, label=0x01)
 print("Size of unlabeled_data_mdc:", len(bytes(unlabeled_data_mdc)))
 
-unlabeled_data_pkt = data_eth/data_ip/data_udp/unlabeled_data_mdc
+unlabeled_data_pkt = data_eth/data_ip/data_udp/unlabeled_data_mdc/0xfafa
 print("Sendiing unlabeled_data_mdc_header: ", bytes(unlabeled_data_mdc))
 print("Size of unlabeled_data_pkt:", len(bytes(unlabeled_data_pkt)))
 
