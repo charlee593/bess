@@ -101,7 +101,7 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
     // Reply with data id, amount of data written,
 
-    char *head = pkt->head_data<char *>();
+    char *head = pkt->head_data<char *>(offset);
 
     uint8_t *p = reinterpret_cast<uint8_t *>(head + 2);
 
@@ -110,7 +110,8 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
     *p = (*p & 0x00) | 0xbc;
 
-    uint8_t mode2 = (mdc_p1->raw_value() & 0xff0000) >> 16;
+    be64_t *mdc_p11 = pkt->head_data<be64_t *>(offset); // first 8 bytes
+    uint8_t mode2 = (mdc_p11->raw_value() & 0xff0000) >> 16;
 
     std::cout << "FileWriter after change: " << std::endl;
     std::cout << std::hex << static_cast<int>(mode2) << std::endl;
