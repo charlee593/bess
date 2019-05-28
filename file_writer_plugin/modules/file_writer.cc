@@ -103,6 +103,8 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     // fwrite to fd_d
     uint8_t data_written = fwrite("hlee", sizeof(char), 3, fd_d);
 
+    std::cout << "FileWriter ProcessBatch written: " + std::to_string(data_written)  << std::endl;
+
     // Reply with data id, amount of data written,
     // Rewrite mode field to 0x14
     char *head = pkt->head_data<char *>(offset);
