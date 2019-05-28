@@ -29,7 +29,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #include "file_writer.h"
-
+#include <bitset>
 
 #include <cstdlib>
 
