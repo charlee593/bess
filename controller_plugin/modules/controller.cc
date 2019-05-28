@@ -71,7 +71,7 @@ RecverState * CreateRecverState(uint8_t data_id, int64_t data_size) {
   std::string str = "/tmp/mdc_data_" +  std::to_string(data_id);
   char *cstr = &str[0u];
 
-  if ((recv_p->fd_p = fopen(cstr, "w")) == NULL) {
+  if ((recv_p->fd_p = fopen(cstr, "a+")) == NULL) {
    free(recv_p);
    std::cout << "Not good!!!!!!!!!" << std::endl;
    return NULL;
