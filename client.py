@@ -53,7 +53,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
                 bytes(unlabeled_data_pkt[MDCData]).encode("hex"),
             )
             print(bytes(unlabeled_data_pkt).encode("hex"))
-            client.send(bytes(unlabeled_data_pkt) /"Hello World")
+            client.send(bytes(unlabeled_data_pkt /"Hello World") )
             sending_pk_sn += 1
 
         except KeyboardInterrupt as k:
