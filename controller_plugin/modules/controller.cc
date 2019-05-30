@@ -192,7 +192,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
       {
         if (recv_p->is_finished)
         {
-          McReply *reply_p = CreateMcReply(recv_p->data_id, recv_p->data_size, recv_p->fd_p);
+          McReply *reply_p = CreateMcReply(0xfa, recv_p->data_size, recv_p->fd_p);
           bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(McReply));
 
           if (new_pkt)
