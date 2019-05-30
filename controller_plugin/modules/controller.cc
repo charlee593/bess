@@ -80,93 +80,11 @@ RecverState * CreateRecverState(uint8_t data_id, int64_t data_size) {
   return recv_p;
 }
 
-int Controller::Resize(int slots) {
-  struct llring *old_queue = queue_;
-  struct llring *new_queue;
-
-  int bytes = llring_bytes_with_slots(slots);
-
-  new_queue =
-      reinterpret_cast<llring *>(std::aligned_alloc(alignof(llring), bytes));
-  if (!new_queue) {
-    std::cout << "Resize: no enough memory: " + std::to_string(ENOMEM) << std::endl;
-    return -ENOMEM;
-  }
-
-  int ret = llring_init(new_queue, slots, 0, 1);
-  if (ret) {
-    std::free(new_queue);
-    std::cout << "Resize: invalid: " + std::to_string(EINVAL) << std::endl;
-    return -EINVAL;
-  }
-
-  /* migrate packets from the old queue */
-  if (old_queue) {
-    bess::Packet *pkt;
-
-    while (llring_sc_dequeue(old_queue, (void **)&pkt) == 0) {
-      ret = llring_sp_enqueue(new_queue, pkt);
-      if (ret == -LLRING_ERR_NOBUF) {
-        bess::Packet::Free(pkt);
-      }
-    }
-
-    std::free(old_queue);
-  }
-
-  queue_ = new_queue;
-  size_ = slots;
-
-  if (backpressure_) {
-    AdjustWaterLevels();
-  }
-
-  return 0;
-}
-
 CommandResponse Controller::Init(const sample::controller::pb::ControllerArg &arg) {
   using AccessMode = bess::metadata::Attribute::AccessMode;
-
   AddMetadataAttr("file_d", sizeof(FILE *), AccessMode::kWrite);
   AddMetadataAttr("data_id", 1, AccessMode::kWrite);
   AddMetadataAttr("data_size", 1, AccessMode::kWrite);
-
-  data_ready_ = false;
-  data_receiving_ = false;
-  data_size_ = 0;
-  curr_data_size_ = 0;
-  data_requested_ = false;
-
-  task_id_t tid;
-  CommandResponse err;
-
-  tid = RegisterTask(nullptr);
-  if (tid == INVALID_TASK_ID) {
-    return CommandFailure(ENOMEM, "Task creation failed");
-  }
-
-  burst_ = bess::PacketBatch::kMaxBurst;
-
-  if (arg.backpressure()) {
-    VLOG(1) << "Backpressure enabled for " << name() << "::Controller";
-    backpressure_ = true;
-  }
-
-  if (arg.size() != 0) {
-    err = SetSize(arg.size());
-    if (err.error().code() != 0) {
-      return err;
-    }
-  } else {
-    int ret = Resize(DEFAULT_BUFFEREDQUEUE_SIZE);
-    if (ret) {
-      return CommandFailure(-ret);
-    }
-  }
-
-  if (arg.prefetch()) {
-    prefetch_ = true;
-  }
 
   return CommandSuccess();
 }
@@ -282,26 +200,22 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << "Controller ProcessBatch header: " << std::endl;
     std::cout << pkt->head_data<be64_t *>() << std::endl;
 
-
     std::cout << "Controllerend: " << std::endl;
 
 
 
-    auto result = cuckoo.Find(app_id);
+    auto recv_s = cuckoo.Find(app_id);
+    RecverState * recv_p = &(recv_s->second);
 
-    RecverState * recv_p = &(result->second);
-
-    if (result == nullptr) {
-      std::cout << "CuckooMap INSSSSSSSSSSSSSIIIIIIIIIDEEEE" << std::endl;
+    if (recv_s == nullptr) {
       recv_p = CreateRecverState(data_id, data_size);
       cuckoo.Insert(data_id, *recv_p);
     }
 
-
     // If to file writer
     set_attr<FILE *>(this, ATTR_W_FILE_D, pkt, recv_p->fd_p);
-    set_attr<uint8_t>(this, ATTR_W_DATA_ID, pkt, 0xff);
-    set_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt, 0xac);
+    set_attr<uint8_t>(this, ATTR_W_DATA_ID, pkt, data_id);
+    set_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt, data_size);
 
     std::cout << "Controller ddddd " << recv_p->fd_p << std::endl;
 

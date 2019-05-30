@@ -107,8 +107,6 @@ class Controller : public Module {
   const double kHighWaterRatio = 0.90;
   const double kLowWaterRatio = 0.15;
 
-  int Resize(int slots);
-
   // Readjusts the water level according to `size_`.
   void AdjustWaterLevels();
 
