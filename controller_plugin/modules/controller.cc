@@ -169,7 +169,6 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
       }
       if (code == 6)
       {
-         int64_t dd = (mdc_p2->raw_value() & 0xff);
         std::cout << "Controller: Got reply from file writer" << std::endl;
         std::cout << recv_p->num_recv_ed << std::endl;
         std::cout << recv_s << std::endl;
