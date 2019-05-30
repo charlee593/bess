@@ -69,8 +69,6 @@ struct RecverState
 class Controller : public Module
 {
 public:
-  static const Commands cmds;
-
   Controller()
       : Module()
   {
