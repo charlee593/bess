@@ -38,7 +38,7 @@
 enum
 {
   ATTR_W_FILE_D,
-  ATTR_W_DATA_ID,
+  ATTR_W_HEADER_SIZE,
   ATTR_W_DATA_SIZE
 };
 
@@ -69,7 +69,7 @@ CommandResponse Controller::Init(const bess::pb::IPEncapArg &arg[[maybe_unused]]
 {
   using AccessMode = bess::metadata::Attribute::AccessMode;
   AddMetadataAttr("file_d", sizeof(FILE *), AccessMode::kWrite);
-  AddMetadataAttr("data_id", 1, AccessMode::kWrite);
+  AddMetadataAttr("header_size", 1, AccessMode::kWrite);
   AddMetadataAttr("data_size", 1, AccessMode::kWrite);
 
   return CommandSuccess();
@@ -167,7 +167,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
 
     // If to file writer
     set_attr<FILE *>(this, ATTR_W_FILE_D, pkt, recv_p->fd_p);
-    set_attr<uint8_t>(this, ATTR_W_DATA_ID, pkt, data_id);
+    set_attr<uint8_t>(this, ATTR_W_HEADER_SIZE, pkt, 9);
     set_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt, data_size);
 
     std::cout << "Controller ddddd " << recv_p->fd_p << std::endl;
