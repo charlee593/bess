@@ -68,7 +68,6 @@ struct RecverState
 
 class Controller : public Module
 {
-
 public:
   static const Commands cmds;
 
@@ -90,4 +89,4 @@ private:
   CuckooMap<uint8_t, RecverState> cuckoo;
 };
 
-#endif // BESS_MODULES_QUEUE_H_
+#endif // BESS_MODULES_
