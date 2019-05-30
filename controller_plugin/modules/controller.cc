@@ -188,7 +188,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
           recv_p->is_finished = 1;
         }
       }
-      if (code == 1)
+      if (code == 6)
       {
         if (recv_p->is_finished)
         {
