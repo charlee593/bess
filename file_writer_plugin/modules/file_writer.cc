@@ -74,7 +74,6 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
     uint8_t header_size_ = get_attr<uint8_t>(this, ATTR_R_HEADER_SIZE, pkt);
     uint8_t data_size_ = get_attr<uint8_t>(this, ATTR_R_DATA_SIZE, pkt);
 
-    uint8_t offset = sizeof(Ethernet) + ip_bytes + sizeof(Udp);
     be64_t *mdc_p1 = pkt->head_data<be64_t *>(offset);     // first 8 bytes
     be64_t *mdc_p2 = pkt->head_data<be64_t *>(offset + 8); // second 8 bytes
 
