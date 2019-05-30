@@ -81,4 +81,4 @@ public:
   void ProcessBatch(Context *ctx, bess::PacketBatch *batch) override;
 };
 
-#endif // BESS_MODULES_QUEUE_H_
+#endif // BESS_MODULES_
