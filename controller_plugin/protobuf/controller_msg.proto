@@ -38,4 +38,4 @@ package sample.controller.pb;
  * __Output Gates__: 1
  */
 message ControllerArg {
-}
+} 
