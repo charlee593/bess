@@ -30,7 +30,6 @@
 
 #include "file_writer.h"
 #include <bitset>
-
 #include <cstdlib>
 
 #include "../utils/format.h"
