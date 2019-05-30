@@ -170,7 +170,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
       if (code == 6)
       {
         std::cout << "Controller: Got reply from file writer" << std::endl;
-        std::cout << recv_p->num_recv_ed << std::endl;
+        // std::cout << recv_p->num_recv_ed << std::endl;
         std::cout << recv_s << std::endl;
       }
       if (code == 1)
