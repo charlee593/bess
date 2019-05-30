@@ -66,6 +66,14 @@ struct RecverState
   uint8_t is_finished;
 };
 
+struct McReply
+{
+  uint8_t data_id;
+  int64_t data_size;
+
+  FILE *fd_p;
+};
+
 class Controller : public Module
 {
 public:

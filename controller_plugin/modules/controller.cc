@@ -65,6 +65,18 @@ RecverState *CreateRecverState(uint8_t data_id, int64_t data_size)
   return recv_p;
 }
 
+McReply *CreateMcReply(uint8_t data_id, int64_t data_size, FILE *fd_p)
+{
+  McReply *reply_p = (McReply *)malloc(sizeof(McReply));
+  bzero(reply_p, sizeof(McReply));
+
+  reply_p->data_id = data_id;
+  reply_p->data_size = data_size;
+  reply_p->fd_p = fd_p;
+
+  return reply_p;
+}
+
 CommandResponse Controller::Init(const bess::pb::IPEncapArg &arg[[maybe_unused]])
 {
   using AccessMode = bess::metadata::Attribute::AccessMode;
@@ -171,7 +183,8 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
       {
         std::cout << "Controller: Got reply from file writer" << std::endl;
         recv_p->num_recv_ed += data_size;
-        if (recv_p->num_recv_ed == recv_p->data_size){
+        if (recv_p->num_recv_ed == recv_p->data_size)
+        {
           recv_p->is_finished = 1;
         }
       }
@@ -179,12 +192,26 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
       {
         if (recv_p->is_finished)
         {
-          EmitPacket(ctx, pkt, 0);
+          McReply *reply_p = CreateMcReply(recv_p->data_id, recv_p->data_size, recv_p->fd_p);
+          bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(McReply));
+
+          if (new_pkt)
+          {
+            char *head = new_pkt->head_data<char *>();
+            bess::utils::Copy(head, reply_p, sizeof(McReply));
+
+            be64_t *ee1 = new_pkt->head_data<be64_t *>(); // first 8 bytes
+            uint8_t daa = ee1->raw_value();
+            std::cout << "Controller: daa" << std::endl;
+
+            std::cout << std::hex << daa << std::endl;
+
+            EmitPacket(ctx, new_pkt, 1);
+          }
         }
       }
     }
   }
-}
 
-ADD_MODULE(Controller, "controller",
-           "description of controller")
+  ADD_MODULE(Controller, "controller",
+             "description of controller")
