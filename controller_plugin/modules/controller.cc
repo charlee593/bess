@@ -30,37 +30,21 @@
 
 #include "controller.h"
 
-
 #include <cstdlib>
 
 #include "../utils/format.h"
 #include "../utils/cuckoo_map.h"
 
-#define DEFAULT_BUFFEREDQUEUE_SIZE 1024
-
-enum {
+enum
+{
   ATTR_W_FILE_D,
   ATTR_W_DATA_ID,
   ATTR_W_DATA_SIZE
 };
 
-struct MDCData
+RecverState *CreateRecverState(uint8_t data_id, int64_t data_size)
 {
-    char name[50];
-    int age;
-    float salary;
-};
-
-const Commands Controller::cmds = {
-    {"set_burst", "ControllerCommandSetBurstArg",
-     MODULE_CMD_FUNC(&Controller::CommandSetBurst), Command::THREAD_SAFE},
-    {"set_size", "ControllerCommandSetSizeArg",
-     MODULE_CMD_FUNC(&Controller::CommandSetSize), Command::THREAD_UNSAFE},
-    {"get_status", "ControllerCommandGetStatusArg",
-     MODULE_CMD_FUNC(&Controller::CommandGetStatus), Command::THREAD_SAFE}};
-
-RecverState * CreateRecverState(uint8_t data_id, int64_t data_size) {
-  RecverState * recv_p = (RecverState *) malloc(sizeof(RecverState));
+  RecverState *recv_p = (RecverState *)malloc(sizeof(RecverState));
   bzero(recv_p, sizeof(RecverState));
 
   recv_p->data_id = data_id;
@@ -68,19 +52,21 @@ RecverState * CreateRecverState(uint8_t data_id, int64_t data_size) {
   recv_p->is_finished = 0;
   recv_p->num_recv_ed = 0;
 
-  std::string str = "/tmp/mdc_data_" +  std::to_string(data_id);
+  std::string str = "/tmp/mdc_data_" + std::to_string(data_id);
   char *cstr = &str[0u];
 
-  if ((recv_p->fd_p = fopen(cstr, "a+")) == NULL) {
-   free(recv_p);
-   std::cout << "Not good!!!!!!!!!" << std::endl;
-   return NULL;
+  if ((recv_p->fd_p = fopen(cstr, "a+")) == NULL)
+  {
+    free(recv_p);
+    std::cout << "Not good!!!!!!!!!" << std::endl;
+    return NULL;
   }
 
   return recv_p;
 }
 
-CommandResponse Controller::Init(const sample::controller::pb::ControllerArg &arg) {
+CommandResponse Controller::Init(const bess::pb::IPEncapArg &arg[[maybe_unused]])
+{
   using AccessMode = bess::metadata::Attribute::AccessMode;
   AddMetadataAttr("file_d", sizeof(FILE *), AccessMode::kWrite);
   AddMetadataAttr("data_id", 1, AccessMode::kWrite);
@@ -89,80 +75,49 @@ CommandResponse Controller::Init(const sample::controller::pb::ControllerArg &ar
   return CommandSuccess();
 }
 
-void Controller::DeInit() {
-  bess::Packet *pkt;
-
-  if (queue_) {
-    while (llring_sc_dequeue(queue_, (void **)&pkt) == 0) {
-      bess::Packet::Free(pkt);
-    }
-    std::free(queue_);
-  }
-}
-
-std::string Controller::GetDesc() const {
-  const struct llring *ring = queue_;
-
-  return bess::utils::Format("%u/%u", llring_count(ring), ring->common.slots);
-}
-
-int Controller::Enqueue(bess::Packet *pkt) {
-  if (llring_enqueue(queue_, (void *)pkt) != 0){
-    return 0;
-  }
-
-  if (backpressure_ && llring_count(queue_) > high_water_) {
-    SignalOverload();
-  }
-
-  stats_.enqueued += 1;
-
-  return 1;
-}
-
 void Controller::SendReq(uint8_t code, uint8_t lrange, uint8_t rrange,
-  uint8_t app_id, uint8_t data_id, uint8_t mode, uint8_t label, uint16_t addr, Context *ctx) {
+                         uint8_t app_id, uint8_t data_id, uint8_t mode, uint8_t label, uint16_t addr, Context *ctx)
+{
 
   bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(42 + 9);
   Ethernet *eth = new_pkt->head_data<Ethernet *>(); // Ethernet
-  Ipv4 *ip = reinterpret_cast<Ipv4 *>(eth + 1); // IP
+  Ipv4 *ip = reinterpret_cast<Ipv4 *>(eth + 1);     // IP
   int ip_bytes = ip->header_length << 2;
 
-  if (new_pkt) {
-      uint64_t mDC = 0xffff & addr;
-      mDC = (mDC << 8) | mode;
-      mDC = (mDC << 8) | label;
-      mDC = (mDC << 8) | code;
-      mDC = (mDC << 8) | app_id;
-      mDC = (mDC << 8) | data_id;
-      mDC = (mDC << 8) | lrange;
+  if (new_pkt)
+  {
+    uint64_t mDC = 0xffff & addr;
+    mDC = (mDC << 8) | mode;
+    mDC = (mDC << 8) | label;
+    mDC = (mDC << 8) | code;
+    mDC = (mDC << 8) | app_id;
+    mDC = (mDC << 8) | data_id;
+    mDC = (mDC << 8) | lrange;
 
-      be16_t *new_p2 = new_pkt->head_data<be16_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
-      bess::utils::Copy(new_p2, &rrange, 2);
+    be16_t *new_p2 = new_pkt->head_data<be16_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
+    bess::utils::Copy(new_p2, &rrange, 2);
 
-      be64_t *new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 1); // First 8 bytes
+    be64_t *new_p = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 1); // First 8 bytes
 
+    std::cout << "Controller new packet mDC" << std::hex << mDC << std::endl;
+    bess::utils::Copy(new_p, reinterpret_cast<uint64_t *>(&mDC), 16);
 
-      std::cout << "Controller new packet mDC"  << std::hex <<  mDC << std::endl;
-      bess::utils::Copy(new_p, reinterpret_cast<uint64_t *>(&mDC), 16);
+    be64_t *p4 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
+    std::cout << "Controller new packet " << std::hex << p4->raw_value() << std::endl;
+    be64_t *p3 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 2);
+    std::cout << "Controller new packet " << std::hex << p3->raw_value() << std::endl;
 
-
-
-
-      be64_t *p4 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp));
-      std::cout << "Controller new packet "  << std::hex << p4->raw_value() << std::endl;
-      be64_t *p3 = new_pkt->head_data<be64_t *>(sizeof(Ethernet) + ip_bytes + sizeof(Udp) + 2);
-      std::cout << "Controller new packet "  << std::hex << p3->raw_value() << std::endl;
-
-      EmitPacket(ctx, new_pkt, 1);
+    EmitPacket(ctx, new_pkt, 1);
   }
 }
 
 /* from upstream */
-void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
+void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
+{
   int cnt = batch->cnt();
 
-  for (int i = 0; i < cnt; i++) {
+  for (int i = 0; i < cnt; i++)
+  {
     bess::Packet *pkt = batch->pkts()[i];
 
     Ethernet *eth = pkt->head_data<Ethernet *>(); // Ethernet
@@ -171,7 +126,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
     // Access UDP payload (i.e., mDC data)
     uint8_t offset = sizeof(Ethernet) + ip_bytes + sizeof(Udp);
-    be64_t *mdc_p1 = pkt->head_data<be64_t *>(offset); // first 8 bytes
+    be64_t *mdc_p1 = pkt->head_data<be64_t *>(offset);     // first 8 bytes
     be64_t *mdc_p2 = pkt->head_data<be64_t *>(offset + 8); // second 8 bytes
 
     uint16_t addr = (mdc_p1->raw_value() & 0xffff);
@@ -193,7 +148,6 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << std::hex << std::to_string(sn) << std::endl;
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
-
     std::cout << "Controller ProcessBatch DATA: " << std::endl;
     std::cout << pkt->data<be64_t *>() << std::endl;
 
@@ -202,12 +156,11 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
 
     std::cout << "Controllerend: " << std::endl;
 
-
-
     auto recv_s = cuckoo.Find(app_id);
-    RecverState * recv_p = &(recv_s->second);
+    RecverState *recv_p = &(recv_s->second);
 
-    if (recv_s == nullptr) {
+    if (recv_s == nullptr)
+    {
       recv_p = CreateRecverState(data_id, data_size);
       cuckoo.Insert(data_id, *recv_p);
     }
@@ -220,129 +173,8 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     std::cout << "Controller ddddd " << recv_p->fd_p << std::endl;
 
     EmitPacket(ctx, pkt, 0);
-
-    // std::cout << "CuckooMap: " << std::to_string(recv_r->data_id) << std::endl;
-    //
-    // RecverState * recv_p = CreateRecverState(0xff, 64);
-    // std::cout << "CuckooMap: " << std::to_string(recv_p->data_id) << std::to_string(recv_p->data_size) << std::to_string(recv_p->num_recv_ed)  << std::endl;
-
-
-
   }
-}
-
-/* to downstream */
-struct task_result Controller::RunTask(Context *ctx, bess::PacketBatch *batch,
-                                  void *) {
-  if (!data_requested_ || children_overload_ > 0) {
-    return {
-        .block = true, .packets = 0, .bits = 0,
-    };
-  }
-
-  const int burst = ACCESS_ONCE(burst_);
-  const int pkt_overhead = 24;
-
-  uint64_t total_bytes = 0;
-
-  uint32_t cnt = llring_sc_dequeue_burst(queue_, (void **)batch->pkts(), burst);
-
-  if (cnt == 0) {
-    return {.block = true, .packets = 0, .bits = 0};
-  }
-
-  stats_.dequeued += cnt;
-  batch->set_cnt(cnt);
-
-  if (prefetch_) {
-    for (uint32_t i = 0; i < cnt; i++) {
-      total_bytes += batch->pkts()[i]->total_len();
-      rte_prefetch0(batch->pkts()[i]->head_data());
-    }
-  } else {
-    for (uint32_t i = 0; i < cnt; i++) {
-      total_bytes += batch->pkts()[i]->total_len();
-    }
-  }
-
-  RunNextModule(ctx, batch);
-
-  if (backpressure_ && llring_count(queue_) < low_water_) {
-    SignalUnderload();
-  }
-
-  return {.block = false,
-          .packets = cnt,
-          .bits = (total_bytes + cnt * pkt_overhead) * 8};
-}
-
-CommandResponse Controller::CommandSetBurst(
-    const sample::controller::pb::ControllerCommandSetBurstArg &arg) {
-  uint64_t burst = arg.burst();
-
-  if (burst > bess::PacketBatch::kMaxBurst) {
-    return CommandFailure(EINVAL, "burst size must be [0,%zu]",
-                          bess::PacketBatch::kMaxBurst);
-  }
-
-  burst_ = burst;
-  return CommandSuccess();
-}
-
-CommandResponse Controller::SetSize(uint64_t size) {
-  std::cout << "Here in Setsize: " << std::endl;
-  if (size < 4 || size > 16384) {
-    return CommandFailure(EINVAL, "must be in [4, 16384]");
-  }
-
-  if (size & (size - 1)) {
-    return CommandFailure(EINVAL, "must be a power of 2");
-  }
-
-  int ret = Resize(size);
-  std::cout << "After Here in Setsize: " +  std::to_string(ret) << std::endl;
-  if (ret) {
-    return CommandFailure(-ret);
-  }
-
-  return CommandSuccess();
-}
-
-CommandResponse Controller::CommandSetSize(
-    const sample::controller::pb::ControllerCommandSetSizeArg &arg) {
-  return SetSize(arg.size());
-}
-
-CommandResponse Controller::CommandGetStatus(
-    const sample::controller::pb::ControllerCommandGetStatusArg &) {
-  sample::controller::pb::ControllerCommandGetStatusResponse resp;
-  resp.set_count(llring_count(queue_));
-  resp.set_size(size_);
-  resp.set_enqueued(stats_.enqueued);
-  resp.set_dequeued(stats_.dequeued);
-  resp.set_dropped(stats_.dropped);
-  return CommandSuccess(resp);
-}
-
-void Controller::AdjustWaterLevels() {
-  high_water_ = static_cast<uint64_t>(size_ * kHighWaterRatio);
-  low_water_ = static_cast<uint64_t>(size_ * kLowWaterRatio);
-}
-
-CheckConstraintResult Controller::CheckModuleConstraints() const {
-  CheckConstraintResult status = CHECK_OK;
-  if (num_active_tasks() - tasks().size() < 1) {  // Assume multi-producer.
-    LOG(ERROR) << "Controller has no producers";
-    status = CHECK_NONFATAL_ERROR;
-  }
-
-  if (tasks().size() > 1) {  // Assume single consumer.
-    LOG(ERROR) << "More than one consumer for the queue" << name();
-    return CHECK_FATAL_ERROR;
-  }
-
-  return status;
 }
 
 ADD_MODULE(Controller, "controller",
-           "terminates current task and enqueue packets for new task")
+           "description of controller")

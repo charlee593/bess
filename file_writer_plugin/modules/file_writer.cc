@@ -38,13 +38,15 @@
 
 #define DEFAULT_BUFFEREDQUEUE_SIZE 1024
 
-enum {
+enum
+{
   ATTR_R_FILE_D,
   ATTR_R_HEADER_SIZE,
   ATTR_R_DATA_SIZE
 };
 
-CommandResponse FileWriter::Init(const bess::pb::IPEncapArg &arg[[maybe_unused]]) {
+CommandResponse FileWriter::Init(const bess::pb::IPEncapArg &arg[[maybe_unused]])
+{
   using AccessMode = bess::metadata::Attribute::AccessMode;
   AddMetadataAttr("file_d", sizeof(FILE *), AccessMode::kRead);
   AddMetadataAttr("header_size", 1, AccessMode::kRead);
@@ -53,12 +55,13 @@ CommandResponse FileWriter::Init(const bess::pb::IPEncapArg &arg[[maybe_unused]]
   return CommandSuccess();
 }
 
-
 /* from upstream */
-void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
+void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
+{
   int cnt = batch->cnt();
 
-  for (int i = 0; i < cnt; i++) {
+  for (int i = 0; i < cnt; i++)
+  {
     bess::Packet *pkt = batch->pkts()[i];
 
     Ethernet *eth = pkt->head_data<Ethernet *>(); // Ethernet
@@ -68,13 +71,13 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     // Access UDP payload (i.e., mDC data)
     uint8_t offset = sizeof(Ethernet) + ip_bytes + sizeof(Udp);
 
-    FILE * fd_d = get_attr<FILE *>(this, ATTR_R_FILE_D, pkt);
+    FILE *fd_d = get_attr<FILE *>(this, ATTR_R_FILE_D, pkt);
     uint8_t header_size_ = get_attr<uint8_t>(this, ATTR_R_HEADER_SIZE, pkt);
     uint8_t data_size_ = get_attr<uint8_t>(this, ATTR_R_DATA_SIZE, pkt);
 
     // fwrite to fd_d
-    uint8_t data_written = fwrite( pkt->head_data<void *>(offset + header_size_) , sizeof(char), data_size_, fd_d);
-    fclose (fd_d);
+    uint8_t data_written = fwrite(pkt->head_data<void *>(offset + header_size_), sizeof(char), data_size_, fd_d);
+    fclose(fd_d);
 
     // Reply with data id, amount of data written,
     // Rewrite mode field to 0x14
@@ -85,9 +88,8 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
     *data_size_p = (*data_size_p & 0x00) | data_written;
 
     EmitPacket(ctx, pkt, 0);
-
   }
 }
 
 ADD_MODULE(FileWriter, "file_writer",
-           "terminates current task and enqueue packets for new task")
+           "description of file_writer")

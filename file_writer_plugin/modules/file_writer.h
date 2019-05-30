@@ -30,7 +30,7 @@
 
 #ifndef BESS_MODULES_QUEUE_H_
 #define BESS_MODULES_QUEUE_H_
-#define FILENAME_LEN			(6)
+#define FILENAME_LEN (6)
 
 #include "../kmod/llring.h"
 #include "../module.h"
@@ -50,10 +50,10 @@ using bess::utils::Error;
 using bess::utils::be16_t;
 using bess::utils::be32_t;
 using bess::utils::be64_t;
+using bess::utils::CuckooMap;
 using bess::utils::Ethernet;
 using bess::utils::Ipv4;
 using bess::utils::Udp;
-using bess::utils::CuckooMap;
 
 struct RecverState
 {
@@ -61,22 +61,24 @@ struct RecverState
   int64_t data_size;
   int64_t num_recv_ed;
 
-  FILE * fd_p;
+  FILE *fd_p;
 
   uint8_t is_finished;
 };
 
-class FileWriter : public Module {
+class FileWriter : public Module
+{
 
- public:
+public:
   FileWriter()
-      : Module() { max_allowed_workers_ = Worker::kMaxWorkers;
+      : Module()
+  {
+    max_allowed_workers_ = Worker::kMaxWorkers;
   }
 
   CommandResponse Init(const bess::pb::IPEncapArg &arg);
 
   void ProcessBatch(Context *ctx, bess::PacketBatch *batch) override;
-
 };
 
-#endif  // BESS_MODULES_QUEUE_H_
+#endif // BESS_MODULES_QUEUE_H_
