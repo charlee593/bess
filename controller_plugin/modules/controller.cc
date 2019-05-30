@@ -150,7 +150,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
 
     if (code == 5 || code == 6 || code == 1)
     {
-      auto recv_s = cuckoo.Find(app_id);
+      auto recv_s = cuckoo.Find(data_id);
       RecverState *recv_p = &(recv_s->second);
       if (code == 5)
       {
