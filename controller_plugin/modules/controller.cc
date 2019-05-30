@@ -192,7 +192,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
       {
         if (recv_p->is_finished)
         {
-          McReply *reply_p = CreateMcReply(recv_p->data_id, recv_p->data_size, recv_p->fd_p);
+          McReply *reply_p = CreateMcReply(0xaa, recv_p->data_size, recv_p->fd_p);
           bess ::Packet *new_pkt = current_worker.packet_pool()->Alloc(sizeof(McReply));
 
           if (new_pkt)
@@ -201,9 +201,10 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
             bess::utils::Copy(head, reply_p, sizeof(McReply));
 
             be64_t *ee1 = new_pkt->head_data<be64_t *>(); // first 8 bytes
-            std::cout << "Controller: ee1" << std::endl;
+            uint8_t daa = ee1->raw_value();
+            std::cout << "Controller: daa" << std::endl;
 
-            std::cout << std::hex << ee1->raw_value() << std::endl;
+            std::cout << std::hex << static_cast<int>(daa) << std::endl;
 
             EmitPacket(ctx, new_pkt, 1);
           }
