@@ -81,9 +81,9 @@ void FileWriter::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
     // Reply with data id, amount of data written,
     // Rewrite mode field to 0x14
     char *head = pkt->head_data<char *>(offset);
-    uint8_t *mode_p = reinterpret_cast<uint8_t *>(head + 2);
+    uint8_t *code_p = reinterpret_cast<uint8_t *>(head + 4);
     uint8_t *data_size_p = reinterpret_cast<uint8_t *>(head + 8);
-    *mode_p = (*mode_p & 0x00) | 0x14;
+    *code_p = (*code_p & 0x00) | 0x06;
     *data_size_p = (*data_size_p & 0x00) | data_written;
 
     EmitPacket(ctx, pkt, 0);

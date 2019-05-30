@@ -148,31 +148,42 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
     std::cout << std::hex << std::to_string(sn) << std::endl;
     std::cout << std::hex << std::to_string(data_size) << std::endl;
 
-    std::cout << "Controller ProcessBatch DATA: " << std::endl;
-    std::cout << pkt->data<be64_t *>() << std::endl;
-
-    std::cout << "Controller ProcessBatch header: " << std::endl;
-    std::cout << pkt->head_data<be64_t *>() << std::endl;
-
-    std::cout << "Controllerend: " << std::endl;
-
-    auto recv_s = cuckoo.Find(app_id);
-    RecverState *recv_p = &(recv_s->second);
-
-    if (recv_s == nullptr)
+    if (code == 5 || code == 6 || code == 1)
     {
-      recv_p = CreateRecverState(data_id, data_size);
-      cuckoo.Insert(data_id, *recv_p);
+      auto recv_s = cuckoo.Find(app_id);
+      RecverState *recv_p = &(recv_s->second);
+      if (code == 5)
+      {
+        std::cout << "Controller: Got data from sender" << std::endl;
+        if (recv_s == nullptr)
+        {
+          recv_p = CreateRecverState(data_id, data_size);
+          cuckoo.Insert(data_id, *recv_p);
+        }
+
+        set_attr<FILE *>(this, ATTR_W_FILE_D, pkt, recv_p->fd_p);
+        set_attr<uint8_t>(this, ATTR_W_HEADER_SIZE, pkt, 9);
+        set_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt, data_size);
+
+        EmitPacket(ctx, pkt, 0);
+      }
+      if (code == 6)
+      {
+        std::cout << "Controller: Got reply from file writer" << std::endl;
+        recv_p->num_recv_ed += data_size;
+        if (recv_p->num_recv_ed == recv_p->data_size)
+        {
+          recv_p->is_finished = true;
+        }
+      }
+      if (code == 1)
+      {
+        if (recv_p->is_finished)
+        {
+          EmitPacket(ctx, pkt, 0);
+        }
+      }
     }
-
-    // If to file writer
-    set_attr<FILE *>(this, ATTR_W_FILE_D, pkt, recv_p->fd_p);
-    set_attr<uint8_t>(this, ATTR_W_HEADER_SIZE, pkt, 9);
-    set_attr<uint8_t>(this, ATTR_W_DATA_SIZE, pkt, data_size);
-
-    std::cout << "Controller ddddd " << recv_p->fd_p << std::endl;
-
-    EmitPacket(ctx, pkt, 0);
   }
 }
 
