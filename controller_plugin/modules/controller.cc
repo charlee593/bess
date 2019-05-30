@@ -212,6 +212,7 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
       }
     }
   }
+}
 
-  ADD_MODULE(Controller, "controller",
-             "description of controller")
+ADD_MODULE(Controller, "controller",
+           "description of controller")
