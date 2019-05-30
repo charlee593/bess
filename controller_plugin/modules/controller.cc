@@ -200,12 +200,6 @@ void Controller::ProcessBatch(Context *ctx, bess::PacketBatch *batch)
             char *head = new_pkt->head_data<char *>();
             bess::utils::Copy(head, reply_p, sizeof(McReply));
 
-            be64_t *ee1 = new_pkt->head_data<be64_t *>(); // first 8 bytes
-            uint8_t daa = ee1->raw_value();
-            std::cout << "Controller: daa" << std::endl;
-
-            std::cout << std::hex << static_cast<int>(daa) << std::endl;
-
             EmitPacket(ctx, new_pkt, 1);
           }
         }
