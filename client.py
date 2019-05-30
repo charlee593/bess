@@ -45,7 +45,7 @@ if os.path.exists("/tmp/mdc_dp_p.sock"):
     sending_pk_sn = 0
     recv_cnt = 0
 
-    while sending_pk_sn < 10:
+    while sending_pk_sn < 1:
         try:
             unlabeled_data_pkt[MDCData].sn = sending_pk_sn
             print(
