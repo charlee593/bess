@@ -34,4 +34,4 @@ LOCAL_PORT_NAME = 'p'
 LOCAL_SOCKET_PATH = '/tmp/mdc_dp_%s.sock' % LOCAL_PORT_NAME
 
 p = UnixSocketPort(name='p', path=LOCAL_SOCKET_PATH)
-PortInc(port='p') -> bq1::Controller() -> FileWriter() -> bq1
+PortInc(port='p') -> ctl::Controller() -> FileWriter() -> ctl
